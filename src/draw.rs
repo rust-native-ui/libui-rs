@@ -2,7 +2,7 @@
 
 use ffi::{self, uiDrawBrush, uiDrawBrushType, uiDrawContext, uiDrawFontFamilies, uiDrawMatrix};
 use ffi::{uiDrawPath, uiDrawStrokeParams};
-use ffi_utils::Text;
+use ffi_utils::{self, Text};
 use libc::{c_double, c_int};
 use std::marker::PhantomData;
 use std::mem;
@@ -23,6 +23,7 @@ pub struct Context {
 impl Context {
     #[inline]
     pub unsafe fn from_ui_draw_context(ui_draw_context: *mut uiDrawContext) -> Context {
+        ffi_utils::ensure_initialized();
         Context {
             ui_draw_context: ui_draw_context,
         }
@@ -30,6 +31,7 @@ impl Context {
 
     #[inline]
     pub fn stroke(&self, path: &Path, brush: &Brush, stroke_params: &StrokeParams) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let brush = brush.as_ui_draw_brush_ref();
             let stroke_params = stroke_params.as_ui_draw_stroke_params_ref();
@@ -43,6 +45,7 @@ impl Context {
 
     #[inline]
     pub fn fill(&self, path: &Path, brush: &Brush) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let brush = brush.as_ui_draw_brush_ref();
             ffi::uiDrawFill(self.ui_draw_context,
@@ -53,6 +56,7 @@ impl Context {
 
     #[inline]
     pub fn transform(&self, matrix: &Matrix) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawTransform(self.ui_draw_context,
                                  matrix as *const uiDrawMatrix as *mut uiDrawMatrix)
@@ -61,6 +65,7 @@ impl Context {
 
     #[inline]
     pub fn save(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawSave(self.ui_draw_context)
         }
@@ -68,6 +73,7 @@ impl Context {
 
     #[inline]
     pub fn restore(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawRestore(self.ui_draw_context)
         }
@@ -75,6 +81,7 @@ impl Context {
 
     #[inline]
     pub fn draw_text(&self, x: f64, y: f64, layout: &text::Layout) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawText(self.ui_draw_context, x, y, layout.as_ui_draw_text_layout())
         }
@@ -97,6 +104,7 @@ pub struct UiDrawBrushRef<'a> {
 
 impl Brush {
     pub fn as_ui_draw_brush_ref(&self) -> UiDrawBrushRef {
+        ffi_utils::ensure_initialized();
         match *self {
             Brush::Solid(ref solid_brush) => {
                 UiDrawBrushRef {
@@ -232,6 +240,7 @@ pub struct UiDrawStrokeParamsRef<'a> {
 
 impl StrokeParams {
     pub fn as_ui_draw_stroke_params_ref(&self) -> UiDrawStrokeParamsRef {
+        ffi_utils::ensure_initialized();
         UiDrawStrokeParamsRef {
             ui_draw_stroke_params: uiDrawStrokeParams {
                 Cap: self.cap,
@@ -254,6 +263,7 @@ pub struct Path {
 impl Drop for Path {
     #[inline]
     fn drop(&mut self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawFreePath(self.ui_draw_path)
         }
@@ -263,6 +273,7 @@ impl Drop for Path {
 impl Path {
     #[inline]
     pub fn new(fill_mode: FillMode) -> Path {
+        ffi_utils::ensure_initialized();
         unsafe {
             Path {
                 ui_draw_path: ffi::uiDrawNewPath(fill_mode),
@@ -272,6 +283,7 @@ impl Path {
 
     #[inline]
     pub fn new_figure(&self, x: f64, y: f64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawPathNewFigure(self.ui_draw_path, x, y)
         }
@@ -285,6 +297,7 @@ impl Path {
                                start_angle: f64,
                                sweep: f64,
                                negative: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawPathNewFigureWithArc(self.ui_draw_path,
                                             x_center,
@@ -298,6 +311,7 @@ impl Path {
 
     #[inline]
     pub fn line_to(&self, x: f64, y: f64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawPathLineTo(self.ui_draw_path, x, y)
         }
@@ -311,6 +325,7 @@ impl Path {
                   start_angle: f64,
                   sweep: f64,
                   negative: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawPathArcTo(self.ui_draw_path,
                                  x_center,
@@ -324,6 +339,7 @@ impl Path {
 
     #[inline]
     pub fn bezier_to(&self, c1x: f64, c1y: f64, c2x: f64, c2y: f64, end_x: f64, end_y: f64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawPathBezierTo(self.ui_draw_path, c1x, c1y, c2x, c2y, end_x, end_y)
         }
@@ -331,6 +347,7 @@ impl Path {
 
     #[inline]
     pub fn close_figure(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawPathCloseFigure(self.ui_draw_path)
         }
@@ -338,6 +355,7 @@ impl Path {
 
     #[inline]
     pub fn add_rectangle(&self, x: f64, y: f64, width: f64, height: f64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawPathAddRectangle(self.ui_draw_path, x, y, width, height)
         }
@@ -345,6 +363,7 @@ impl Path {
 
     #[inline]
     pub fn end(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawPathEnd(self.ui_draw_path)
         }
@@ -447,6 +466,7 @@ pub struct FontFamilies {
 impl Drop for FontFamilies {
     #[inline]
     fn drop(&mut self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawFreeFontFamilies(self.ui_draw_font_families)
         }
@@ -456,6 +476,7 @@ impl Drop for FontFamilies {
 impl FontFamilies {
     #[inline]
     pub fn list() -> FontFamilies {
+        ffi_utils::ensure_initialized();
         unsafe {
             FontFamilies {
                 ui_draw_font_families: ffi::uiDrawListFontFamilies(),
@@ -465,6 +486,7 @@ impl FontFamilies {
 
     #[inline]
     pub fn len(&self) -> u64 {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiDrawFontFamiliesNumFamilies(self.ui_draw_font_families)
         }
@@ -472,6 +494,7 @@ impl FontFamilies {
 
     #[inline]
     pub fn family(&self, index: u64) -> Text {
+        ffi_utils::ensure_initialized();
         assert!(index < self.len());
         unsafe {
             Text::new(ffi::uiDrawFontFamiliesFamily(self.ui_draw_font_families, index))
@@ -481,6 +504,7 @@ impl FontFamilies {
 
 pub mod text {
     use ffi::{self, uiDrawTextFont, uiDrawTextFontDescriptor, uiDrawTextLayout};
+    use ffi_utils;
     use libc::c_char;
     use std::ffi::{CStr, CString};
     use std::mem;
@@ -502,6 +526,7 @@ pub mod text {
         #[inline]
         pub fn new(family: &str, size: f64, weight: Weight, italic: Italic, stretch: Stretch)
                    -> FontDescriptor {
+            ffi_utils::ensure_initialized();
             FontDescriptor {
                 family: CString::new(family.as_bytes().to_vec()).unwrap(),
                 size: size,
@@ -514,6 +539,7 @@ pub mod text {
         /// FIXME(pcwalton): Should this return an Option?
         #[inline]
         pub fn load_closest_font(&self) -> Font {
+            ffi_utils::ensure_initialized();
             unsafe {
                 let font_descriptor = uiDrawTextFontDescriptor {
                     Family: self.family.as_ptr(),
@@ -541,6 +567,7 @@ pub mod text {
     impl Drop for Font {
         #[inline]
         fn drop(&mut self) {
+            ffi_utils::ensure_initialized();
             unsafe {
                 ffi::uiDrawFreeTextFont(self.ui_draw_text_font)
             }
@@ -557,6 +584,7 @@ pub mod text {
 
         #[inline]
         pub fn handle(&self) -> usize {
+            ffi_utils::ensure_initialized();
             unsafe {
                 ffi::uiDrawTextFontHandle(self.ui_draw_text_font)
             }
@@ -564,6 +592,7 @@ pub mod text {
 
         #[inline]
         pub fn describe(&self) -> FontDescriptor {
+            ffi_utils::ensure_initialized();
             unsafe {
                 let mut ui_draw_text_font_descriptor = mem::uninitialized();
                 ffi::uiDrawTextFontDescribe(self.ui_draw_text_font,
@@ -584,6 +613,7 @@ pub mod text {
 
         #[inline]
         pub fn metrics(&self) -> FontMetrics {
+            ffi_utils::ensure_initialized();
             unsafe {
                 let mut metrics = mem::uninitialized();
                 ffi::uiDrawTextFontGetMetrics(self.ui_draw_text_font, &mut metrics);
@@ -599,6 +629,7 @@ pub mod text {
     impl Drop for Layout {
         #[inline]
         fn drop(&mut self) {
+            ffi_utils::ensure_initialized();
             unsafe {
                 ffi::uiDrawFreeTextLayout(self.ui_draw_text_layout)
             }
@@ -608,6 +639,7 @@ pub mod text {
     impl Layout {
         #[inline]
         pub fn new(text: &str, default_font: &Font, width: f64) -> Layout {
+            ffi_utils::ensure_initialized();
             unsafe {
                 let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
                 Layout {
@@ -625,6 +657,7 @@ pub mod text {
 
         #[inline]
         pub fn set_width(&self, width: f64) {
+            ffi_utils::ensure_initialized();
             unsafe {
                 ffi::uiDrawTextLayoutSetWidth(self.ui_draw_text_layout, width)
             }
@@ -632,6 +665,7 @@ pub mod text {
 
         #[inline]
         pub fn extents(&self) -> (f64, f64) {
+            ffi_utils::ensure_initialized();
             unsafe {
                 let mut extents = (0.0, 0.0);
                 ffi::uiDrawTextLayoutExtents(self.ui_draw_text_layout,
@@ -643,6 +677,7 @@ pub mod text {
 
         #[inline]
         pub fn set_color(&self, start_char: i64, end_char: i64, r: f64, g: f64, b: f64, a: f64) {
+            ffi_utils::ensure_initialized();
             unsafe {
                 ffi::uiDrawTextLayoutSetColor(self.ui_draw_text_layout,
                                               start_char,

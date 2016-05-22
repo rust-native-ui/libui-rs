@@ -48,7 +48,8 @@ impl MenuItem {
                 };
                 let window = Window::from_ui_window(window);
                 mem::transmute::<*mut c_void,
-                                 &mut Box<FnMut(&MenuItem, &Window)>>(data)(&menu_item, &window)
+                                 &mut Box<FnMut(&MenuItem, &Window)>>(data)(&menu_item, &window);
+                mem::forget(window);
             }
         }
     }

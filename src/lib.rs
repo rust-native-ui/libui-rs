@@ -17,6 +17,7 @@ pub use ui::{InitError, InitOptions, init, main, msg_box, msg_box_error, on_shou
 pub use ui::{open_file, queue_main, quit, save_file, uninit};
 pub use windows::Window;
 
+#[macro_use]
 mod controls;
 pub mod draw;
 pub mod ffi;

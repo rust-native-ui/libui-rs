@@ -1,30 +1,18 @@
 //! Functions and types related to windows.
 
 use controls::Control;
-use ffi::{self, uiWindow};
-use ffi_utils::Text;
+use ffi::{self, uiControl, uiWindow};
+use ffi_utils::{self, Text};
 use libc::{c_int, c_void};
+use std::cell::RefCell;
 use std::ffi::CString;
 use std::mem;
-use std::ops::Deref;
 
-/// FIXME(pcwalton): We need to reference count these for memory safety!
-#[derive(Clone)]
-pub struct Window {
-    ui_window: *mut uiWindow,
+thread_local! {
+    static WINDOWS: RefCell<Vec<Window>> = RefCell::new(Vec::new())
 }
 
-impl Deref for Window {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Window, &Control>(self)
-        }
-    }
-}
+define_control!(Window, uiWindow, ui_window);
 
 impl Window {
     #[inline]
@@ -34,6 +22,7 @@ impl Window {
 
     #[inline]
     pub fn title(&self) -> Text {
+        ffi_utils::ensure_initialized();
         unsafe {
             Text::new(ffi::uiWindowTitle(self.ui_window))
         }
@@ -41,6 +30,7 @@ impl Window {
 
     #[inline]
     pub fn set_title(&self, title: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
             ffi::uiWindowSetTitle(self.ui_window, c_string.as_ptr())
@@ -49,6 +39,7 @@ impl Window {
 
     #[inline]
     pub fn on_closing(&self, callback: Box<FnMut(&Window) -> bool>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Window) -> bool>> = Box::new(callback);
             ffi::uiWindowOnClosing(self.ui_window,
@@ -70,6 +61,7 @@ impl Window {
 
     #[inline]
     pub fn set_child(&self, child: &Control) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiWindowSetChild(self.ui_window, child.as_ui_control())
         }
@@ -77,6 +69,7 @@ impl Window {
 
     #[inline]
     pub fn margined(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiWindowMargined(self.ui_window) != 0
         }
@@ -84,6 +77,7 @@ impl Window {
 
     #[inline]
     pub fn set_margined(&self, margined: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiWindowSetMargined(self.ui_window, margined as c_int)
         }
@@ -91,12 +85,17 @@ impl Window {
 
     #[inline]
     pub fn new(title: &str, width: c_int, height: c_int, has_menubar: bool) -> Window {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
-            Window::from_ui_window(ffi::uiNewWindow(c_string.as_ptr(),
-                                                    width,
-                                                    height,
-                                                    has_menubar as c_int))
+            let window = Window::from_ui_window(ffi::uiNewWindow(c_string.as_ptr(),
+                                                                 width,
+                                                                 height,
+                                                                 has_menubar as c_int));
+
+            WINDOWS.with(|windows| windows.borrow_mut().push(window.clone()));
+
+            window
         }
     }
 
@@ -105,6 +104,15 @@ impl Window {
         Window {
             ui_window: window,
         }
+    }
+
+    pub unsafe fn destroy_all_windows() {
+        WINDOWS.with(|windows| {
+            let mut windows = windows.borrow_mut();
+            for window in windows.drain(..) {
+                window.destroy()
+            }
+        })
     }
 }
 

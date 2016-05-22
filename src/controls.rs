@@ -5,35 +5,122 @@ use ffi::{self, uiArea, uiAreaDrawParams, uiAreaHandler, uiAreaKeyEvent, uiAreaM
 use ffi::{uiButton, uiCheckbox, uiColorButton, uiCombobox, uiControl, uiDateTimePicker, uiEntry};
 use ffi::{uiFontButton, uiGroup, uiLabel, uiMultilineEntry, uiProgressBar, uiRadioButtons};
 use ffi::{uiSeparator, uiSlider, uiSpinbox, uiTab};
-use ffi_utils::Text;
+use ffi_utils::{self, Text};
 use libc::{c_int, c_void};
 use std::ffi::CString;
 use std::mem;
-use std::ops::Deref;
 use std::ptr;
 
 pub use ffi::uiExtKey as ExtKey;
 
-/// FIXME(pcwalton): We need to reference count these for memory safety!
-#[derive(Clone)]
+// Defines a new control, creating a Rust wrapper, a `Deref` implementation, and a destructor.
+// An example of use:
+//
+//     define_control!(Slider, uiSlider, ui_slider)
+#[macro_export]
+macro_rules! define_control {
+    ($rust_type:ident, $ui_type:ident, $ui_field:ident) => {
+        pub struct $rust_type {
+            $ui_field: *mut $ui_type,
+        }
+
+        impl ::std::ops::Deref for $rust_type {
+            type Target = ::controls::Control;
+
+            #[inline]
+            fn deref(&self) -> &::controls::Control {
+                // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
+                unsafe {
+                    mem::transmute::<&$rust_type, &::controls::Control>(self)
+                }
+            }
+        }
+
+        impl Drop for $rust_type {
+            #[inline]
+            fn drop(&mut self) {
+                // For now this does nothing, but in the future, when `libui` supports proper
+                // memory management, this will likely need to twiddle reference counts.
+            }
+        }
+
+        impl Clone for $rust_type {
+            #[inline]
+            fn clone(&self) -> $rust_type {
+                $rust_type {
+                    $ui_field: self.$ui_field,
+                }
+            }
+        }
+
+        impl Into<Control> for $rust_type {
+            #[inline]
+            fn into(self) -> Control {
+                unsafe {
+                    let control = Control::from_ui_control(self.$ui_field as *mut uiControl);
+                    mem::forget(self);
+                    control
+                }
+            }
+        }
+
+        impl $rust_type {
+            #[inline]
+            pub unsafe fn from_ui_control($ui_field: *mut $ui_type) -> $rust_type {
+                $rust_type {
+                    $ui_field: $ui_field
+                }
+            }
+        }
+    }
+}
+
 pub struct Control {
     ui_control: *mut uiControl,
 }
 
+impl Drop for Control {
+    #[inline]
+    fn drop(&mut self) {
+        // For now this does nothing, but in the future, when `libui` supports proper memory
+        // management, this will likely need to twiddle reference counts.
+    }
+}
+
+impl Clone for Control {
+    #[inline]
+    fn clone(&self) -> Control {
+        Control {
+            ui_control: self.ui_control,
+        }
+    }
+}
+
 impl Control {
+    /// Creates a new `Control` object from an existing `uiControl`.
+    #[inline]
+    pub unsafe fn from_ui_control(ui_control: *mut uiControl) -> Control {
+        Control {
+            ui_control: ui_control,
+        }
+    }
+
     #[inline]
     pub fn as_ui_control(&self) -> *mut uiControl {
         self.ui_control
     }
 
-    /// FIXME(pcwalton): Offer a safe way to destroy controls.
+    /// Destroys a control. Any use of the control after this is use-after-free; therefore, this
+    /// is marked unsafe.
     #[inline]
     pub unsafe fn destroy(&self) {
+        // Don't check for initialization here since this can be run during deinitialization.
         ffi::uiControlDestroy(self.ui_control)
     }
 
     #[inline]
     pub fn handle(&self) -> usize {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiControlHandle(self.ui_control)
         }
@@ -41,31 +128,30 @@ impl Control {
 
     #[inline]
     pub fn parent(&self) -> Option<Control> {
-        let ui_control = unsafe {
-            ffi::uiControlParent(self.ui_control)
-        };
-        if ui_control.is_null() {
-            None
-        } else {
-            Some(Control {
-                ui_control: ui_control,
-            })
+        ffi_utils::ensure_initialized();
+        unsafe {
+            let ui_control = ffi::uiControlParent(self.ui_control);
+            if ui_control.is_null() {
+                None
+            } else {
+                Some(Control::from_ui_control(ui_control))
+            }
         }
     }
 
     #[inline]
-    pub fn set_parent(&self, parent: Option<&Control>) {
-        unsafe {
-            ffi::uiControlSetParent(self.ui_control,
-                                    match parent {
-                                        None => ptr::null_mut(),
-                                        Some(parent) => parent.ui_control,
-                                    })
-        }
+    pub unsafe fn set_parent(&self, parent: Option<&Control>) {
+        ffi_utils::ensure_initialized();
+        ffi::uiControlSetParent(self.ui_control,
+                                match parent {
+                                    None => ptr::null_mut(),
+                                    Some(parent) => parent.ui_control,
+                                })
     }
 
     #[inline]
     pub fn toplevel(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiControlToplevel(self.ui_control) != 0
         }
@@ -73,6 +159,7 @@ impl Control {
 
     #[inline]
     pub fn visible(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiControlVisible(self.ui_control) != 0
         }
@@ -80,6 +167,7 @@ impl Control {
 
     #[inline]
     pub fn show(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiControlShow(self.ui_control)
         }
@@ -87,6 +175,7 @@ impl Control {
 
     #[inline]
     pub fn hide(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiControlHide(self.ui_control)
         }
@@ -94,6 +183,7 @@ impl Control {
 
     #[inline]
     pub fn enabled(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiControlEnabled(self.ui_control) != 0
         }
@@ -101,6 +191,7 @@ impl Control {
 
     #[inline]
     pub fn enable(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiControlEnable(self.ui_control)
         }
@@ -108,32 +199,19 @@ impl Control {
 
     #[inline]
     pub fn disable(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiControlDisable(self.ui_control)
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Button {
-    ui_button: *mut uiButton,
-}
-
-impl Deref for Button {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Button, &Control>(self)
-        }
-    }
-}
+define_control!(Button, uiButton, ui_button);
 
 impl Button {
     #[inline]
     pub fn text(&self) -> Text {
+        ffi_utils::ensure_initialized();
         unsafe {
             Text::new(ffi::uiButtonText(self.ui_button))
         }
@@ -141,6 +219,7 @@ impl Button {
 
     #[inline]
     pub fn set_text(&self, text: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             ffi::uiButtonSetText(self.ui_button, c_string.as_ptr())
@@ -149,6 +228,7 @@ impl Button {
 
     #[inline]
     pub fn on_clicked(&self, callback: Box<FnMut(&Button)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Button)>> = Box::new(callback);
             ffi::uiButtonOnClicked(self.ui_button,
@@ -169,42 +249,32 @@ impl Button {
 
     #[inline]
     pub fn new(text: &str) -> Button {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
-            Button {
-                ui_button: ffi::uiNewButton(c_string.as_ptr()),
-            }
+            Button::from_ui_control(ffi::uiNewButton(c_string.as_ptr()))
         }
     }
 }
 
-#[derive(Clone)]
-pub struct BoxControl {
-    ui_box: *mut uiBox,
-}
-
-impl Deref for BoxControl {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&BoxControl, &Control>(self)
-        }
-    }
-}
+define_control!(BoxControl, uiBox, ui_box);
 
 impl BoxControl {
     #[inline]
-    pub fn append(&self, child: &Control, stretchy: bool) {
+    pub fn append(&self, child: Control, stretchy: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
+            assert!(child.parent().is_none());
             ffi::uiBoxAppend(self.ui_box, child.ui_control, stretchy as c_int)
         }
     }
 
+    /// FIXME(pcwalton): This will leak the deleted control! We have no way of actually getting it
+    /// to decrement its reference count per `libui`'s UI as of today, unless we maintain a
+    /// separate list of children ourselves…
     #[inline]
     pub fn delete(&self, index: u64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiBoxDelete(self.ui_box, index)
         }
@@ -212,6 +282,7 @@ impl BoxControl {
 
     #[inline]
     pub fn padded(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiBoxPadded(self.ui_box) != 0
         }
@@ -219,6 +290,7 @@ impl BoxControl {
 
     #[inline]
     pub fn set_padded(&self, padded: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiBoxSetPadded(self.ui_box, padded as c_int)
         }
@@ -226,43 +298,27 @@ impl BoxControl {
 
     #[inline]
     pub fn new_horizontal() -> BoxControl {
+        ffi_utils::ensure_initialized();
         unsafe {
-            BoxControl {
-                ui_box: ffi::uiNewHorizontalBox(),
-            }
+            BoxControl::from_ui_control(ffi::uiNewHorizontalBox())
         }
     }
 
     #[inline]
     pub fn new_vertical() -> BoxControl {
+        ffi_utils::ensure_initialized();
         unsafe {
-            BoxControl {
-                ui_box: ffi::uiNewVerticalBox(),
-            }
+            BoxControl::from_ui_control(ffi::uiNewVerticalBox())
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Entry {
-    ui_entry: *mut uiEntry,
-}
-
-impl Deref for Entry {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Entry, &Control>(self)
-        }
-    }
-}
+define_control!(Entry, uiEntry, ui_entry);
 
 impl Entry {
     #[inline]
     pub fn text(&self) -> Text {
+        ffi_utils::ensure_initialized();
         unsafe {
             Text::new(ffi::uiEntryText(self.ui_entry))
         }
@@ -270,6 +326,7 @@ impl Entry {
 
     #[inline]
     pub fn set_text(&self, text: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             ffi::uiEntrySetText(self.ui_entry, c_string.as_ptr())
@@ -278,6 +335,7 @@ impl Entry {
 
     #[inline]
     pub fn on_changed(&self, callback: Box<FnMut(&Entry)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Entry)>> = Box::new(callback);
             ffi::uiEntryOnChanged(self.ui_entry,
@@ -288,16 +346,16 @@ impl Entry {
 
         extern "C" fn c_callback(entry: *mut uiEntry, data: *mut c_void) {
             unsafe {
-                let entry = Entry {
-                    ui_entry: entry,
-                };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&Entry)>>(data)(&entry)
+                let entry = Entry::from_ui_control(entry);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Entry)>>(data)(&entry);
+                mem::forget(entry);
             }
         }
     }
 
     #[inline]
     pub fn read_only(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiEntryReadOnly(self.ui_entry) != 0
         }
@@ -305,6 +363,7 @@ impl Entry {
 
     #[inline]
     pub fn set_read_only(&self, readonly: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiEntrySetReadOnly(self.ui_entry, readonly as c_int)
         }
@@ -312,34 +371,19 @@ impl Entry {
 
     #[inline]
     pub fn new() -> Entry {
+        ffi_utils::ensure_initialized();
         unsafe {
-            Entry {
-                ui_entry: ffi::uiNewEntry(),
-            }
+            Entry::from_ui_control(ffi::uiNewEntry())
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Checkbox {
-    ui_checkbox: *mut uiCheckbox,
-}
-
-impl Deref for Checkbox {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Checkbox, &Control>(self)
-        }
-    }
-}
+define_control!(Checkbox, uiCheckbox, ui_checkbox);
 
 impl Checkbox {
     #[inline]
     pub fn text(&self) -> Text {
+        ffi_utils::ensure_initialized();
         unsafe {
             Text::new(ffi::uiCheckboxText(self.ui_checkbox))
         }
@@ -347,6 +391,7 @@ impl Checkbox {
 
     #[inline]
     pub fn set_text(&self, text: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             ffi::uiCheckboxSetText(self.ui_checkbox, c_string.as_ptr())
@@ -355,6 +400,7 @@ impl Checkbox {
 
     #[inline]
     pub fn on_toggled(&self, callback: Box<FnMut(&Checkbox)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Checkbox)>> = Box::new(callback);
             ffi::uiCheckboxOnToggled(self.ui_checkbox,
@@ -365,16 +411,16 @@ impl Checkbox {
 
         extern "C" fn c_callback(checkbox: *mut uiCheckbox, data: *mut c_void) {
             unsafe {
-                let checkbox = Checkbox {
-                    ui_checkbox: checkbox,
-                };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&Checkbox)>>(data)(&checkbox)
+                let checkbox = Checkbox::from_ui_control(checkbox);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Checkbox)>>(data)(&checkbox);
+                mem::forget(checkbox)
             }
         }
     }
 
     #[inline]
     pub fn checked(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiCheckboxChecked(self.ui_checkbox) != 0
         }
@@ -382,6 +428,7 @@ impl Checkbox {
 
     #[inline]
     pub fn set_checked(&self, checked: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiCheckboxSetChecked(self.ui_checkbox, checked as c_int)
         }
@@ -389,35 +436,20 @@ impl Checkbox {
 
     #[inline]
     pub fn new(text: &str) -> Checkbox {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
-            Checkbox {
-                ui_checkbox: ffi::uiNewCheckbox(c_string.as_ptr()),
-            }
+            Checkbox::from_ui_control(ffi::uiNewCheckbox(c_string.as_ptr()))
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Label {
-    ui_label: *mut uiLabel,
-}
-
-impl Deref for Label {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Label, &Control>(self)
-        }
-    }
-}
+define_control!(Label, uiLabel, ui_label);
 
 impl Label {
     #[inline]
     pub fn text(&self) -> Text {
+        ffi_utils::ensure_initialized();
         unsafe {
             Text::new(ffi::uiLabelText(self.ui_label))
         }
@@ -425,6 +457,7 @@ impl Label {
 
     #[inline]
     pub fn set_text(&self, text: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             ffi::uiLabelSetText(self.ui_label, c_string.as_ptr())
@@ -433,35 +466,20 @@ impl Label {
 
     #[inline]
     pub fn new(text: &str) -> Label {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
-            Label {
-                ui_label: ffi::uiNewLabel(c_string.as_ptr()),
-            }
+            Label::from_ui_control(ffi::uiNewLabel(c_string.as_ptr()))
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Tab {
-    ui_tab: *mut uiTab,
-}
-
-impl Deref for Tab {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Tab, &Control>(self)
-        }
-    }
-}
+define_control!(Tab, uiTab, ui_tab);
 
 impl Tab {
     #[inline]
-    pub fn append(&self, name: &str, control: &Control) {
+    pub fn append(&self, name: &str, control: Control) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ffi::uiTabAppend(self.ui_tab, c_string.as_ptr(), control.ui_control)
@@ -469,15 +487,20 @@ impl Tab {
     }
 
     #[inline]
-    pub fn insert_at(&self, name: &str, before: u64, control: &Control) {
+    pub fn insert_at(&self, name: &str, before: u64, control: Control) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ffi::uiTabInsertAt(self.ui_tab, c_string.as_ptr(), before, control.ui_control)
         }
     }
 
+    /// FIXME(pcwalton): This will leak the deleted control! We have no way of actually getting it
+    /// to decrement its reference count per `libui`'s UI as of today, unless we maintain a
+    /// separate list of children ourselves…
     #[inline]
     pub fn delete(&self, index: u64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiTabDelete(self.ui_tab, index)
         }
@@ -485,6 +508,7 @@ impl Tab {
 
     #[inline]
     pub fn margined(&self, page: u64) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiTabMargined(self.ui_tab, page) != 0
         }
@@ -492,6 +516,7 @@ impl Tab {
 
     #[inline]
     pub fn set_margined(&self, page: u64, margined: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiTabSetMargined(self.ui_tab, page, margined as c_int)
         }
@@ -499,34 +524,19 @@ impl Tab {
 
     #[inline]
     pub fn new() -> Tab {
+        ffi_utils::ensure_initialized();
         unsafe {
-            Tab {
-                ui_tab: ffi::uiNewTab(),
-            }
+            Tab::from_ui_control(ffi::uiNewTab())
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Group {
-    ui_group: *mut uiGroup,
-}
-
-impl Deref for Group {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Group, &Control>(self)
-        }
-    }
-}
+define_control!(Group, uiGroup, ui_group);
 
 impl Group {
     #[inline]
     pub fn title(&self) -> Text {
+        ffi_utils::ensure_initialized();
         unsafe {
             Text::new(ffi::uiGroupTitle(self.ui_group))
         }
@@ -534,6 +544,7 @@ impl Group {
 
     #[inline]
     pub fn set_title(&self, title: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
             ffi::uiGroupSetTitle(self.ui_group, c_string.as_ptr())
@@ -541,7 +552,8 @@ impl Group {
     }
 
     #[inline]
-    pub fn set_child(&self, child: &Control) {
+    pub fn set_child(&self, child: Control) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiGroupSetChild(self.ui_group, child.ui_control)
         }
@@ -549,6 +561,7 @@ impl Group {
 
     #[inline]
     pub fn margined(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiGroupMargined(self.ui_group) != 0
         }
@@ -556,6 +569,7 @@ impl Group {
 
     #[inline]
     pub fn set_margined(&self, margined: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiGroupSetMargined(self.ui_group, margined as c_int)
         }
@@ -563,35 +577,20 @@ impl Group {
 
     #[inline]
     pub fn new(title: &str) -> Group {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
-            Group {
-                ui_group: ffi::uiNewGroup(c_string.as_ptr()),
-            }
+            Group::from_ui_control(ffi::uiNewGroup(c_string.as_ptr()))
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Spinbox {
-    ui_spinbox: *mut uiSpinbox,
-}
-
-impl Deref for Spinbox {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Spinbox, &Control>(self)
-        }
-    }
-}
+define_control!(Spinbox, uiSpinbox, ui_spinbox);
 
 impl Spinbox {
     #[inline]
     pub fn value(&self) -> i64 {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiSpinboxValue(self.ui_spinbox)
         }
@@ -599,6 +598,7 @@ impl Spinbox {
 
     #[inline]
     pub fn set_value(&self, value: i64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiSpinboxSetValue(self.ui_spinbox, value)
         }
@@ -606,6 +606,7 @@ impl Spinbox {
 
     #[inline]
     pub fn on_changed(&self, callback: Box<FnMut(&Spinbox)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Spinbox)>> = Box::new(callback);
             ffi::uiSpinboxOnChanged(self.ui_spinbox,
@@ -616,44 +617,28 @@ impl Spinbox {
 
         extern "C" fn c_callback(spinbox: *mut uiSpinbox, data: *mut c_void) {
             unsafe {
-                let spinbox = Spinbox {
-                    ui_spinbox: spinbox,
-                };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&Spinbox)>>(data)(&spinbox)
+                let spinbox = Spinbox::from_ui_control(spinbox);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Spinbox)>>(data)(&spinbox);
+                mem::forget(spinbox);
             }
         }
     }
 
     #[inline]
     pub fn new(min: i64, max: i64) -> Spinbox {
+        ffi_utils::ensure_initialized();
         unsafe {
-            Spinbox {
-                ui_spinbox: ffi::uiNewSpinbox(min, max),
-            }
+            Spinbox::from_ui_control(ffi::uiNewSpinbox(min, max))
         }
     }
 }
 
-#[derive(Clone)]
-pub struct ProgressBar {
-    ui_progress_bar: *mut uiProgressBar,
-}
-
-impl Deref for ProgressBar {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&ProgressBar, &Control>(self)
-        }
-    }
-}
+define_control!(ProgressBar, uiProgressBar, ui_progress_bar);
 
 impl ProgressBar {
     #[inline]
     pub fn set_value(&self, n: i32) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiProgressBarSetValue(self.ui_progress_bar, n)
         }
@@ -661,34 +646,19 @@ impl ProgressBar {
 
     #[inline]
     pub fn new() -> ProgressBar {
+        ffi_utils::ensure_initialized();
         unsafe {
-            ProgressBar {
-                ui_progress_bar: ffi::uiNewProgressBar(),
-            }
+            ProgressBar::from_ui_control(ffi::uiNewProgressBar())
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Slider {
-    ui_slider: *mut uiSlider,
-}
-
-impl Deref for Slider {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Slider, &Control>(self)
-        }
-    }
-}
+define_control!(Slider, uiSlider, ui_slider);
 
 impl Slider {
     #[inline]
     pub fn value(&self) -> i64 {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiSliderValue(self.ui_slider)
         }
@@ -696,6 +666,7 @@ impl Slider {
 
     #[inline]
     pub fn set_value(&self, value: i64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiSliderSetValue(self.ui_slider, value)
         }
@@ -703,6 +674,7 @@ impl Slider {
 
     #[inline]
     pub fn on_changed(&self, callback: Box<FnMut(&Slider)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Slider)>> = Box::new(callback);
             ffi::uiSliderOnChanged(self.ui_slider,
@@ -713,72 +685,40 @@ impl Slider {
 
         extern "C" fn c_callback(slider: *mut uiSlider, data: *mut c_void) {
             unsafe {
-                let slider = Slider {
-                    ui_slider: slider,
-                };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&Slider)>>(data)(&slider)
+                let slider = Slider::from_ui_control(slider);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Slider)>>(data)(&slider);
+                mem::forget(slider);
             }
         }
     }
 
     #[inline]
     pub fn new(min: i64, max: i64) -> Slider {
+        ffi_utils::ensure_initialized();
         unsafe {
-            Slider {
-                ui_slider: ffi::uiNewSlider(min, max),
-            }
+            Slider::from_ui_control(ffi::uiNewSlider(min, max))
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Separator {
-    ui_separator: *mut uiSeparator,
-}
-
-impl Deref for Separator {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Separator, &Control>(self)
-        }
-    }
-}
+define_control!(Separator, uiSeparator, ui_separator);
 
 impl Separator {
     #[inline]
     pub fn new_horizontal() -> Separator {
+        ffi_utils::ensure_initialized();
         unsafe {
-            Separator {
-                ui_separator: ffi::uiNewHorizontalSeparator(),
-            }
+            Separator::from_ui_control(ffi::uiNewHorizontalSeparator())
         }
     }
 }
 
-#[derive(Clone)]
-pub struct Combobox {
-    ui_combobox: *mut uiCombobox,
-}
-
-impl Deref for Combobox {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Combobox, &Control>(self)
-        }
-    }
-}
+define_control!(Combobox, uiCombobox, ui_combobox);
 
 impl Combobox {
     #[inline]
     pub fn append(&self, name: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ffi::uiComboboxAppend(self.ui_combobox, c_string.as_ptr())
@@ -787,6 +727,7 @@ impl Combobox {
 
     #[inline]
     pub fn selected(&self) -> i64 {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiComboboxSelected(self.ui_combobox)
         }
@@ -794,6 +735,7 @@ impl Combobox {
 
     #[inline]
     pub fn set_selected(&self, n: i64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiComboboxSetSelected(self.ui_combobox, n)
         }
@@ -801,6 +743,7 @@ impl Combobox {
 
     #[inline]
     pub fn on_selected(&self, callback: Box<FnMut(&Combobox)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Combobox)>> = Box::new(callback);
             ffi::uiComboboxOnSelected(self.ui_combobox,
@@ -811,55 +754,38 @@ impl Combobox {
 
         extern "C" fn c_callback(combobox: *mut uiCombobox, data: *mut c_void) {
             unsafe {
-                let combobox = Combobox {
-                    ui_combobox: combobox,
-                };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&Combobox)>>(data)(&combobox)
+                let combobox = Combobox::from_ui_control(combobox);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Combobox)>>(data)(&combobox);
+                mem::forget(combobox);
             }
         }
     }
 
     #[inline]
     pub fn new() -> Combobox {
+        ffi_utils::ensure_initialized();
         unsafe {
-            Combobox {
-                ui_combobox: ffi::uiNewCombobox(),
-            }
+            Combobox::from_ui_control(ffi::uiNewCombobox())
         }
     }
 
     #[inline]
     pub fn new_editable() -> Combobox {
+        ffi_utils::ensure_initialized();
         unsafe {
-            Combobox {
-                ui_combobox: ffi::uiNewEditableCombobox(),
-            }
+            Combobox::from_ui_control(ffi::uiNewEditableCombobox())
         }
     }
 }
 
-/// FIXME(pcwalton): Are these supposed to be a subclass of something? They don't seem very usable
-/// with just the `uiRadioButtons*` methods…
-#[derive(Clone)]
-pub struct RadioButtons {
-    ui_radio_buttons: *mut uiRadioButtons,
-}
-
-impl Deref for RadioButtons {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&RadioButtons, &Control>(self)
-        }
-    }
-}
+// FIXME(pcwalton): Are these supposed to be a subclass of something? They don't seem very usable
+// with just the `uiRadioButtons*` methods…
+define_control!(RadioButtons, uiRadioButtons, ui_radio_buttons);
 
 impl RadioButtons {
     #[inline]
     pub fn append(&self, name: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ffi::uiRadioButtonsAppend(self.ui_radio_buttons, c_string.as_ptr())
@@ -868,79 +794,46 @@ impl RadioButtons {
 
     #[inline]
     pub fn new() -> RadioButtons {
+        ffi_utils::ensure_initialized();
         unsafe {
-            RadioButtons {
-                ui_radio_buttons: ffi::uiNewRadioButtons(),
-            }
+            RadioButtons::from_ui_control(ffi::uiNewRadioButtons())
         }
     }
 }
 
-/// FIXME(pcwalton): Are these supposed to be a subclass of something? They don't seem very usable
-/// with just the `uiDatetimePicker*` methods…
-#[derive(Clone)]
-pub struct DateTimePicker {
-    ui_date_time_picker: *mut uiDateTimePicker,
-}
-
-impl Deref for DateTimePicker {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&DateTimePicker, &Control>(self)
-        }
-    }
-}
+// FIXME(pcwalton): Are these supposed to be a subclass of something? They don't seem very usable
+// with just the `uiDatetimePicker*` methods…
+define_control!(DateTimePicker, uiDateTimePicker, ui_date_time_picker);
 
 impl DateTimePicker {
     pub fn new_date_time_picker() -> DateTimePicker {
+        ffi_utils::ensure_initialized();
         unsafe {
-            DateTimePicker {
-                ui_date_time_picker: ffi::uiNewDateTimePicker(),
-            }
+            DateTimePicker::from_ui_control(ffi::uiNewDateTimePicker())
         }
     }
 
     pub fn new_date_picker() -> DateTimePicker {
+        ffi_utils::ensure_initialized();
         unsafe {
-            DateTimePicker {
-                ui_date_time_picker: ffi::uiNewDatePicker(),
-            }
+            DateTimePicker::from_ui_control(ffi::uiNewDatePicker())
         }
     }
 
     pub fn new_time_picker() -> DateTimePicker {
+        ffi_utils::ensure_initialized();
         unsafe {
-            DateTimePicker {
-                ui_date_time_picker: ffi::uiNewTimePicker(),
-            }
+            DateTimePicker::from_ui_control(ffi::uiNewTimePicker())
         }
     }
 }
 
-#[derive(Clone)]
-pub struct MultilineEntry {
-    ui_multiline_entry: *mut uiMultilineEntry,
-}
-
-impl Deref for MultilineEntry {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&MultilineEntry, &Control>(self)
-        }
-    }
-}
+define_control!(MultilineEntry, uiMultilineEntry, ui_multiline_entry);
 
 impl MultilineEntry {
     #[inline]
     pub fn text(&self) -> Text {
+        ffi_utils::ensure_initialized();
         unsafe {
             Text::new(ffi::uiMultilineEntryText(self.ui_multiline_entry))
         }
@@ -948,6 +841,7 @@ impl MultilineEntry {
 
     #[inline]
     pub fn set_text(&self, text: &str) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             ffi::uiMultilineEntrySetText(self.ui_multiline_entry, c_string.as_ptr())
@@ -956,6 +850,7 @@ impl MultilineEntry {
 
     #[inline]
     pub fn on_changed(&self, callback: Box<FnMut(&MultilineEntry)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&MultilineEntry)>> = Box::new(callback);
             ffi::uiMultilineEntryOnChanged(self.ui_multiline_entry,
@@ -967,17 +862,17 @@ impl MultilineEntry {
 
         extern "C" fn c_callback(multiline_entry: *mut uiMultilineEntry, data: *mut c_void) {
             unsafe {
-                let multiline_entry = MultilineEntry {
-                    ui_multiline_entry: multiline_entry,
-                };
+                let multiline_entry = MultilineEntry::from_ui_control(multiline_entry);
                 mem::transmute::<*mut c_void,
-                                 &mut Box<FnMut(&MultilineEntry)>>(data)(&multiline_entry)
+                                 &mut Box<FnMut(&MultilineEntry)>>(data)(&multiline_entry);
+                mem::forget(multiline_entry);
             }
         }
     }
 
     #[inline]
     pub fn read_only(&self) -> bool {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiMultilineEntryReadOnly(self.ui_multiline_entry) != 0
         }
@@ -985,6 +880,7 @@ impl MultilineEntry {
 
     #[inline]
     pub fn set_read_only(&self, readonly: bool) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiMultilineEntrySetReadOnly(self.ui_multiline_entry, readonly as c_int)
         }
@@ -992,10 +888,9 @@ impl MultilineEntry {
 
     #[inline]
     pub fn new() -> MultilineEntry {
+        ffi_utils::ensure_initialized();
         unsafe {
-            MultilineEntry {
-                ui_multiline_entry: ffi::uiNewMultilineEntry(),
-            }
+            MultilineEntry::from_ui_control(ffi::uiNewMultilineEntry())
         }
     }
 }
@@ -1017,6 +912,7 @@ struct RustAreaHandler {
 impl RustAreaHandler {
     #[inline]
     fn new(trait_object: Box<AreaHandler>) -> Box<RustAreaHandler> {
+        ffi_utils::ensure_initialized();
         return Box::new(RustAreaHandler {
             ui_area_handler: uiAreaHandler {
                 Draw: draw,
@@ -1093,22 +989,7 @@ impl RustAreaHandler {
     }
 }
 
-#[derive(Clone)]
-pub struct Area {
-    ui_area: *mut uiArea,
-}
-
-impl Deref for Area {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&Area, &Control>(self)
-        }
-    }
-}
+define_control!(Area, uiArea, ui_area);
 
 impl Area {
     #[inline]
@@ -1120,6 +1001,7 @@ impl Area {
 
     #[inline]
     pub fn set_size(&self, width: i64, height: i64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiAreaSetSize(self.ui_area, width, height)
         }
@@ -1127,6 +1009,7 @@ impl Area {
 
     #[inline]
     pub fn queue_redraw_all(&self) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiAreaQueueRedrawAll(self.ui_area)
         }
@@ -1134,6 +1017,7 @@ impl Area {
 
     #[inline]
     pub fn scroll_to(&self, x: f64, y: f64, width: f64, height: f64) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiAreaScrollTo(self.ui_area, x, y, width, height)
         }
@@ -1141,12 +1025,13 @@ impl Area {
 
     #[inline]
     pub fn new(&self, area_handler: Box<AreaHandler>) -> Area {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut rust_area_handler = RustAreaHandler::new(area_handler);
-            let area = Area {
-                ui_area: ffi::uiNewArea(&mut *rust_area_handler as *mut RustAreaHandler as
-                                        *mut uiAreaHandler),
-            };
+            let area =
+                Area::from_ui_control(ffi::uiNewArea(&mut *rust_area_handler as
+                                                              *mut RustAreaHandler as
+                                                              *mut uiAreaHandler));
             mem::forget(rust_area_handler);
             area
         }
@@ -1154,14 +1039,15 @@ impl Area {
 
     #[inline]
     pub fn new_scrolling(&self, area_handler: Box<AreaHandler>, width: i64, height: i64) -> Area {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut rust_area_handler = RustAreaHandler::new(area_handler);
-            let area = Area {
-                ui_area: ffi::uiNewScrollingArea(&mut *rust_area_handler as *mut RustAreaHandler as
-                                                 *mut uiAreaHandler,
-                                                 width,
-                                                 height),
-            };
+            let area =
+                Area::from_ui_control(ffi::uiNewScrollingArea(&mut *rust_area_handler as
+                                                                       *mut RustAreaHandler as
+                                                                       *mut uiAreaHandler,
+                                                                       width,
+                                                                       height));
             mem::forget(rust_area_handler);
             area
         }
@@ -1183,6 +1069,7 @@ pub struct AreaDrawParams {
 impl AreaDrawParams {
     #[inline]
     unsafe fn from_ui_area_draw_params(ui_area_draw_params: &uiAreaDrawParams) -> AreaDrawParams {
+        ffi_utils::ensure_initialized();
         AreaDrawParams {
             context: draw::Context::from_ui_draw_context(ui_area_draw_params.Context),
             area_width: ui_area_draw_params.AreaWidth,
@@ -1225,6 +1112,7 @@ pub struct AreaMouseEvent {
 impl AreaMouseEvent {
     #[inline]
     pub fn from_ui_area_mouse_event(ui_area_mouse_event: &uiAreaMouseEvent) -> AreaMouseEvent {
+        ffi_utils::ensure_initialized();
         AreaMouseEvent {
             x: ui_area_mouse_event.X,
             y: ui_area_mouse_event.Y,
@@ -1251,6 +1139,7 @@ pub struct AreaKeyEvent {
 impl AreaKeyEvent {
     #[inline]
     pub fn from_ui_area_key_event(ui_area_key_event: &uiAreaKeyEvent) -> AreaKeyEvent {
+        ffi_utils::ensure_initialized();
         AreaKeyEvent {
             key: ui_area_key_event.Key as u8,
             ext_key: ui_area_key_event.ExtKey,
@@ -1261,27 +1150,13 @@ impl AreaKeyEvent {
     }
 }
 
-#[derive(Clone)]
-pub struct FontButton {
-    ui_font_button: *mut uiFontButton,
-}
-
-impl Deref for FontButton {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&FontButton, &Control>(self)
-        }
-    }
-}
+define_control!(FontButton, uiFontButton, ui_font_button);
 
 impl FontButton {
     /// Returns a new font.
     #[inline]
     pub fn font(&self) -> draw::text::Font {
+        ffi_utils::ensure_initialized();
         unsafe {
             draw::text::Font::from_ui_draw_text_font(ffi::uiFontButtonFont(self.ui_font_button))
         }
@@ -1289,6 +1164,7 @@ impl FontButton {
 
     #[inline]
     pub fn on_changed(&self, callback: Box<FnMut(&FontButton)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&FontButton)>> = Box::new(callback);
             ffi::uiFontButtonOnChanged(self.ui_font_button,
@@ -1299,44 +1175,28 @@ impl FontButton {
 
         extern "C" fn c_callback(ui_font_button: *mut uiFontButton, data: *mut c_void) {
             unsafe {
-                let font_button = FontButton {
-                    ui_font_button: ui_font_button,
-                };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&FontButton)>>(data)(&font_button)
+                let font_button = FontButton::from_ui_control(ui_font_button);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&FontButton)>>(data)(&font_button);
+                mem::forget(font_button);
             }
         }
     }
 
     #[inline]
     pub fn new() -> FontButton {
+        ffi_utils::ensure_initialized();
         unsafe {
-            FontButton {
-                ui_font_button: ffi::uiNewFontButton(),
-            }
+            FontButton::from_ui_control(ffi::uiNewFontButton())
         }
     }
 }
 
-#[derive(Clone)]
-pub struct ColorButton {
-    ui_color_button: *mut uiColorButton,
-}
-
-impl Deref for ColorButton {
-    type Target = Control;
-
-    #[inline]
-    fn deref(&self) -> &Control {
-        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
-        unsafe {
-            mem::transmute::<&ColorButton, &Control>(self)
-        }
-    }
-}
+define_control!(ColorButton, uiColorButton, ui_color_button);
 
 impl ColorButton {
     #[inline]
     pub fn color(&self) -> Color {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut color: Color = mem::uninitialized();
             ffi::uiColorButtonColor(self.ui_color_button,
@@ -1350,6 +1210,7 @@ impl ColorButton {
 
     #[inline]
     pub fn set_color(&self, color: &Color) {
+        ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiColorButtonSetColor(self.ui_color_button, color.r, color.g, color.b, color.a)
         }
@@ -1357,6 +1218,7 @@ impl ColorButton {
 
     #[inline]
     pub fn on_changed(&self, callback: Box<FnMut(&ColorButton)>) {
+        ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&ColorButton)>> = Box::new(callback);
             ffi::uiColorButtonOnChanged(self.ui_color_button,
@@ -1367,20 +1229,18 @@ impl ColorButton {
 
         extern "C" fn c_callback(ui_color_button: *mut uiColorButton, data: *mut c_void) {
             unsafe {
-                let color_button = ColorButton {
-                    ui_color_button: ui_color_button,
-                };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&ColorButton)>>(data)(&color_button)
+                let color_button = ColorButton::from_ui_control(ui_color_button);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&ColorButton)>>(data)(&color_button);
+                mem::forget(color_button)
             }
         }
     }
 
     #[inline]
     pub fn new() -> ColorButton {
+        ffi_utils::ensure_initialized();
         unsafe {
-            ColorButton {
-                ui_color_button: ffi::uiNewColorButton(),
-            }
+            ColorButton::from_ui_control(ffi::uiNewColorButton())
         }
     }
 }

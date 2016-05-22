@@ -14,24 +14,27 @@ pub struct InitOptions;
 
 #[inline]
 pub fn init(_: InitOptions) -> Result<(),InitError> {
-    let mut init_options = uiInitOptions {
-        Size: mem::size_of::<uiInitOptions>(),
-    };
-    let err = unsafe {
-        ffi::uiInit(&mut init_options)
-    };
-    if err.is_null() {
-        Ok(())
-    } else {
-        Err(InitError {
-            ui_init_error: err,
-        })
+    unsafe {
+        let mut init_options = uiInitOptions {
+            Size: mem::size_of::<uiInitOptions>(),
+        };
+        let err = ffi::uiInit(&mut init_options);
+        if err.is_null() {
+            ffi_utils::set_initialized();
+            Ok(())
+        } else {
+            Err(InitError {
+                ui_init_error: err,
+            })
+        }
     }
 }
 
 #[inline]
 pub fn uninit() {
     unsafe {
+        ffi_utils::unset_initialized();
+        Window::destroy_all_windows();
         ffi::uiUninit();
     }
 }
