@@ -2,9 +2,9 @@
 
 extern crate libui;
 
-use libui::{BoxControl, Button, Checkbox, Combobox, DateTimePicker, Entry, Group, InitOptions};
-use libui::{Label, Menu, MenuItem, ProgressBar, RadioButtons, Separator, Slider, Spinbox, Tab};
-use libui::{Window};
+use libui::{BoxControl, Button, Checkbox, ColorButton, Combobox, DateTimePicker, Entry};
+use libui::{FontButton, Group, InitOptions, Label, Menu, MenuItem, ProgressBar, RadioButtons};
+use libui::{Separator, Slider, Spinbox, Tab, Window};
 
 pub fn main() {
     libui::init(InitOptions).unwrap();
@@ -58,6 +58,9 @@ pub fn main() {
     inner.append(&DateTimePicker::new_date_picker(), false);
     inner.append(&DateTimePicker::new_time_picker(), false);
     inner.append(&DateTimePicker::new_date_time_picker(), false);
+
+    inner.append(&FontButton::new(), false);
+    inner.append(&ColorButton::new(), false);
 
     let inner2 = BoxControl::new_vertical();
     inner2.set_padded(true);

@@ -8,9 +8,9 @@
 extern crate bitflags;
 extern crate libc;
 
-pub use controls::{Area, BoxControl, Button, Checkbox, Combobox, Control, DateTimePicker, Entry};
-pub use controls::{Group, Label, MultilineEntry, ProgressBar, RadioButtons, Separator, Slider};
-pub use controls::{Spinbox, Tab};
+pub use controls::{Area, BoxControl, Button, Checkbox, ColorButton, Combobox, Control};
+pub use controls::{DateTimePicker, Entry, FontButton, Group, Label, MultilineEntry, ProgressBar};
+pub use controls::{RadioButtons, Separator, Slider, Spinbox, Tab};
 pub use ffi_utils::Text;
 pub use menus::{Menu, MenuItem};
 pub use ui::{InitError, InitOptions, init, main, msg_box, msg_box_error, on_should_quit};

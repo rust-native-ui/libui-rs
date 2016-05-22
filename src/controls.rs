@@ -2,9 +2,9 @@
 
 use draw;
 use ffi::{self, uiArea, uiAreaDrawParams, uiAreaHandler, uiAreaKeyEvent, uiAreaMouseEvent, uiBox};
-use ffi::{uiButton, uiCheckbox, uiCombobox, uiControl, uiDateTimePicker, uiEntry, uiGroup};
-use ffi::{uiLabel, uiMultilineEntry, uiProgressBar, uiRadioButtons, uiSeparator, uiSlider};
-use ffi::{uiSpinbox, uiTab};
+use ffi::{uiButton, uiCheckbox, uiColorButton, uiCombobox, uiControl, uiDateTimePicker, uiEntry};
+use ffi::{uiFontButton, uiGroup, uiLabel, uiMultilineEntry, uiProgressBar, uiRadioButtons};
+use ffi::{uiSeparator, uiSlider, uiSpinbox, uiTab};
 use ffi_utils::Text;
 use libc::{c_int, c_void};
 use std::ffi::CString;
@@ -1259,5 +1259,137 @@ impl AreaKeyEvent {
             up: ui_area_key_event.Up != 0,
         }
     }
+}
+
+#[derive(Clone)]
+pub struct FontButton {
+    ui_font_button: *mut uiFontButton,
+}
+
+impl Deref for FontButton {
+    type Target = Control;
+
+    #[inline]
+    fn deref(&self) -> &Control {
+        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
+        unsafe {
+            mem::transmute::<&FontButton, &Control>(self)
+        }
+    }
+}
+
+impl FontButton {
+    /// Returns a new font.
+    #[inline]
+    pub fn font(&self) -> draw::text::Font {
+        unsafe {
+            draw::text::Font::from_ui_draw_text_font(ffi::uiFontButtonFont(self.ui_font_button))
+        }
+    }
+
+    #[inline]
+    pub fn on_changed(&self, callback: Box<FnMut(&FontButton)>) {
+        unsafe {
+            let mut data: Box<Box<FnMut(&FontButton)>> = Box::new(callback);
+            ffi::uiFontButtonOnChanged(self.ui_font_button,
+                                       c_callback,
+                                       &mut *data as *mut Box<FnMut(&FontButton)> as *mut c_void);
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(ui_font_button: *mut uiFontButton, data: *mut c_void) {
+            unsafe {
+                let font_button = FontButton {
+                    ui_font_button: ui_font_button,
+                };
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&FontButton)>>(data)(&font_button)
+            }
+        }
+    }
+
+    #[inline]
+    pub fn new() -> FontButton {
+        unsafe {
+            FontButton {
+                ui_font_button: ffi::uiNewFontButton(),
+            }
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct ColorButton {
+    ui_color_button: *mut uiColorButton,
+}
+
+impl Deref for ColorButton {
+    type Target = Control;
+
+    #[inline]
+    fn deref(&self) -> &Control {
+        // FIXME(pcwalton): $10 says this is undefined behavior. How do I make it not so?
+        unsafe {
+            mem::transmute::<&ColorButton, &Control>(self)
+        }
+    }
+}
+
+impl ColorButton {
+    #[inline]
+    pub fn color(&self) -> Color {
+        unsafe {
+            let mut color: Color = mem::uninitialized();
+            ffi::uiColorButtonColor(self.ui_color_button,
+                                    &mut color.r,
+                                    &mut color.g,
+                                    &mut color.b,
+                                    &mut color.a);
+            color
+        }
+    }
+
+    #[inline]
+    pub fn set_color(&self, color: &Color) {
+        unsafe {
+            ffi::uiColorButtonSetColor(self.ui_color_button, color.r, color.g, color.b, color.a)
+        }
+    }
+
+    #[inline]
+    pub fn on_changed(&self, callback: Box<FnMut(&ColorButton)>) {
+        unsafe {
+            let mut data: Box<Box<FnMut(&ColorButton)>> = Box::new(callback);
+            ffi::uiColorButtonOnChanged(self.ui_color_button,
+                                       c_callback,
+                                       &mut *data as *mut Box<FnMut(&ColorButton)> as *mut c_void);
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(ui_color_button: *mut uiColorButton, data: *mut c_void) {
+            unsafe {
+                let color_button = ColorButton {
+                    ui_color_button: ui_color_button,
+                };
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&ColorButton)>>(data)(&color_button)
+            }
+        }
+    }
+
+    #[inline]
+    pub fn new() -> ColorButton {
+        unsafe {
+            ColorButton {
+                ui_color_button: ffi::uiNewColorButton(),
+            }
+        }
+    }
+}
+
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub struct Color {
+    r: f64,
+    g: f64,
+    b: f64,
+    a: f64,
 }
 

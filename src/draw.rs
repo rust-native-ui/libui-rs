@@ -549,6 +549,13 @@ pub mod text {
 
     impl Font {
         #[inline]
+        pub unsafe fn from_ui_draw_text_font(ui_draw_text_font: *mut uiDrawTextFont) -> Font {
+            Font {
+                ui_draw_text_font: ui_draw_text_font,
+            }
+        }
+
+        #[inline]
         pub fn handle(&self) -> usize {
             unsafe {
                 ffi::uiDrawTextFontHandle(self.ui_draw_text_font)
