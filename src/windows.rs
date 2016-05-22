@@ -48,12 +48,12 @@ impl Window {
     }
 
     #[inline]
-    pub fn on_closing(&self, callback: Box<FnMut(Window) -> bool>) {
+    pub fn on_closing(&self, callback: Box<FnMut(&Window) -> bool>) {
         unsafe {
-            let mut data: Box<Box<FnMut(Window) -> bool>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Window) -> bool>> = Box::new(callback);
             ffi::uiWindowOnClosing(self.ui_window,
                                    c_callback,
-                                   &mut *data as *mut Box<FnMut(Window) -> bool> as *mut c_void);
+                                   &mut *data as *mut Box<FnMut(&Window) -> bool> as *mut c_void);
             mem::forget(data);
         }
 
@@ -62,13 +62,14 @@ impl Window {
                 let window = Window {
                     ui_window: window,
                 };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(Window) -> bool>>>(data)(window) as i32
+                mem::transmute::<*mut c_void,
+                                 Box<Box<FnMut(&Window) -> bool>>>(data)(&window) as i32
             }
         }
     }
 
     #[inline]
-    pub fn set_child(&self, child: Control) {
+    pub fn set_child(&self, child: &Control) {
         unsafe {
             ffi::uiWindowSetChild(self.ui_window, child.as_ui_control())
         }

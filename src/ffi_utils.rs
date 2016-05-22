@@ -28,9 +28,22 @@ impl Deref for Text {
 }
 
 impl Text {
+    #[inline]
     pub unsafe fn new(text: *mut c_char) -> Text {
+        debug_assert!(!text.is_null());
         Text {
             ui_text: text,
+        }
+    }
+
+    #[inline]
+    pub unsafe fn optional(text: *mut c_char) -> Option<Text> {
+        if text.is_null() {
+            None
+        } else {
+            Some(Text {
+                ui_text: text,
+            })
         }
     }
 }

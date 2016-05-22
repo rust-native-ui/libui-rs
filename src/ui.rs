@@ -3,6 +3,7 @@
 use ffi::{self, uiInitOptions};
 use ffi_utils::{self, Text};
 use libc::{c_char, c_void};
+use std::fmt::{self, Debug, Formatter};
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::ops::Deref;
@@ -61,6 +62,12 @@ impl Drop for InitError {
     }
 }
 
+impl Debug for InitError {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+        (**self).fmt(f)
+    }
+}
+
 impl Deref for InitError {
     type Target = str;
     fn deref(&self) -> &str {
@@ -91,21 +98,21 @@ pub fn on_should_quit(callback: Box<FnMut()>) {
 }
 
 #[inline]
-pub fn open_file(parent: Window) -> Text {
+pub fn open_file(parent: &Window) -> Option<Text> {
     unsafe {
-        Text::new(ffi::uiOpenFile(parent.as_ui_window()))
+        Text::optional(ffi::uiOpenFile(parent.as_ui_window()))
     }
 }
 
 #[inline]
-pub fn save_file(parent: Window) -> Text {
+pub fn save_file(parent: &Window) -> Option<Text> {
     unsafe {
-        Text::new(ffi::uiSaveFile(parent.as_ui_window()))
+        Text::optional(ffi::uiSaveFile(parent.as_ui_window()))
     }
 }
 
 #[inline]
-pub fn msg_box(parent: Window, title: &str, description: &str) {
+pub fn msg_box(parent: &Window, title: &str, description: &str) {
     unsafe {
         let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
         let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
@@ -114,7 +121,7 @@ pub fn msg_box(parent: Window, title: &str, description: &str) {
 }
 
 #[inline]
-pub fn msg_box_error(parent: Window, title: &str, description: &str) {
+pub fn msg_box_error(parent: &Window, title: &str, description: &str) {
     unsafe {
         let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
         let c_description = CString::new(description.as_bytes().to_vec()).unwrap();

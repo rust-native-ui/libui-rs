@@ -51,7 +51,7 @@ impl Control {
     }
 
     #[inline]
-    pub fn set_parent(&self, parent: Option<Control>) {
+    pub fn set_parent(&self, parent: Option<&Control>) {
         unsafe {
             ffi::uiControlSetParent(self.ui_control,
                                     match parent {
@@ -145,12 +145,12 @@ impl Button {
     }
 
     #[inline]
-    pub fn on_clicked(&self, callback: Box<FnMut(Button)>) {
+    pub fn on_clicked(&self, callback: Box<FnMut(&Button)>) {
         unsafe {
-            let mut data: Box<Box<FnMut(Button)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Button)>> = Box::new(callback);
             ffi::uiButtonOnClicked(self.ui_button,
                                    c_callback,
-                                   &mut *data as *mut Box<FnMut(Button)> as *mut c_void);
+                                   &mut *data as *mut Box<FnMut(&Button)> as *mut c_void);
             mem::forget(data);
         }
 
@@ -159,7 +159,7 @@ impl Button {
                 let button = Button {
                     ui_button: button,
                 };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(Button)>>>(data)(button)
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Button)>>(data)(&button)
             }
         }
     }
@@ -194,7 +194,7 @@ impl Deref for BoxControl {
 
 impl BoxControl {
     #[inline]
-    pub fn append(&self, child: Control, stretchy: bool) {
+    pub fn append(&self, child: &Control, stretchy: bool) {
         unsafe {
             ffi::uiBoxAppend(self.ui_box, child.ui_control, stretchy as c_int)
         }
@@ -274,12 +274,12 @@ impl Entry {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(Entry)>) {
+    pub fn on_changed(&self, callback: Box<FnMut(&Entry)>) {
         unsafe {
-            let mut data: Box<Box<FnMut(Entry)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Entry)>> = Box::new(callback);
             ffi::uiEntryOnChanged(self.ui_entry,
                                   c_callback,
-                                  &mut *data as *mut Box<FnMut(Entry)> as *mut c_void);
+                                  &mut *data as *mut Box<FnMut(&Entry)> as *mut c_void);
             mem::forget(data);
         }
 
@@ -288,7 +288,7 @@ impl Entry {
                 let entry = Entry {
                     ui_entry: entry,
                 };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(Entry)>>>(data)(entry)
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Entry)>>(data)(&entry)
             }
         }
     }
@@ -351,12 +351,12 @@ impl Checkbox {
     }
 
     #[inline]
-    pub fn on_toggled(&self, callback: Box<FnMut(Checkbox)>) {
+    pub fn on_toggled(&self, callback: Box<FnMut(&Checkbox)>) {
         unsafe {
-            let mut data: Box<Box<FnMut(Checkbox)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Checkbox)>> = Box::new(callback);
             ffi::uiCheckboxOnToggled(self.ui_checkbox,
                                      c_callback,
-                                     &mut *data as *mut Box<FnMut(Checkbox)> as *mut c_void);
+                                     &mut *data as *mut Box<FnMut(&Checkbox)> as *mut c_void);
             mem::forget(data);
         }
 
@@ -365,7 +365,7 @@ impl Checkbox {
                 let checkbox = Checkbox {
                     ui_checkbox: checkbox,
                 };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(Checkbox)>>>(data)(checkbox)
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Checkbox)>>(data)(&checkbox)
             }
         }
     }
@@ -458,7 +458,7 @@ impl Deref for Tab {
 
 impl Tab {
     #[inline]
-    pub fn append(&self, name: &str, control: Control) {
+    pub fn append(&self, name: &str, control: &Control) {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ffi::uiTabAppend(self.ui_tab, c_string.as_ptr(), control.ui_control)
@@ -466,7 +466,7 @@ impl Tab {
     }
 
     #[inline]
-    pub fn insert_at(&self, name: &str, before: u64, control: Control) {
+    pub fn insert_at(&self, name: &str, before: u64, control: &Control) {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ffi::uiTabInsertAt(self.ui_tab, c_string.as_ptr(), before, control.ui_control)
@@ -538,7 +538,7 @@ impl Group {
     }
 
     #[inline]
-    pub fn set_child(&self, child: Control) {
+    pub fn set_child(&self, child: &Control) {
         unsafe {
             ffi::uiGroupSetChild(self.ui_group, child.ui_control)
         }
@@ -602,12 +602,12 @@ impl Spinbox {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(Spinbox)>) {
+    pub fn on_changed(&self, callback: Box<FnMut(&Spinbox)>) {
         unsafe {
-            let mut data: Box<Box<FnMut(Spinbox)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Spinbox)>> = Box::new(callback);
             ffi::uiSpinboxOnChanged(self.ui_spinbox,
                                     c_callback,
-                                    &mut *data as *mut Box<FnMut(Spinbox)> as *mut c_void);
+                                    &mut *data as *mut Box<FnMut(&Spinbox)> as *mut c_void);
             mem::forget(data);
         }
 
@@ -616,7 +616,7 @@ impl Spinbox {
                 let spinbox = Spinbox {
                     ui_spinbox: spinbox,
                 };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(Spinbox)>>>(data)(spinbox)
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Spinbox)>>(data)(&spinbox)
             }
         }
     }
@@ -699,12 +699,12 @@ impl Slider {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(Slider)>) {
+    pub fn on_changed(&self, callback: Box<FnMut(&Slider)>) {
         unsafe {
-            let mut data: Box<Box<FnMut(Slider)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Slider)>> = Box::new(callback);
             ffi::uiSliderOnChanged(self.ui_slider,
                                     c_callback,
-                                    &mut *data as *mut Box<FnMut(Slider)> as *mut c_void);
+                                    &mut *data as *mut Box<FnMut(&Slider)> as *mut c_void);
             mem::forget(data);
         }
 
@@ -713,7 +713,7 @@ impl Slider {
                 let slider = Slider {
                     ui_slider: slider,
                 };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(Slider)>>>(data)(slider)
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Slider)>>(data)(&slider)
             }
         }
     }
@@ -797,12 +797,12 @@ impl Combobox {
     }
 
     #[inline]
-    pub fn on_selected(&self, callback: Box<FnMut(Combobox)>) {
+    pub fn on_selected(&self, callback: Box<FnMut(&Combobox)>) {
         unsafe {
-            let mut data: Box<Box<FnMut(Combobox)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Combobox)>> = Box::new(callback);
             ffi::uiComboboxOnSelected(self.ui_combobox,
                                       c_callback,
-                                      &mut *data as *mut Box<FnMut(Combobox)> as *mut c_void);
+                                      &mut *data as *mut Box<FnMut(&Combobox)> as *mut c_void);
             mem::forget(data);
         }
 
@@ -811,7 +811,7 @@ impl Combobox {
                 let combobox = Combobox {
                     ui_combobox: combobox,
                 };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(Combobox)>>>(data)(combobox)
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&Combobox)>>(data)(&combobox)
             }
         }
     }
@@ -952,12 +952,13 @@ impl MultilineEntry {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(MultilineEntry)>) {
+    pub fn on_changed(&self, callback: Box<FnMut(&MultilineEntry)>) {
         unsafe {
-            let mut data: Box<Box<FnMut(MultilineEntry)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&MultilineEntry)>> = Box::new(callback);
             ffi::uiMultilineEntryOnChanged(self.ui_multiline_entry,
-                                  c_callback,
-                                  &mut *data as *mut Box<FnMut(MultilineEntry)> as *mut c_void);
+                                           c_callback,
+                                           &mut *data as *mut Box<FnMut(&MultilineEntry)> as
+                                           *mut c_void);
             mem::forget(data);
         }
 
@@ -966,7 +967,8 @@ impl MultilineEntry {
                 let multiline_entry = MultilineEntry {
                     ui_multiline_entry: multiline_entry,
                 };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(MultilineEntry)>>>(data)(multiline_entry)
+                mem::transmute::<*mut c_void,
+                                 &mut Box<FnMut(&MultilineEntry)>>(data)(&multiline_entry)
             }
         }
     }

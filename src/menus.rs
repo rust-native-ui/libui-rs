@@ -29,13 +29,13 @@ impl MenuItem {
     }
 
     #[inline]
-    pub fn on_clicked(&self, callback: Box<FnMut(MenuItem, Window)>) {
+    pub fn on_clicked(&self, callback: Box<FnMut(&MenuItem, &Window)>) {
         unsafe {
-            let mut data: Box<Box<FnMut(MenuItem, Window)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&MenuItem, &Window)>> = Box::new(callback);
             ffi::uiMenuItemOnClicked(self.ui_menu_item,
                                      c_callback,
-                                     &mut *data as *mut Box<FnMut(MenuItem,
-                                                                  Window)> as *mut c_void);
+                                     &mut *data as *mut Box<FnMut(&MenuItem,
+                                                                  &Window)> as *mut c_void);
             mem::forget(data);
         }
 
@@ -47,8 +47,8 @@ impl MenuItem {
                     ui_menu_item: menu_item,
                 };
                 let window = Window::from_ui_window(window);
-                mem::transmute::<*mut c_void, Box<Box<FnMut(MenuItem, Window)>>>(data)(menu_item,
-                                                                                       window)
+                mem::transmute::<*mut c_void,
+                                 &mut Box<FnMut(&MenuItem, &Window)>>(data)(&menu_item, &window)
             }
         }
     }
