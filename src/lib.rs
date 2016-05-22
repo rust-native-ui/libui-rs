@@ -16,6 +16,7 @@ pub use ui::{open_file, queue_main, quit, save_file, uninit};
 pub use windows::Window;
 
 mod controls;
+pub mod draw;
 pub mod ffi;
 pub mod ffi_utils;
 mod menus;
