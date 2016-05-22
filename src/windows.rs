@@ -28,6 +28,11 @@ impl Deref for Window {
 
 impl Window {
     #[inline]
+    pub fn as_ui_window(&self) -> *mut uiWindow {
+        self.ui_window
+    }
+
+    #[inline]
     pub fn title(&self) -> Text {
         unsafe {
             Text::new(ffi::uiWindowTitle(self.ui_window))
@@ -87,12 +92,17 @@ impl Window {
     pub fn new(title: &str, width: c_int, height: c_int, has_menubar: bool) -> Window {
         unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
-            Window {
-                ui_window: ffi::uiNewWindow(c_string.as_ptr(),
-                                            width,
-                                            height,
-                                            has_menubar as c_int),
-            }
+            Window::from_ui_window(ffi::uiNewWindow(c_string.as_ptr(),
+                                                    width,
+                                                    height,
+                                                    has_menubar as c_int))
+        }
+    }
+
+    #[inline]
+    pub unsafe fn from_ui_window(window: *mut uiWindow) -> Window {
+        Window {
+            ui_window: window,
         }
     }
 }

@@ -1,11 +1,12 @@
 //! General functions.
 
 use ffi::{self, uiInitOptions};
-use ffi_utils;
+use ffi_utils::{self, Text};
 use libc::{c_char, c_void};
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use std::mem;
 use std::ops::Deref;
+use windows::Window;
 
 #[derive(Clone)]
 pub struct InitOptions;
@@ -86,6 +87,38 @@ pub fn on_should_quit(callback: Box<FnMut()>) {
         ffi::uiOnShouldQuit(ffi_utils::void_void_callback,
                             &mut *data as *mut Box<FnMut()> as *mut c_void);
         mem::forget(data);
+    }
+}
+
+#[inline]
+pub fn open_file(parent: Window) -> Text {
+    unsafe {
+        Text::new(ffi::uiOpenFile(parent.as_ui_window()))
+    }
+}
+
+#[inline]
+pub fn save_file(parent: Window) -> Text {
+    unsafe {
+        Text::new(ffi::uiSaveFile(parent.as_ui_window()))
+    }
+}
+
+#[inline]
+pub fn msg_box(parent: Window, title: &str, description: &str) {
+    unsafe {
+        let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
+        let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
+        ffi::uiMsgBox(parent.as_ui_window(), c_title.as_ptr(), c_description.as_ptr())
+    }
+}
+
+#[inline]
+pub fn msg_box_error(parent: Window, title: &str, description: &str) {
+    unsafe {
+        let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
+        let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
+        ffi::uiMsgBoxError(parent.as_ui_window(), c_title.as_ptr(), c_description.as_ptr())
     }
 }
 
