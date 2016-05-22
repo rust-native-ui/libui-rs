@@ -25,3 +25,12 @@ mod menus;
 mod ui;
 mod windows;
 
+pub mod platform {
+    #[cfg(target_os = "macos")]
+    pub mod macos;
+    #[cfg(all(not(target_os = "macos"), target_family = "unix"))]
+    pub mod unix;
+    #[cfg(target_os = "windows")]
+    pub mod windows;
+}
+
