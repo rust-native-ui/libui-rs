@@ -496,8 +496,8 @@ extern "C" {
                             xamount: c_double,
                             yamount: c_double);
     pub fn uiDrawMatrixMultiply(dest: *mut uiDrawMatrix, src: *mut uiDrawMatrix);
-    pub fn uiDrawMatrixInvertible(m: *mut uiDrawMatrix);
-    pub fn uiDrawMatrixInvert(m: *mut uiDrawMatrix);
+    pub fn uiDrawMatrixInvertible(m: *mut uiDrawMatrix) -> c_int;
+    pub fn uiDrawMatrixInvert(m: *mut uiDrawMatrix) -> c_int;
     pub fn uiDrawMatrixTransformPoint(m: *mut uiDrawMatrix, x: *mut c_double, y: *mut c_double);
     pub fn uiDrawMatrixTransformSize(m: *mut uiDrawMatrix, x: *mut c_double, y: *mut c_double);
 }
