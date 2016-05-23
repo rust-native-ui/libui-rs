@@ -1,10 +1,10 @@
-//! An example control gallery: a port of the same `libui` example.
+//! An example control gallery: a port of the same `ui` example.
 
-extern crate libui;
+extern crate ui;
 
-use libui::{BoxControl, Button, Checkbox, ColorButton, Combobox, DateTimePicker, Entry};
-use libui::{FontButton, Group, InitOptions, Label, Menu, MenuItem, ProgressBar, RadioButtons};
-use libui::{Separator, Slider, Spinbox, Tab, Window};
+use ui::{BoxControl, Button, Checkbox, ColorButton, Combobox, DateTimePicker, Entry};
+use ui::{FontButton, Group, InitOptions, Label, Menu, MenuItem, ProgressBar, RadioButtons};
+use ui::{Separator, Slider, Spinbox, Tab, Window};
 
 fn run() {
     let menu = Menu::new("File");
@@ -22,10 +22,10 @@ fn run() {
     menu.append_item("Help");
     menu.append_about_item();
 
-    let mainwin = Window::new("libui Control Gallery", 640, 480, true);
+    let mainwin = Window::new("ui Control Gallery", 640, 480, true);
     mainwin.set_margined(true);
     mainwin.on_closing(Box::new(|_| {
-        libui::quit();
+        ui::quit();
         false
     }));
 
@@ -116,28 +116,28 @@ fn run() {
     inner2.append(tab.into(), true);
 
     mainwin.show();
-    libui::main();
+    ui::main();
 }
 
 pub fn main() {
-    libui::init(InitOptions).unwrap();
+    ui::init(InitOptions).unwrap();
     run();
-    libui::uninit();
+    ui::uninit();
 }
 
 fn open_clicked(_: &MenuItem, mainwin: &Window) {
-    match libui::open_file(mainwin) {
-        Some(filename) => libui::msg_box(mainwin, "File selected", &*filename),
-        None => libui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
+    match ui::open_file(mainwin) {
+        Some(filename) => ui::msg_box(mainwin, "File selected", &*filename),
+        None => ui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
     }
 }
 
 fn save_clicked(_: &MenuItem, mainwin: &Window) {
-    match libui::open_file(mainwin) {
+    match ui::open_file(mainwin) {
         Some(filename) => {
-            libui::msg_box(mainwin, "File selected (don't worry, it's still there)", &*filename)
+            ui::msg_box(mainwin, "File selected (don't worry, it's still there)", &*filename)
         }
-        None => libui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
+        None => ui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
     }
 }
 

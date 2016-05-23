@@ -2,10 +2,10 @@
 //!
 //! FIXME(pcwalton): This is a very broken Rust logo! It was halfheartedly autoconverted from SVG.
 
-extern crate libui;
+extern crate ui;
 
-use libui::{Area, AreaDrawParams, AreaHandler, InitOptions, Window};
-use libui::draw::{Brush, FillMode, Path, SolidBrush};
+use ui::{Area, AreaDrawParams, AreaHandler, InitOptions, Window};
+use ui::draw::{Brush, FillMode, Path, SolidBrush};
 
 struct RustLogoArea;
 
@@ -260,19 +260,19 @@ impl AreaHandler for RustLogoArea {
 fn run() {
     let window = Window::new("Rust logo", 640, 480, true);
     window.on_closing(Box::new(|_| {
-        libui::quit();
+        ui::quit();
         false
     }));
 
     let area = Area::new(Box::new(RustLogoArea));
     window.set_child(area.into());
     window.show();
-    libui::main();
+    ui::main();
 }
 
 fn main() {
-    libui::init(InitOptions).unwrap();
+    ui::init(InitOptions).unwrap();
     run();
-    libui::uninit();
+    ui::uninit();
 }
 

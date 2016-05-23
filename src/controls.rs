@@ -896,11 +896,11 @@ impl MultilineEntry {
 }
 
 pub trait AreaHandler {
-    fn draw(&mut self, area: &Area, area_draw_params: &AreaDrawParams) {}
-    fn mouse_event(&mut self, area: &Area, area_mouse_event: &AreaMouseEvent) {}
-    fn mouse_crossed(&mut self, area: &Area, left: bool) {}
-    fn drag_broken(&mut self, area: &Area) {}
-    fn key_event(&mut self, area: &Area, area_key_event: &AreaKeyEvent) -> bool {
+    fn draw(&mut self, _area: &Area, _area_draw_params: &AreaDrawParams) {}
+    fn mouse_event(&mut self, _area: &Area, _area_mouse_event: &AreaMouseEvent) {}
+    fn mouse_crossed(&mut self, _area: &Area, _left: bool) {}
+    fn drag_broken(&mut self, _area: &Area) {}
+    fn key_event(&mut self, _area: &Area, _area_key_event: &AreaKeyEvent) -> bool {
         true
     }
 }
