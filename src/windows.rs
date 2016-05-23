@@ -60,7 +60,7 @@ impl Window {
     }
 
     #[inline]
-    pub fn set_child(&self, child: &Control) {
+    pub fn set_child(&self, child: Control) {
         ffi_utils::ensure_initialized();
         unsafe {
             ffi::uiWindowSetChild(self.ui_window, child.as_ui_control())

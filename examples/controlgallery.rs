@@ -31,7 +31,7 @@ fn run() {
 
     let vbox = BoxControl::new_vertical();
     vbox.set_padded(true);
-    mainwin.set_child(&vbox);
+    mainwin.set_child(vbox.clone().into());
 
     let hbox = BoxControl::new_horizontal();
     hbox.set_padded(true);
