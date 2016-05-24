@@ -2,8 +2,8 @@
 
 #![allow(non_camel_case_types, non_snake_case, non_upper_case_globals)]
 
-use ffi::uiControl;
 use libc::{c_float, c_int};
+use uiControl;
 
 #[repr(C)]
 pub struct uiDarwinControl {

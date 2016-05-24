@@ -7,3 +7,6 @@ authors = ["Patrick Walton <pcwalton@mimiga.net>"]
 bitflags = "0.7"
 libc = "*"
 
+[dependencies.ui-sys]
+path = "../ui-sys"
+

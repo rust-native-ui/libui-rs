@@ -3,8 +3,8 @@
 
 #![allow(non_camel_case_types, non_snake_case)]
 
-use ffi::uiControl;
 use libc::{c_char, c_int, size_t};
+use uiControl;
 
 #[repr(C)]
 pub struct uiUnixControl {

@@ -1,12 +1,12 @@
 //! General functions.
 
-use ffi::{self, uiInitOptions};
 use ffi_utils::{self, Text};
 use libc::{c_char, c_void};
 use std::fmt::{self, Debug, Formatter};
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::ops::Deref;
+use ui_sys::{self, uiInitOptions};
 use windows::Window;
 
 #[derive(Clone)]
@@ -18,7 +18,7 @@ pub fn init(_: InitOptions) -> Result<(),InitError> {
         let mut init_options = uiInitOptions {
             Size: mem::size_of::<uiInitOptions>(),
         };
-        let err = ffi::uiInit(&mut init_options);
+        let err = ui_sys::uiInit(&mut init_options);
         if err.is_null() {
             ffi_utils::set_initialized();
             Ok(())
@@ -35,21 +35,21 @@ pub fn uninit() {
     unsafe {
         ffi_utils::unset_initialized();
         Window::destroy_all_windows();
-        ffi::uiUninit();
+        ui_sys::uiUninit();
     }
 }
 
 #[inline]
 pub fn main() {
     unsafe {
-        ffi::uiMain()
+        ui_sys::uiMain()
     }
 }
 
 #[inline]
 pub fn quit() {
     unsafe {
-        ffi::uiQuit()
+        ui_sys::uiQuit()
     }
 }
 
@@ -60,7 +60,7 @@ pub struct InitError {
 impl Drop for InitError {
     fn drop(&mut self) {
         unsafe {
-            ffi::uiFreeInitError(self.ui_init_error)
+            ui_sys::uiFreeInitError(self.ui_init_error)
         }
     }
 }
@@ -84,8 +84,8 @@ impl Deref for InitError {
 pub fn queue_main(callback: Box<FnMut()>) {
     unsafe {
         let mut data: Box<Box<FnMut()>> = Box::new(callback);
-        ffi::uiQueueMain(ffi_utils::void_void_callback,
-                         &mut *data as *mut Box<FnMut()> as *mut c_void);
+        ui_sys::uiQueueMain(ffi_utils::void_void_callback,
+                            &mut *data as *mut Box<FnMut()> as *mut c_void);
         mem::forget(data);
     }
 }
@@ -94,8 +94,8 @@ pub fn queue_main(callback: Box<FnMut()>) {
 pub fn on_should_quit(callback: Box<FnMut()>) {
     unsafe {
         let mut data: Box<Box<FnMut()>> = Box::new(callback);
-        ffi::uiOnShouldQuit(ffi_utils::void_void_callback,
-                            &mut *data as *mut Box<FnMut()> as *mut c_void);
+        ui_sys::uiOnShouldQuit(ffi_utils::void_void_callback,
+                               &mut *data as *mut Box<FnMut()> as *mut c_void);
         mem::forget(data);
     }
 }
@@ -103,14 +103,14 @@ pub fn on_should_quit(callback: Box<FnMut()>) {
 #[inline]
 pub fn open_file(parent: &Window) -> Option<Text> {
     unsafe {
-        Text::optional(ffi::uiOpenFile(parent.as_ui_window()))
+        Text::optional(ui_sys::uiOpenFile(parent.as_ui_window()))
     }
 }
 
 #[inline]
 pub fn save_file(parent: &Window) -> Option<Text> {
     unsafe {
-        Text::optional(ffi::uiSaveFile(parent.as_ui_window()))
+        Text::optional(ui_sys::uiSaveFile(parent.as_ui_window()))
     }
 }
 
@@ -119,7 +119,7 @@ pub fn msg_box(parent: &Window, title: &str, description: &str) {
     unsafe {
         let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
         let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
-        ffi::uiMsgBox(parent.as_ui_window(), c_title.as_ptr(), c_description.as_ptr())
+        ui_sys::uiMsgBox(parent.as_ui_window(), c_title.as_ptr(), c_description.as_ptr())
     }
 }
 
@@ -128,7 +128,7 @@ pub fn msg_box_error(parent: &Window, title: &str, description: &str) {
     unsafe {
         let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
         let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
-        ffi::uiMsgBoxError(parent.as_ui_window(), c_title.as_ptr(), c_description.as_ptr())
+        ui_sys::uiMsgBoxError(parent.as_ui_window(), c_title.as_ptr(), c_description.as_ptr())
     }
 }
 

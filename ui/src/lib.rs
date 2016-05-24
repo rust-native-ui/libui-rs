@@ -7,6 +7,7 @@
 #[macro_use]
 extern crate bitflags;
 extern crate libc;
+extern crate ui_sys;
 
 pub use controls::{Area, AreaDrawParams, AreaHandler, BoxControl, Button, Checkbox, ColorButton};
 pub use controls::{Combobox, Control, DateTimePicker, Entry, FontButton, Group, Label};
@@ -20,18 +21,8 @@ pub use windows::Window;
 #[macro_use]
 mod controls;
 pub mod draw;
-pub mod ffi;
 pub mod ffi_utils;
 mod menus;
 mod ui;
 mod windows;
-
-pub mod platform {
-    #[cfg(target_os = "macos")]
-    pub mod macos;
-    #[cfg(all(not(target_os = "macos"), target_family = "unix"))]
-    pub mod unix;
-    #[cfg(target_os = "windows")]
-    pub mod windows;
-}
 

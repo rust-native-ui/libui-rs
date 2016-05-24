@@ -2,8 +2,8 @@
 
 #![allow(non_camel_case_types, non_snake_case)]
 
-use ffi::uiControl;
 use libc::{c_char, c_int, c_long, c_ulong, c_uint, c_ushort, c_void, intmax_t, size_t, wchar_t};
+use uiControl;
 
 #[repr(C)]
 pub struct uiWindowsControl {
