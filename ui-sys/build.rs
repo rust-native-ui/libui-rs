@@ -17,6 +17,6 @@ fn main() {
                         .unwrap();
 
     println!("cargo:rustc-link-lib=dylib=ui");
-    println!("cargo:rustc-link-search=native={}", out_dir);
+    println!("cargo:rustc-link-search={}", out_dir);
 }
 
