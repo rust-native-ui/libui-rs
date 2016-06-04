@@ -1,6 +1,5 @@
 ui-sys/target
 ui-sys/Cargo.lock
-ui-sys/libui
 ui/target
 ui/Cargo.lock
 .DS_Store
