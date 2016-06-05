@@ -7,6 +7,7 @@ use std::fs::{self, File};
 use std::io::Write;
 
 fn main() {
+    println!("cargo:rerun-if-changed=libui");
     if !Path::new("libui/.git").exists() {
         Command::new("git").args(&["submodule", "update", "--init"]).status().expect("Could not update libui submodule");
     }
