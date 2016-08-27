@@ -97,11 +97,13 @@ fn run() {
     cbox.append("Combobox Item 3");
     inner.append(cbox.into(), false);
 
-    let cbox = Combobox::new_editable();
-    cbox.append("Editable Item 1");
-    cbox.append("Editable Item 2");
-    cbox.append("Editable Item 3");
-    inner.append(cbox.into(), false);
+    // FIXME(jamesmunns) Editable comboboxes are a nogo
+
+    // let cbox = Combobox::new_editable();
+    // cbox.append("Editable Item 1");
+    // cbox.append("Editable Item 2");
+    // cbox.append("Editable Item 3");
+    // inner.append(cbox.into(), false);
 
     let rb = RadioButtons::new();
     rb.append("Radio Button 1");
