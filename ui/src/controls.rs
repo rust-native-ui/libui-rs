@@ -24,6 +24,10 @@ macro_rules! define_control {
             $ui_field: *mut $ui_type,
         }
 
+        unsafe impl ::std::marker::Send for $rust_type {
+
+        }
+
         impl ::std::ops::Deref for $rust_type {
             type Target = ::controls::Control;
 
