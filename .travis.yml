@@ -1,0 +1,12 @@
+language: rust
+rust:
+  - stable
+  - beta
+  - nightly
+env:
+  - TEST_DIR=ui
+  - TEST_DIR=ui-sys
+matrix:
+  allow_failures:
+    - rust: nightly
+script: cd $TEST_DIR && cargo build --verbose && cargo test --verbose
