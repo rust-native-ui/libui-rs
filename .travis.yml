@@ -13,4 +13,4 @@ matrix:
   allow_failures:
     - rust: nightly
 
-script: cd $TEST_DIR && cargo build --verbose && cargo test --verbose
+script: cd $TEST_DIR && cargo build --verbose
