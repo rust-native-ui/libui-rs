@@ -1127,7 +1127,7 @@ impl AreaMouseEvent {
             down: ui_area_mouse_event.Down,
             up: ui_area_mouse_event.Up,
             count: ui_area_mouse_event.Count,
-            modifiers: Modifiers::from_bits(ui_area_mouse_event.Modifiers as u8).unwrap(),
+            modifiers: Modifiers::from_bits_truncate(ui_area_mouse_event.Modifiers as u8),
             held_1_to_64: ui_area_mouse_event.Held1To64,
         }
     }
@@ -1149,8 +1149,8 @@ impl AreaKeyEvent {
         AreaKeyEvent {
             key: ui_area_key_event.Key as u8,
             ext_key: ui_area_key_event.ExtKey,
-            modifier: Modifiers::from_bits(ui_area_key_event.Modifier as u8).unwrap(),
-            modifiers: Modifiers::from_bits(ui_area_key_event.Modifiers as u8).unwrap(),
+            modifier: Modifiers::from_bits_truncate(ui_area_key_event.Modifier as u8),
+            modifiers: Modifiers::from_bits_truncate(ui_area_key_event.Modifiers as u8),
             up: ui_area_key_event.Up != 0,
         }
     }
