@@ -742,3 +742,35 @@ extern {
     pub fn uiNewColorButton() -> *mut uiColorButton;
 }
 
+
+pub enum uiImage {}
+pub type uiPixmap32Format = u32;
+
+#[repr(C)]
+pub struct uiImageData {
+    pub fmt: uiPixmap32Format,
+    pub width: c_int,
+    pub height: c_int,
+    pub rowstride: c_int,
+    pub data: *mut c_void,
+}
+
+#[link(name = "ui")]
+extern {
+    pub fn uiNewImage(width: c_int, height: c_int) -> *mut uiImage;
+    pub fn uiFreeImage(img: *mut uiImage);
+    pub fn uiImageGetFormat(img: *mut uiImage) -> uiPixmap32Format;
+    pub fn uiImageGetData(img: *const uiImage, data: *mut uiImageData);
+    pub fn uiImageLoadPixmap32Raw(img: *mut uiImage,
+                                  x: c_int,
+                                  y: c_int,
+                                  width: c_int,
+                                  height: c_int,
+                                  rowstrideBytes: c_int,
+                                  fmt: uiPixmap32Format,
+                                  data: *const c_void);
+    pub fn uiDrawImage(c: *mut uiDrawContext,
+                       x: c_double,
+                       y: c_double,
+                       img: *const uiImage);
+}
