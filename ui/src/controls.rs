@@ -273,6 +273,15 @@ impl BoxControl {
         }
     }
 
+    #[inline]
+    pub fn append_ref(&self, child: &Control, stretchy: bool) {
+        ffi_utils::ensure_initialized();
+        unsafe {
+            assert!(child.parent().is_none());
+            ui_sys::uiBoxAppend(self.ui_box, child.ui_control, stretchy as c_int)
+        }
+    }
+
     /// FIXME(pcwalton): This will leak the deleted control! We have no way of actually getting it
     /// to decrement its reference count per `libui`'s UI as of today, unless we maintain a
     /// separate list of children ourselves…
@@ -996,6 +1005,16 @@ impl RustAreaHandler {
 }
 
 define_control!(Area, uiArea, ui_area);
+
+impl<'a> From<&'a Area> for Control {
+    fn from(area: &Area) -> Control {
+        unsafe {
+            let control = Control::from_ui_control(area.ui_area as *mut uiControl);
+            // mem::forget(self);
+            control
+        }
+    }
+}
 
 impl Area {
     #[inline]
