@@ -9,7 +9,7 @@ extern crate bitflags;
 extern crate libc;
 extern crate ui_sys;
 
-pub use controls::{Area, AreaDrawParams, AreaHandler, BoxControl, Button, Checkbox, ColorButton};
+pub use controls::{Area, AreaDrawParams, AreaKeyEvent, AreaHandler, ExtKey, BoxControl, Button, Checkbox, ColorButton};
 pub use controls::{Combobox, Control, DateTimePicker, Entry, FontButton, Group, Label};
 pub use controls::{MultilineEntry, ProgressBar, RadioButtons, Separator, Slider, Spinbox, Tab};
 pub use ffi_utils::Text;
