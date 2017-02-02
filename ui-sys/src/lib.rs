@@ -88,6 +88,7 @@ extern {
     pub fn uiWindowSetChild(w: *mut uiWindow, child: *mut uiControl);
     pub fn uiWindowMargined(w: *mut uiWindow) -> c_int;
     pub fn uiWindowSetMargined(w: *mut uiWindow, margined: c_int);
+    pub fn uiWindowSetAutosave(w: *mut uiWindow, name: *const c_char);
     pub fn uiNewWindow(title: *const c_char, width: c_int, height: c_int, hasMenubar: c_int)
                        -> *mut uiWindow;
 }

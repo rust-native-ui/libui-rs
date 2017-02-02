@@ -25,6 +25,7 @@ impl AreaHandler for ImageAreaHandler {
 fn run() {
     let mainwin = Window::new("ui Control Gallery", 640, 480, true);
     mainwin.set_margined(true);
+    mainwin.set_autosave("libui-rs_image-example_main-window");
     mainwin.on_closing(Box::new(|_| {
         ui::quit();
         false

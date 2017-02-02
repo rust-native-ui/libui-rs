@@ -84,6 +84,14 @@ impl Window {
         }
     }
 
+    pub fn set_autosave(&self, name: &str) {
+        ffi_utils::ensure_initialized();
+        unsafe {
+            let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
+            ui_sys::uiWindowSetAutosave(self.ui_window, c_string.as_ptr())
+        }
+    }
+
     #[inline]
     pub fn new(title: &str, width: c_int, height: c_int, has_menubar: bool) -> Window {
         ffi_utils::ensure_initialized();
