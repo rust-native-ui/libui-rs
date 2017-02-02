@@ -1,6 +1,6 @@
 [package]
 name = "ui-sys"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Patrick Walton <pcwalton@mimiga.net>"]
 build = "build.rs"
 license = "MIT/Apache 2.0"
@@ -10,5 +10,4 @@ description = "Native bindings to the minimalist, cross-platform, widget set `li
 libc = "0.2"
 
 [build-dependencies]
-make-cmd = "0.1"
-
+cmake = "0.1"

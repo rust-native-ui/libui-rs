@@ -1,52 +1,44 @@
-extern crate make_cmd;
+extern crate cmake;
 
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Command;
-use std::fs::{self, File};
-use std::io::Write;
+use cmake::Config;
 
 fn main() {
     println!("cargo:rerun-if-changed=libui");
-    if !Path::new("libui/.git").exists() {
-        Command::new("git").args(&["submodule", "update", "--init"]).status().expect("Could not update libui submodule");
-    }
-    
-    let cwd = env::current_dir().unwrap();
-    
-    let libui_path = cwd.join("libui");
-    env::set_current_dir(&libui_path).expect("Could not change dir");
-    
-    // Run CMake
-    //let cmake_cache_path = (&libui_path).join("CMakeCache.txt");
-    //if cmake_cache_path.exists() {
-    //    fs::remove_file(cmake_cache_path).expect("Could not remove cmake cache");
-    //}
-    Command::new("cmake").arg(".").output().expect("cmake failed");
-    
-    // Run Make
-    let libui_out_path = (&libui_path).join("out");
-    if ! libui_out_path.exists() {
-        println!("Creating out dir");
-        fs::create_dir(&libui_out_path).expect("Could not create out dir");
-    }
-    make_cmd::gnu_make().status().expect("Make failed");
-    
-    // Copy the output to the build folder
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let out_path = Path::new(&out_dir);
-    for entry in fs::read_dir(&libui_out_path).unwrap() {
-        let entry = entry.expect("IO error while reading");
-        let name = entry.file_name();
-        let target = out_path.join(name);
-        fs::copy(&entry.path(), &target).expect("Could not copy file");
-        println!("Copying file from {} to {}", entry.path().display(), target.display());
-    }
-    
+    init_git_submodule();
 
-    // Configure cargo
-    println!("cargo:rustc-link-lib=dylib=ui");
-    println!("cargo:rustc-link-search={}", out_dir);
-    //panic!();
+    let mut cfg = Config::new("libui");
+    if static_library() {
+        cfg.define("BUILD_SHARED_LIBS", "OFF");
+    }
+    let mut dst = cfg.build_target("all").build();
+
+    dst.push("build");
+    dst.push("out");
+
+    // Without explicit notion of Appkit,
+    // compilation of static binary fails
+    #[cfg(target_os="macos")]
+    println!("cargo:rustc-link-lib=framework=Appkit");
+
+    println!("cargo:rustc-link-search=native={}", dst.display());
+    println!("cargo:rustc-link-lib=ui");
 }
 
+fn static_library() -> bool {
+    // env::var_os("STATIC")
+    //     .map(|v| v.to_str() == Some("1"))
+    //     .unwrap_or(false)
+    true
+}
+
+fn init_git_submodule() {
+    if !Path::new("libui/.git").exists() {
+        let cwd = env::current_dir().unwrap();
+        env::set_current_dir(&cwd.parent().unwrap()).expect("Could not change dir");
+        Command::new("git").args(&["submodule", "update", "--init"]).status().expect("Could not update libui submodule");
+        env::set_current_dir(&cwd).expect("Could not change dir");
+    }
+}
