@@ -743,7 +743,7 @@ extern {
 }
 
 
-pub enum uiImage {}
+pub enum uiPixmapImage {}
 pub type uiPixmap32Format = u32;
 
 #[repr(C)]
@@ -757,11 +757,11 @@ pub struct uiImageData {
 
 #[link(name = "ui")]
 extern {
-    pub fn uiNewImage(width: c_int, height: c_int) -> *mut uiImage;
-    pub fn uiFreeImage(img: *mut uiImage);
-    pub fn uiImageGetFormat(img: *mut uiImage) -> uiPixmap32Format;
-    pub fn uiImageGetData(img: *const uiImage, data: *mut uiImageData);
-    pub fn uiImageLoadPixmap32Raw(img: *mut uiImage,
+    pub fn uiNewPixmapImage(width: c_int, height: c_int) -> *mut uiPixmapImage;
+    pub fn uiFreePixmapImage(img: *mut uiPixmapImage);
+    pub fn uiPixmapImageGetFormat(img: *mut uiPixmapImage) -> uiPixmap32Format;
+    pub fn uiPixmapImageGetData(img: *const uiPixmapImage, data: *mut uiImageData);
+    pub fn uiImageLoadPixmap32Raw(img: *mut uiPixmapImage,
                                   x: c_int,
                                   y: c_int,
                                   width: c_int,
@@ -769,8 +769,8 @@ extern {
                                   rowstrideBytes: c_int,
                                   fmt: uiPixmap32Format,
                                   data: *const c_void);
-    pub fn uiDrawImage(c: *mut uiDrawContext,
-                       x: c_double,
-                       y: c_double,
-                       img: *const uiImage);
+    pub fn uiDrawPixmapImage(c: *mut uiDrawContext,
+                             x: c_double,
+                             y: c_double,
+                             img: *const uiPixmapImage);
 }

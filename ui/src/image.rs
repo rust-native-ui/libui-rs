@@ -1,11 +1,11 @@
 use libc::c_void;
-use ui_sys::{self, uiImage, uiImageData, uiNewImage,
-             uiFreeImage, uiImageGetFormat, uiImageGetData,
-             uiImageLoadPixmap32Raw, uiDrawImage};
+use ui_sys::{self, uiPixmapImage, uiImageData, uiNewPixmapImage,
+             uiFreePixmapImage, uiPixmapImageGetFormat, uiPixmapImageGetData,
+             uiImageLoadPixmap32Raw, uiDrawPixmapImage};
 use ui_sys::uiDrawContext;
 
 pub struct Image {
-    ui_image: *mut uiImage
+    ui_image: *mut uiPixmapImage
 }
 
 // #define uiPixmap32FormatOffsets(a,r,g,b)    ((a) << 0 | (r) << 2 | (g) << 4 | (b) << 6)
@@ -18,13 +18,13 @@ impl Image {
     pub fn new(w: i32, h: i32) -> Image {
         unsafe {
             Image {
-                ui_image: uiNewImage(w, h)
+                ui_image: uiNewPixmapImage(w, h)
             }
         }
     }
 
     #[inline]
-    pub fn as_ui_draw_image(&self) -> *const uiImage {
+    pub fn as_ui_draw_image(&self) -> *const uiPixmapImage {
         self.ui_image
     }
 
@@ -40,11 +40,11 @@ impl Image {
 
 impl Drop for Image {
     fn drop(&mut self) {
-        unsafe { uiFreeImage(self.ui_image) };
+        unsafe { uiFreePixmapImage(self.ui_image) };
     }
 }
 
-fn get_image_data(img: *const uiImage) -> uiImageData {
+fn get_image_data(img: *const uiPixmapImage) -> uiImageData {
     use std::ptr;
     let mut d = uiImageData {
         fmt: 0,
@@ -54,7 +54,7 @@ fn get_image_data(img: *const uiImage) -> uiImageData {
         data: ptr::null_mut(),
     };
 
-    unsafe { uiImageGetData(img, &mut d) }
+    unsafe { uiPixmapImageGetData(img, &mut d) }
 
     d
 }

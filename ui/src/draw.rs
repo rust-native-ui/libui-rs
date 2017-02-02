@@ -90,7 +90,7 @@ impl Context {
 
     pub fn draw_image(&self, x: f64, y: f64, img: &image::Image) {
         unsafe {
-            ui_sys::uiDrawImage(self.ui_draw_context, x, y, img.as_ui_draw_image())
+            ui_sys::uiDrawPixmapImage(self.ui_draw_context, x, y, img.as_ui_draw_image())
         }
     }
 }
