@@ -1,7 +1,7 @@
 //! General functions.
 
 use ffi_utils::{self, Text};
-use libc::{c_char, c_void};
+use libc::{c_char, c_int, c_void};
 use std::fmt::{self, Debug, Formatter};
 use std::ffi::{CStr, CString};
 use std::mem;
@@ -13,7 +13,7 @@ use windows::Window;
 pub struct InitOptions;
 
 #[inline]
-pub fn init(_: InitOptions) -> Result<(),InitError> {
+pub fn init(_: InitOptions) -> Result<(), InitError> {
     unsafe {
         let mut init_options = uiInitOptions {
             Size: mem::size_of::<uiInitOptions>(),
@@ -39,6 +39,23 @@ pub fn uninit() {
     }
 }
 
+/// start manual control over event loop
+#[inline]
+pub fn main_steps() {
+    unsafe {
+        ui_sys::uiMainSteps()
+    }
+}
+
+/// advance event loop
+#[inline]
+pub fn main_step(wait: bool) -> bool {
+    unsafe {
+        ui_sys::uiMainStep(if wait { 1 } else { 0 }) > 0
+    }
+}
+
+/// call to start event loop handled by libui
 #[inline]
 pub fn main() {
     unsafe {
