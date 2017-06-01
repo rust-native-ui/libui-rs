@@ -1,0 +1,3 @@
+[submodule "ui-sys/libui"]
+	path = ui-sys/libui
+	url = https://github.com/arcturu/libui.git
