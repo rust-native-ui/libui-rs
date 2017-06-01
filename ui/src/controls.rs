@@ -7,7 +7,7 @@ use std::ffi::CString;
 use std::mem;
 use std::ptr;
 use ui_sys::{self, uiArea, uiAreaDrawParams, uiAreaHandler, uiAreaKeyEvent, uiAreaMouseEvent};
-use ui_sys::{uiBox, uiButton, uiCheckbox, uiColorButton, uiCombobox, uiControl, uiDateTimePicker};
+use ui_sys::{uiBox, uiButton, uiCheckbox, uiColorButton, uiCombobox, uiEditableCombobox, uiControl, uiDateTimePicker};
 use ui_sys::{uiEntry, uiFontButton, uiGroup, uiLabel, uiMultilineEntry, uiProgressBar};
 use ui_sys::{uiRadioButtons, uiSeparator, uiSlider, uiSpinbox, uiTab};
 
@@ -768,12 +768,23 @@ impl Combobox {
             Combobox::from_ui_control(ui_sys::uiNewCombobox())
         }
     }
+}
 
+define_control!(EditableCombobox, uiEditableCombobox, ui_editable_combobox);
+
+impl EditableCombobox {
     #[inline]
-    pub fn new_editable() -> Combobox {
+    pub fn new() -> EditableCombobox {
         ffi_utils::ensure_initialized();
         unsafe {
-            Combobox::from_ui_control(ui_sys::uiNewEditableCombobox())
+            EditableCombobox::from_ui_control(ui_sys::uiNewEditableCombobox())
+        }
+    }
+    pub fn append(&self, name: &str) {
+        ffi_utils::ensure_initialized();
+        unsafe {
+            let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
+            ui_sys::uiEditableComboboxAppend(self.ui_editable_combobox, c_string.as_ptr())
         }
     }
 }

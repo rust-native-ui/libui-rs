@@ -2,7 +2,7 @@
 
 extern crate ui;
 
-use ui::{BoxControl, Button, Checkbox, ColorButton, Combobox, DateTimePicker, Entry};
+use ui::{BoxControl, Button, Checkbox, ColorButton, Combobox, EditableCombobox, DateTimePicker, Entry};
 use ui::{FontButton, Group, InitOptions, Label, Menu, MenuItem, ProgressBar, RadioButtons};
 use ui::{Separator, Slider, Spinbox, Tab, Window};
 
@@ -97,11 +97,12 @@ fn run() {
     cbox.append("Combobox Item 3");
     inner.append(cbox.into(), false);
 
-    let cbox = Combobox::new_editable();
+    let cbox = EditableCombobox::new();
     cbox.append("Editable Item 1");
     cbox.append("Editable Item 2");
     cbox.append("Editable Item 3");
     inner.append(cbox.into(), false);
+
 
     let rb = RadioButtons::new();
     rb.append("Radio Button 1");

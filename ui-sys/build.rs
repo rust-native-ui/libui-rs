@@ -15,6 +15,7 @@ fn main() {
     make_cmd::gnu_make().args(&["-C", "libui", &*outdir_argument, &*objdir_argument])
                         .status()
                         .unwrap();
+    Command::new("cp").args(&["-r", "libui/out/", &*out_dir]).status().unwrap();
 
     println!("cargo:rustc-link-lib=dylib=ui");
     println!("cargo:rustc-link-search=native={}", out_dir);

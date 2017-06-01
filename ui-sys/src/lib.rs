@@ -228,7 +228,14 @@ extern {
                                 f: extern "C" fn(c: *mut uiCombobox, data: *mut c_void),
                                 data: *mut c_void);
     pub fn uiNewCombobox() -> *mut uiCombobox;
-    pub fn uiNewEditableCombobox() -> *mut uiCombobox;
+}
+
+pub enum uiEditableCombobox {}
+
+#[link(name = "ui")]
+extern {
+    pub fn uiNewEditableCombobox() -> *mut uiEditableCombobox;
+    pub fn uiEditableComboboxAppend(c: *mut uiEditableCombobox, text: *const c_char);
 }
 
 pub enum uiRadioButtons {}
