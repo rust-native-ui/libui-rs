@@ -648,10 +648,10 @@ pub struct uiAreaMouseEvent {
     pub AreaWidth: c_double,
     pub AreaHeight: c_double,
 
-    pub Down: uintmax_t,
-    pub Up: uintmax_t,
+    pub Down: c_int,
+    pub Up: c_int,
 
-    pub Count: uintmax_t,
+    pub Count: c_int,
 
     pub Modifiers: uiModifiers,
 

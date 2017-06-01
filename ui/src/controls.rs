@@ -1112,10 +1112,10 @@ pub struct AreaMouseEvent {
     pub area_width: f64,
     pub area_height: f64,
 
-    pub down: u64,
-    pub up: u64,
+    pub down: i32,
+    pub up: i32,
 
-    pub count: u64,
+    pub count: i32,
 
     pub modifiers: Modifiers,
 
