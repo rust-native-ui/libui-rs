@@ -17,6 +17,7 @@ pub use menus::{Menu, MenuItem};
 pub use ui::{InitError, InitOptions, init, main, msg_box, msg_box_error, on_should_quit};
 pub use ui::{open_file, queue_main, quit, save_file, uninit};
 pub use windows::Window;
+pub use image::Image;
 
 #[macro_use]
 mod controls;
@@ -25,4 +26,5 @@ pub mod ffi_utils;
 mod menus;
 mod ui;
 mod windows;
+mod image;
 
