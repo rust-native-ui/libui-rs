@@ -776,4 +776,8 @@ extern {
                              x: c_double,
                              y: c_double,
                              img: *const uiPixmapImage);
+
+    pub fn uiScalePixmapImage(c: *mut uiDrawContext,
+                             xScale: c_double,
+                             yScale: c_double);
 }

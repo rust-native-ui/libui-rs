@@ -93,6 +93,12 @@ impl Context {
             ui_sys::uiDrawPixmapImage(self.ui_draw_context, x, y, img.as_ui_draw_image())
         }
     }
+
+    pub fn scale_image(&self, x_scale: f64, y_scale: f64) {
+        unsafe {
+            ui_sys::uiScalePixmapImage(self.ui_draw_context, x_scale, y_scale)
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
