@@ -10,6 +10,8 @@ fn run() {
     let menu = Menu::new("File");
     menu.append_item("Open").on_clicked(Box::new(open_clicked));
     menu.append_item("Save").on_clicked(Box::new(save_clicked));
+    menu.append_separator();
+    menu.append_quit_item();
 
     let menu = Menu::new("Edit");
     menu.append_check_item("Checkable Item");

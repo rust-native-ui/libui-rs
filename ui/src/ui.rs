@@ -13,6 +13,7 @@ use windows::Window;
 pub struct InitOptions;
 
 #[inline]
+/// Sets up the `libui` environment. Run this prior to constructing your UI.
 pub fn init(_: InitOptions) -> Result<(),InitError> {
     unsafe {
         let mut init_options = uiInitOptions {
@@ -31,6 +32,7 @@ pub fn init(_: InitOptions) -> Result<(),InitError> {
 }
 
 #[inline]
+/// Undoes the work of [init](fn.init.html). Calling this will free all the memory used by the UI toolkit.
 pub fn uninit() {
     unsafe {
         ffi_utils::unset_initialized();
@@ -40,6 +42,7 @@ pub fn uninit() {
 }
 
 #[inline]
+/// Hands control of this thread to the UI toolkit, allowing it to display the UI and respond to events. Does not return until the UI [quit](fn.quit.html)s.
 pub fn main() {
     unsafe {
         ui_sys::uiMain()
@@ -47,6 +50,7 @@ pub fn main() {
 }
 
 #[inline]
+/// Running this function causes the UI to quit, exiting from [main](fn.main.html) and no longer showing any widgets.
 pub fn quit() {
     unsafe {
         ui_sys::uiQuit()
@@ -91,6 +95,7 @@ pub fn queue_main(callback: Box<FnMut()>) {
 }
 
 #[inline]
+/// Set a callback to be run when the application quits.
 pub fn on_should_quit(callback: Box<FnMut()>) {
     unsafe {
         let mut data: Box<Box<FnMut()>> = Box::new(callback);
@@ -101,6 +106,7 @@ pub fn on_should_quit(callback: Box<FnMut()>) {
 }
 
 #[inline]
+/// Allow the user to select an existing file.
 pub fn open_file(parent: &Window) -> Option<Text> {
     unsafe {
         Text::optional(ui_sys::uiOpenFile(parent.as_ui_window()))
@@ -108,6 +114,7 @@ pub fn open_file(parent: &Window) -> Option<Text> {
 }
 
 #[inline]
+/// Allow the user to select a new or existing file.
 pub fn save_file(parent: &Window) -> Option<Text> {
     unsafe {
         Text::optional(ui_sys::uiSaveFile(parent.as_ui_window()))
@@ -115,6 +122,7 @@ pub fn save_file(parent: &Window) -> Option<Text> {
 }
 
 #[inline]
+/// Open a generic message box to show a message to the user.
 pub fn msg_box(parent: &Window, title: &str, description: &str) {
     unsafe {
         let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
@@ -124,6 +132,7 @@ pub fn msg_box(parent: &Window, title: &str, description: &str) {
 }
 
 #[inline]
+/// Open an error-themed message box to show a message to the user.
 pub fn msg_box_error(parent: &Window, title: &str, description: &str) {
     unsafe {
         let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
