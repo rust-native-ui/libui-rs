@@ -17,10 +17,17 @@ pub use ui_sys::uiExtKey as ExtKey;
 // Defines a new control, creating a Rust wrapper, a `Deref` implementation, and a destructor.
 // An example of use:
 //
-//     define_control!(Slider, uiSlider, ui_slider)
+//      define_control!{ 
+//          /// Some documentation
+//          #[attribute(whatever="something")]
+//          control(Slider, uiSlider, ui_slider); 
+//      }
 #[macro_export]
 macro_rules! define_control {
-    ($rust_type:ident, $ui_type:ident, $ui_field:ident) => {
+    // Match first any attributes (incl. doc comments) and then the actual invocation
+    {$(#[$attr:meta])* control($rust_type:ident, $ui_type:ident, $ui_field:ident);} => {
+        // Include all attributes
+        $(#[$attr])*
         pub struct $rust_type {
             $ui_field: *mut $ui_type,
         }
@@ -76,6 +83,7 @@ macro_rules! define_control {
     }
 }
 
+/// A generic UI control. Any UI control can be dereferenced into this type.
 pub struct Control {
     ui_control: *mut uiControl,
 }
@@ -122,6 +130,7 @@ impl Control {
     }
 
     #[inline]
+    /// Get the parent control of this control.
     pub fn parent(&self) -> Option<Control> {
         ffi_utils::ensure_initialized();
         unsafe {
@@ -135,6 +144,8 @@ impl Control {
     }
 
     #[inline]
+    /// Set the parent control of this control, "moving" it to a new place in 
+    /// the UI tree or, if passed `None`, removing it.
     pub unsafe fn set_parent(&self, parent: Option<&Control>) {
         ffi_utils::ensure_initialized();
         ui_sys::uiControlSetParent(
@@ -147,58 +158,82 @@ impl Control {
     }
 
     #[inline]
+    /// Returns true if this control is a top-level control; the root of
+    /// the UI tree.
     pub fn toplevel(&self) -> bool {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiControlToplevel(self.ui_control) != 0 }
     }
 
     #[inline]
+    /// Returns true if this control is visible.
     pub fn visible(&self) -> bool {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiControlVisible(self.ui_control) != 0 }
     }
 
     #[inline]
+    /// Shows the control and its sub-controls.
     pub fn show(&self) {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiControlShow(self.ui_control) }
     }
 
     #[inline]
+    /// Hides the control and its sub-controls.
     pub fn hide(&self) {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiControlHide(self.ui_control) }
     }
 
     #[inline]
+    /// Returns true if the control is enabled (can be interacted with).
     pub fn enabled(&self) -> bool {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiControlEnabled(self.ui_control) != 0 }
     }
 
     #[inline]
+    /// Enable the control, so the user can interact with it.
     pub fn enable(&self) {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiControlEnable(self.ui_control) }
     }
 
     #[inline]
+    /// Disable the control, so the user cannot interact with it.
     pub fn disable(&self) {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiControlDisable(self.ui_control) }
     }
 }
 
-define_control!(Button, uiButton, ui_button);
+
+define_control!{ 
+    /// A labeled clickable control which animates when clicked.
+    control(Button, uiButton, ui_button);
+}
 
 impl Button {
     #[inline]
+    /// Create a new button with the given text as its label.
+    pub fn new(text: &str) -> Button {
+        ffi_utils::ensure_initialized();
+        unsafe {
+            let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
+            Button::from_ui_control(ui_sys::uiNewButton(c_string.as_ptr()))
+        }
+    }
+
+    #[inline]
+    /// Get the existing text on the button.
     pub fn text(&self) -> Text {
         ffi_utils::ensure_initialized();
         unsafe { Text::new(ui_sys::uiButtonText(self.ui_button)) }
     }
 
     #[inline]
+    /// Set the text on the button.
     pub fn set_text(&self, text: &str) {
         ffi_utils::ensure_initialized();
         unsafe {
@@ -208,6 +243,7 @@ impl Button {
     }
 
     #[inline]
+    /// Run the given callback when the button is clicked.
     pub fn on_clicked(&self, callback: Box<FnMut(&Button)>) {
         ffi_utils::ensure_initialized();
         unsafe {
@@ -227,21 +263,30 @@ impl Button {
             }
         }
     }
-
-    #[inline]
-    pub fn new(text: &str) -> Button {
-        ffi_utils::ensure_initialized();
-        unsafe {
-            let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
-            Button::from_ui_control(ui_sys::uiNewButton(c_string.as_ptr()))
-        }
-    }
 }
 
-define_control!(BoxControl, uiBox, ui_box);
+define_control!{
+    /// An invisible, uninteractable control that arranges the widgets inside it.
+    control(BoxControl, uiBox, ui_box);
+}
 
 impl BoxControl {
     #[inline]
+    /// Create a new `BoxControl` that lays out its children horizontally.
+    pub fn new_horizontal() -> BoxControl {
+        ffi_utils::ensure_initialized();
+        unsafe { BoxControl::from_ui_control(ui_sys::uiNewHorizontalBox()) }
+    }
+
+    #[inline]
+    /// Create a new `BoxControl` that lays out its children vertically.
+    pub fn new_vertical() -> BoxControl {
+        ffi_utils::ensure_initialized();
+        unsafe { BoxControl::from_ui_control(ui_sys::uiNewVerticalBox()) }
+    }
+
+    #[inline]
+    /// Add the given widget to the `BoxControl`, at the end of the list of widgets.
     pub fn append(&self, child: Control, stretchy: bool) {
         ffi_utils::ensure_initialized();
         unsafe {
@@ -260,31 +305,24 @@ impl BoxControl {
     }
 
     #[inline]
+    /// Returns `true` if the `BoxControl` provides padding for the widgets inside.
     pub fn padded(&self) -> bool {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiBoxPadded(self.ui_box) != 0 }
     }
 
     #[inline]
+    /// Set whether or not the `BoxControl` provides padding for the widgets inside.
     pub fn set_padded(&self, padded: bool) {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiBoxSetPadded(self.ui_box, padded as c_int) }
     }
-
-    #[inline]
-    pub fn new_horizontal() -> BoxControl {
-        ffi_utils::ensure_initialized();
-        unsafe { BoxControl::from_ui_control(ui_sys::uiNewHorizontalBox()) }
-    }
-
-    #[inline]
-    pub fn new_vertical() -> BoxControl {
-        ffi_utils::ensure_initialized();
-        unsafe { BoxControl::from_ui_control(ui_sys::uiNewVerticalBox()) }
-    }
 }
 
-define_control!(Entry, uiEntry, ui_entry);
+define_control!{
+    /// A control that allows the user to enter text.
+    control(Entry, uiEntry, ui_entry);
+}
 
 impl Entry {
     #[inline]
@@ -343,7 +381,10 @@ impl Entry {
     }
 }
 
-define_control!(Checkbox, uiCheckbox, ui_checkbox);
+define_control!{
+    /// A togglable checkbox control.
+    control(Checkbox, uiCheckbox, ui_checkbox);
+}
 
 impl Checkbox {
     #[inline]
@@ -405,9 +446,21 @@ impl Checkbox {
     }
 }
 
-define_control!(Label, uiLabel, ui_label);
+define_control!{
+    /// A control which simply displays some text.
+    control(Label, uiLabel, ui_label);
+}
 
 impl Label {
+    #[inline]
+    pub fn new(text: &str) -> Label {
+        ffi_utils::ensure_initialized();
+        unsafe {
+            let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
+            Label::from_ui_control(ui_sys::uiNewLabel(c_string.as_ptr()))
+        }
+    }
+
     #[inline]
     pub fn text(&self) -> Text {
         ffi_utils::ensure_initialized();
@@ -422,18 +475,12 @@ impl Label {
             ui_sys::uiLabelSetText(self.ui_label, c_string.as_ptr())
         }
     }
-
-    #[inline]
-    pub fn new(text: &str) -> Label {
-        ffi_utils::ensure_initialized();
-        unsafe {
-            let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
-            Label::from_ui_control(ui_sys::uiNewLabel(c_string.as_ptr()))
-        }
-    }
 }
 
-define_control!(Tab, uiTab, ui_tab);
+define_control!{
+    /// A control which simply displays some text.
+    control(Tab, uiTab, ui_tab);
+}
 
 impl Tab {
     #[inline]
@@ -482,7 +529,10 @@ impl Tab {
     }
 }
 
-define_control!(Group, uiGroup, ui_group);
+define_control!{
+    /// A logical group of controls, which can collect them in one place and draw margins around them.
+    control(Group, uiGroup, ui_group);
+}
 
 impl Group {
     #[inline]
@@ -528,7 +578,10 @@ impl Group {
     }
 }
 
-define_control!(Spinbox, uiSpinbox, ui_spinbox);
+define_control!{
+    /// A numerical entry control which allows users to set any value in a range.
+    control(Spinbox, uiSpinbox, ui_spinbox);
+}
 
 impl Spinbox {
     #[inline]
@@ -572,7 +625,10 @@ impl Spinbox {
     }
 }
 
-define_control!(ProgressBar, uiProgressBar, ui_progress_bar);
+define_control!{ 
+    /// A control that displays a given value as a partial fill of a bar.
+    control(ProgressBar, uiProgressBar, ui_progress_bar);
+}
 
 impl ProgressBar {
     #[inline]
@@ -588,7 +644,10 @@ impl ProgressBar {
     }
 }
 
-define_control!(Slider, uiSlider, ui_slider);
+
+define_control!{ /// A control that allows users to select a value by picking a location along a line.
+    control(Slider, uiSlider, ui_slider);
+}
 
 impl Slider {
     #[inline]
@@ -632,7 +691,10 @@ impl Slider {
     }
 }
 
-define_control!(Separator, uiSeparator, ui_separator);
+define_control!{
+    /// A control which simply adds a horizontal line to seperate things.
+    control(Separator, uiSeparator, ui_separator);
+}
 
 impl Separator {
     #[inline]
@@ -642,7 +704,10 @@ impl Separator {
     }
 }
 
-define_control!(Combobox, uiCombobox, ui_combobox);
+define_control!{
+    /// A control which allows the user to select any one of its options, from a list shown only when selected.
+    control(Combobox, uiCombobox, ui_combobox);
+}
 
 impl Combobox {
     #[inline]
@@ -695,7 +760,10 @@ impl Combobox {
     }
 }
 
-define_control!(EditableCombobox, uiEditableCombobox, ui_editable_combobox);
+define_control!{
+    /// A control which allows the user to select an option from a list shown when selected and/or enter arbitrary text.
+    control(EditableCombobox, uiEditableCombobox, ui_editable_combobox);
+}
 
 impl EditableCombobox {
     #[inline]
@@ -714,7 +782,10 @@ impl EditableCombobox {
 
 // FIXME(pcwalton): Are these supposed to be a subclass of something? They don't seem very usable
 // with just the `uiRadioButtons*` methods…
-define_control!(RadioButtons, uiRadioButtons, ui_radio_buttons);
+define_control!{
+    /// A control which allows a user to select any one of its options, displayed as radio buttons.
+    control(RadioButtons, uiRadioButtons, ui_radio_buttons);
+}
 
 impl RadioButtons {
     #[inline]
@@ -735,7 +806,10 @@ impl RadioButtons {
 
 // FIXME(pcwalton): Are these supposed to be a subclass of something? They don't seem very usable
 // with just the `uiDatetimePicker*` methods…
-define_control!(DateTimePicker, uiDateTimePicker, ui_date_time_picker);
+define_control!{
+    /// A control which allows the user to pick a date, time, or both.
+    control(DateTimePicker, uiDateTimePicker, ui_date_time_picker);
+}
 
 impl DateTimePicker {
     pub fn new_date_time_picker() -> DateTimePicker {
@@ -754,7 +828,10 @@ impl DateTimePicker {
     }
 }
 
-define_control!(MultilineEntry, uiMultilineEntry, ui_multiline_entry);
+define_control!{
+    /// A control which allows a user to enter text over multiple lines.
+    control(MultilineEntry, uiMultilineEntry, ui_multiline_entry);
+}
 
 impl MultilineEntry {
     #[inline]
@@ -923,7 +1000,11 @@ impl RustAreaHandler {
     }
 }
 
-define_control!(Area, uiArea, ui_area);
+/// A control which takes up space on which the application can draw custom content.
+define_control!{
+    /// A control which takes up space on which the application can draw custom content.
+    control(Area, uiArea, ui_area);
+}
 
 impl Area {
     #[inline]
@@ -1076,7 +1157,10 @@ impl AreaKeyEvent {
     }
 }
 
-define_control!(FontButton, uiFontButton, ui_font_button);
+define_control!{
+    /// A control which allows users to select a font.
+    control(FontButton, uiFontButton, ui_font_button);
+}
 
 impl FontButton {
     /// Returns a new font.
@@ -1117,7 +1201,10 @@ impl FontButton {
     }
 }
 
-define_control!(ColorButton, uiColorButton, ui_color_button);
+define_control!{
+    /// A control which allows the user to select a color.
+    control(ColorButton, uiColorButton, ui_color_button);
+}
 
 impl ColorButton {
     #[inline]
@@ -1173,6 +1260,7 @@ impl ColorButton {
     }
 }
 
+/// A RGBA color.
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Color {
     r: f64,

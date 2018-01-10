@@ -7,6 +7,7 @@ use std::ffi::CStr;
 use std::mem;
 use std::ops::Deref;
 use std::cell::RefCell;
+use std::marker::PhantomData;
 use ui_sys::{self, uiInitOptions};
 use windows::Window;
 
@@ -14,7 +15,14 @@ thread_local! {
     static IS_INIT: RefCell<bool> = RefCell::new(false)
 }
 
-pub struct UI;
+/// An initialized UI environment. You need to create one of these to do anything with this library.
+/// 
+/// Only one `UI` can be active at a time. When dropped, it will automatically deinitialize the UI environment.
+/// A common pattern involves placing the `UI` in a [std::rc::Rc](https://doc.rust-lang.org/std/rc/struct.Rc.html)
+/// so it can be shared with UI closures.
+pub struct UI {
+    pd: PhantomData<* const ()>
+}
 
 impl UI {
     #[inline]
@@ -22,11 +30,27 @@ impl UI {
     /// 
     /// # Panics
     /// Will panic if two UIs are initialized simultaneously.
-    /// ```
+    /// 
+    /// # Examples
+    /// 
+    /// This will cause a panic:
+    /// 
+    /// ```should_panic
     /// use ui::UI;
     /// let ui1 = UI::init();
     /// let ui2 = UI::init();
     /// ```
+    /// 
+    /// This, however, will not, as `UI` is `Drop`.
+    /// 
+    /// ```
+    /// use ui::UI;
+    /// {
+    ///     let ui1 = UI::init();
+    /// }
+    /// let ui2 = UI::init();
+    /// ```
+    /// 
     pub fn init() -> Result<Self, InitError> {
         IS_INIT.with(|isinit| {
             if *isinit.borrow() == true {
@@ -41,7 +65,7 @@ impl UI {
                 IS_INIT.with(|isinit|{
                     *isinit.borrow_mut() = true;
                 });
-                Ok(Self {})
+                Ok(Self { pd: PhantomData })
             } else {
                 Err(InitError { ui_init_error: err })
             }
@@ -49,13 +73,13 @@ impl UI {
     }
 
     #[inline]
-    /// Hands control of this thread to the UI toolkit, allowing it to display the UI and respond to events. Does not return until the UI [quit](fn.quit.html)s.
+    /// Hands control of this thread to the UI toolkit, allowing it to display the UI and respond to events. Does not return until the UI [quit](struct.UI.html#method.quit)s.
     pub fn main(&self) {
         unsafe { ui_sys::uiMain() }
     }
 
     #[inline]
-    /// Running this function causes the UI to quit, exiting from [main](fn.main.html) and no longer showing any widgets.
+    /// Running this function causes the UI to quit, exiting from [main](struct.UI.html#method.main) and no longer showing any widgets.
     pub fn quit(&self) {
         unsafe { ui_sys::uiQuit() }
     }
@@ -99,6 +123,7 @@ impl Drop for UI {
     }
 }
 
+/// An error that occurred during the initialization of the UI library.
 pub struct InitError {
     ui_init_error: *const c_char,
 }

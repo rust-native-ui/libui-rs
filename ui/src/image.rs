@@ -1,6 +1,7 @@
 use ffi_utils;
 use ui_sys;
 
+/// The data of an image and its associated metadata.
 pub struct Image {
     pub ui_image: *mut ui_sys::uiImage,
     pub data: Vec<u8>,

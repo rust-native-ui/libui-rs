@@ -12,21 +12,48 @@ thread_local! {
     static WINDOWS: RefCell<Vec<Window>> = RefCell::new(Vec::new())
 }
 
-define_control!(Window, uiWindow, ui_window);
+define_control!{
+    /// Contains a single child control and displays it and its children in a window on the screen.
+    control(Window, uiWindow, ui_window);
+}
 
 impl Window {
     #[inline]
+    /// Create a new window with the given title, width, and height.
+    /// If `has_menubar` is true, you can add items to the window's menu bar with
+    /// the [`Menu`](struct.Menu.html) struct.
+    pub fn new(title: &str, width: c_int, height: c_int, has_menubar: bool) -> Window {
+        ffi_utils::ensure_initialized();
+        unsafe {
+            let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
+            let window = Window::from_ui_window(ui_sys::uiNewWindow(
+                c_string.as_ptr(),
+                width,
+                height,
+                has_menubar as c_int,
+            ));
+
+            WINDOWS.with(|windows| windows.borrow_mut().push(window.clone()));
+
+            window
+        }
+    }
+
+    #[inline]
+    /// Return the inner `libui` pointer.
     pub fn as_ui_window(&self) -> *mut uiWindow {
         self.ui_window
     }
 
     #[inline]
+    /// Get the current title of the window.
     pub fn title(&self) -> Text {
         ffi_utils::ensure_initialized();
         unsafe { Text::new(ui_sys::uiWindowTitle(self.ui_window)) }
     }
 
     #[inline]
+    /// Set the window's title to the given string.
     pub fn set_title(&self, title: &str) {
         ffi_utils::ensure_initialized();
         unsafe {
@@ -36,6 +63,10 @@ impl Window {
     }
 
     #[inline]
+    /// Set a callback to be run when the window closes.
+    /// 
+    /// This is often used on the main window of an application to quit
+    /// the application when the window is closed.
     pub fn on_closing(&self, callback: Box<FnMut(&Window) -> bool>) {
         ffi_utils::ensure_initialized();
         unsafe {
@@ -58,39 +89,24 @@ impl Window {
     }
 
     #[inline]
+    /// Sets the window's child widget. The window can only have one child widget at a time.
     pub fn set_child(&self, child: Control) {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiWindowSetChild(self.ui_window, child.as_ui_control()) }
     }
 
     #[inline]
+    /// Check whether or not this window has margins around the edges.
     pub fn margined(&self) -> bool {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiWindowMargined(self.ui_window) != 0 }
     }
 
     #[inline]
+    /// Set whether or not the window has margins around the edges.
     pub fn set_margined(&self, margined: bool) {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiWindowSetMargined(self.ui_window, margined as c_int) }
-    }
-
-    #[inline]
-    pub fn new(title: &str, width: c_int, height: c_int, has_menubar: bool) -> Window {
-        ffi_utils::ensure_initialized();
-        unsafe {
-            let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
-            let window = Window::from_ui_window(ui_sys::uiNewWindow(
-                c_string.as_ptr(),
-                width,
-                height,
-                has_menubar as c_int,
-            ));
-
-            WINDOWS.with(|windows| windows.borrow_mut().push(window.clone()));
-
-            window
-        }
     }
 
     #[inline]

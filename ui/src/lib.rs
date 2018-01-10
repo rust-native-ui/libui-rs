@@ -1,8 +1,5 @@
-//! Rust bindings to `libui`.
-//!
-//! Main C source repository: https://github.com/andlabs/libui
-//!
-//! Copyright © 2016 Mozilla Foundation
+//! Rust bindings to `libui`, a wrapper library for native(ish) GUI libraries - Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere.
+//! This library exposes the a Rusty procedural interface to the "Least Common Denominator" of GUI widgets. They are all available on all supported platforms.
 //!
 //! # Example
 //!
@@ -22,7 +19,8 @@
 //!     // Add margins around the edge of the window, making it look much nicer.
 //!     main_window.set_margined(true);
 //! 
-//!     // Adding this callback means that when this window closes, the `ui::main` function returns.
+//!     // Adding this callback means that when this window closes, 
+//!     // the `ui::main` function returns.
 //!     // This should be added to the primary window of any application.
 //!     {
 //!         let ui = ui.clone();
@@ -46,7 +44,7 @@
 //!     }
 //! 
 //!     // Create a button that quits the app.
-//!     let quit_button = Button::new("Quit");
+//!     let mut quit_button = Button::new("Quit");
 //!     {
 //!         let ui = ui.clone();
 //!         quit_button.on_clicked(Box::new(move |_| { ui.quit(); }));
