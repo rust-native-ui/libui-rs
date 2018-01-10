@@ -25,9 +25,7 @@ impl Context {
     #[inline]
     pub unsafe fn from_ui_draw_context(ui_draw_context: *mut uiDrawContext) -> Context {
         ffi_utils::ensure_initialized();
-        Context {
-            ui_draw_context: ui_draw_context,
-        }
+        Context { ui_draw_context: ui_draw_context }
     }
 
     #[inline]
@@ -36,11 +34,13 @@ impl Context {
         unsafe {
             let brush = brush.as_ui_draw_brush_ref();
             let stroke_params = stroke_params.as_ui_draw_stroke_params_ref();
-            ui_sys::uiDrawStroke(self.ui_draw_context,
-                                 path.ui_draw_path,
-                                 &brush.ui_draw_brush as *const uiDrawBrush as *mut uiDrawBrush,
-                                 &stroke_params.ui_draw_stroke_params as *const uiDrawStrokeParams
-                                 as *mut uiDrawStrokeParams)
+            ui_sys::uiDrawStroke(
+                self.ui_draw_context,
+                path.ui_draw_path,
+                &brush.ui_draw_brush as *const uiDrawBrush as *mut uiDrawBrush,
+                &stroke_params.ui_draw_stroke_params as *const uiDrawStrokeParams as
+                    *mut uiDrawStrokeParams,
+            )
         }
     }
 
@@ -49,9 +49,11 @@ impl Context {
         ffi_utils::ensure_initialized();
         unsafe {
             let brush = brush.as_ui_draw_brush_ref();
-            ui_sys::uiDrawFill(self.ui_draw_context,
-                               path.ui_draw_path,
-                               &brush.ui_draw_brush as *const uiDrawBrush as *mut uiDrawBrush)
+            ui_sys::uiDrawFill(
+                self.ui_draw_context,
+                path.ui_draw_path,
+                &brush.ui_draw_brush as *const uiDrawBrush as *mut uiDrawBrush,
+            )
         }
     }
 
@@ -59,40 +61,42 @@ impl Context {
     pub fn transform(&self, matrix: &Matrix) {
         ffi_utils::ensure_initialized();
         unsafe {
-            ui_sys::uiDrawTransform(self.ui_draw_context,
-                                    &matrix.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix)
+            ui_sys::uiDrawTransform(
+                self.ui_draw_context,
+                &matrix.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix,
+            )
         }
     }
 
     #[inline]
     pub fn save(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawSave(self.ui_draw_context)
-        }
+        unsafe { ui_sys::uiDrawSave(self.ui_draw_context) }
     }
 
     #[inline]
     pub fn restore(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawRestore(self.ui_draw_context)
-        }
+        unsafe { ui_sys::uiDrawRestore(self.ui_draw_context) }
     }
 
     #[inline]
     pub fn draw_text(&self, x: f64, y: f64, layout: &text::Layout) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawText(self.ui_draw_context, x, y, layout.as_ui_draw_text_layout())
-        }
+        unsafe { ui_sys::uiDrawText(self.ui_draw_context, x, y, layout.as_ui_draw_text_layout()) }
     }
 
     #[inline]
     pub fn draw_image(&self, x: f64, y: f64, width: f64, height: f64, image: &mut image::Image) {
         ffi_utils::ensure_initialized();
         unsafe {
-            ui_sys::uiImageAppend(image.ui_image, image.data.as_mut_ptr() as *mut c_void, image.width as i32, image.height as i32, image.width as i32 * 4);
+            ui_sys::uiImageAppend(
+                image.ui_image,
+                image.data.as_mut_ptr() as *mut c_void,
+                image.width as i32,
+                image.height as i32,
+                image.width as i32 * 4,
+            );
             ui_sys::uiDrawImage(self.ui_draw_context, x, y, width, height, image.ui_image);
         }
     }
@@ -274,9 +278,7 @@ impl Drop for Path {
     #[inline]
     fn drop(&mut self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawFreePath(self.ui_draw_path)
-        }
+        unsafe { ui_sys::uiDrawFreePath(self.ui_draw_path) }
     }
 }
 
@@ -284,99 +286,91 @@ impl Path {
     #[inline]
     pub fn new(fill_mode: FillMode) -> Path {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Path {
-                ui_draw_path: ui_sys::uiDrawNewPath(fill_mode),
-            }
-        }
+        unsafe { Path { ui_draw_path: ui_sys::uiDrawNewPath(fill_mode) } }
     }
 
     #[inline]
     pub fn new_figure(&self, x: f64, y: f64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawPathNewFigure(self.ui_draw_path, x, y)
-        }
+        unsafe { ui_sys::uiDrawPathNewFigure(self.ui_draw_path, x, y) }
     }
 
     #[inline]
-    pub fn new_figure_with_arc(&self,
-                               x_center: f64,
-                               y_center: f64,
-                               radius: f64,
-                               start_angle: f64,
-                               sweep: f64,
-                               negative: bool) {
+    pub fn new_figure_with_arc(
+        &self,
+        x_center: f64,
+        y_center: f64,
+        radius: f64,
+        start_angle: f64,
+        sweep: f64,
+        negative: bool,
+    ) {
         ffi_utils::ensure_initialized();
         unsafe {
-            ui_sys::uiDrawPathNewFigureWithArc(self.ui_draw_path,
-                                               x_center,
-                                               y_center,
-                                               radius,
-                                               start_angle,
-                                               sweep,
-                                               negative as c_int)
+            ui_sys::uiDrawPathNewFigureWithArc(
+                self.ui_draw_path,
+                x_center,
+                y_center,
+                radius,
+                start_angle,
+                sweep,
+                negative as c_int,
+            )
         }
     }
 
     #[inline]
     pub fn line_to(&self, x: f64, y: f64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawPathLineTo(self.ui_draw_path, x, y)
-        }
+        unsafe { ui_sys::uiDrawPathLineTo(self.ui_draw_path, x, y) }
     }
 
     #[inline]
-    pub fn arc_to(&self,
-                  x_center: f64,
-                  y_center: f64,
-                  radius: f64,
-                  start_angle: f64,
-                  sweep: f64,
-                  negative: bool) {
+    pub fn arc_to(
+        &self,
+        x_center: f64,
+        y_center: f64,
+        radius: f64,
+        start_angle: f64,
+        sweep: f64,
+        negative: bool,
+    ) {
         ffi_utils::ensure_initialized();
         unsafe {
-            ui_sys::uiDrawPathArcTo(self.ui_draw_path,
-                                    x_center,
-                                    y_center,
-                                    radius,
-                                    start_angle,
-                                    sweep,
-                                    negative as c_int)
+            ui_sys::uiDrawPathArcTo(
+                self.ui_draw_path,
+                x_center,
+                y_center,
+                radius,
+                start_angle,
+                sweep,
+                negative as c_int,
+            )
         }
     }
 
     #[inline]
     pub fn bezier_to(&self, c1x: f64, c1y: f64, c2x: f64, c2y: f64, end_x: f64, end_y: f64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawPathBezierTo(self.ui_draw_path, c1x, c1y, c2x, c2y, end_x, end_y)
-        }
+        unsafe { ui_sys::uiDrawPathBezierTo(self.ui_draw_path, c1x, c1y, c2x, c2y, end_x, end_y) }
     }
 
     #[inline]
     pub fn close_figure(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawPathCloseFigure(self.ui_draw_path)
-        }
+        unsafe { ui_sys::uiDrawPathCloseFigure(self.ui_draw_path) }
     }
 
     #[inline]
     pub fn add_rectangle(&self, x: f64, y: f64, width: f64, height: f64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawPathAddRectangle(self.ui_draw_path, x, y, width, height)
-        }
+        unsafe { ui_sys::uiDrawPathAddRectangle(self.ui_draw_path, x, y, width, height) }
     }
 
     #[inline]
     pub fn end(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawPathEnd(self.ui_draw_path)
-        }
+        unsafe { ui_sys::uiDrawPathEnd(self.ui_draw_path) }
     }
 }
 
@@ -388,9 +382,7 @@ pub struct Matrix {
 impl Matrix {
     #[inline]
     pub fn from_ui_matrix(ui_matrix: &uiDrawMatrix) -> Matrix {
-        Matrix {
-            ui_matrix: *ui_matrix,
-        }
+        Matrix { ui_matrix: *ui_matrix }
     }
 
     #[inline]
@@ -404,63 +396,56 @@ impl Matrix {
 
     #[inline]
     pub fn translate(&mut self, x: f64, y: f64) {
-        unsafe {
-            ui_sys::uiDrawMatrixTranslate(&mut self.ui_matrix, x, y)
-        }
+        unsafe { ui_sys::uiDrawMatrixTranslate(&mut self.ui_matrix, x, y) }
     }
 
     #[inline]
     pub fn scale(&mut self, x_center: f64, y_center: f64, x: f64, y: f64) {
-        unsafe {
-            ui_sys::uiDrawMatrixScale(&mut self.ui_matrix, x_center, y_center, x, y)
-        }
+        unsafe { ui_sys::uiDrawMatrixScale(&mut self.ui_matrix, x_center, y_center, x, y) }
     }
 
     #[inline]
     pub fn rotate(&mut self, x: f64, y: f64, angle: f64) {
-        unsafe {
-            ui_sys::uiDrawMatrixRotate(&mut self.ui_matrix, x, y, angle)
-        }
+        unsafe { ui_sys::uiDrawMatrixRotate(&mut self.ui_matrix, x, y, angle) }
     }
 
     #[inline]
     pub fn skew(&mut self, x: f64, y: f64, xamount: f64, yamount: f64) {
-        unsafe {
-            ui_sys::uiDrawMatrixSkew(&mut self.ui_matrix, x, y, xamount, yamount)
-        }
+        unsafe { ui_sys::uiDrawMatrixSkew(&mut self.ui_matrix, x, y, xamount, yamount) }
     }
 
     #[inline]
     pub fn multiply(&mut self, src: &Matrix) {
         unsafe {
-            ui_sys::uiDrawMatrixMultiply(&mut self.ui_matrix,
-                                         &src.ui_matrix as *const uiDrawMatrix
-                                         as *mut uiDrawMatrix)
+            ui_sys::uiDrawMatrixMultiply(
+                &mut self.ui_matrix,
+                &src.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix,
+            )
         }
     }
 
     #[inline]
     pub fn invertible(&self) -> bool {
         unsafe {
-            ui_sys::uiDrawMatrixInvertible(&self.ui_matrix as *const uiDrawMatrix
-                                           as *mut uiDrawMatrix) != 0
+            ui_sys::uiDrawMatrixInvertible(
+                &self.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix,
+            ) != 0
         }
     }
 
     #[inline]
     pub fn invert(&mut self) -> bool {
-        unsafe {
-            ui_sys::uiDrawMatrixInvert(&mut self.ui_matrix) != 0
-        }
+        unsafe { ui_sys::uiDrawMatrixInvert(&mut self.ui_matrix) != 0 }
     }
 
     #[inline]
     pub fn transform_point(&self, mut point: (f64, f64)) -> (f64, f64) {
         unsafe {
-            ui_sys::uiDrawMatrixTransformPoint(&self.ui_matrix as *const uiDrawMatrix as
-                                               *mut uiDrawMatrix,
-                                               &mut point.0,
-                                               &mut point.1);
+            ui_sys::uiDrawMatrixTransformPoint(
+                &self.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix,
+                &mut point.0,
+                &mut point.1,
+            );
             point
         }
     }
@@ -468,10 +453,11 @@ impl Matrix {
     #[inline]
     pub fn transform_size(&self, mut size: (f64, f64)) -> (f64, f64) {
         unsafe {
-            ui_sys::uiDrawMatrixTransformSize(&self.ui_matrix as *const uiDrawMatrix as
-                                              *mut uiDrawMatrix,
-                                              &mut size.0,
-                                              &mut size.1);
+            ui_sys::uiDrawMatrixTransformSize(
+                &self.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix,
+                &mut size.0,
+                &mut size.1,
+            );
             size
         }
     }
@@ -494,9 +480,7 @@ impl Drop for FontFamilies {
     #[inline]
     fn drop(&mut self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawFreeFontFamilies(self.ui_draw_font_families)
-        }
+        unsafe { ui_sys::uiDrawFreeFontFamilies(self.ui_draw_font_families) }
     }
 }
 
@@ -504,19 +488,13 @@ impl FontFamilies {
     #[inline]
     pub fn list() -> FontFamilies {
         ffi_utils::ensure_initialized();
-        unsafe {
-            FontFamilies {
-                ui_draw_font_families: ui_sys::uiDrawListFontFamilies(),
-            }
-        }
+        unsafe { FontFamilies { ui_draw_font_families: ui_sys::uiDrawListFontFamilies() } }
     }
 
     #[inline]
     pub fn len(&self) -> u64 {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiDrawFontFamiliesNumFamilies(self.ui_draw_font_families)
-        }
+        unsafe { ui_sys::uiDrawFontFamiliesNumFamilies(self.ui_draw_font_families) }
     }
 
     #[inline]
@@ -524,7 +502,10 @@ impl FontFamilies {
         ffi_utils::ensure_initialized();
         assert!(index < self.len());
         unsafe {
-            Text::new(ui_sys::uiDrawFontFamiliesFamily(self.ui_draw_font_families, index))
+            Text::new(ui_sys::uiDrawFontFamiliesFamily(
+                self.ui_draw_font_families,
+                index,
+            ))
         }
     }
 }
@@ -551,8 +532,13 @@ pub mod text {
 
     impl FontDescriptor {
         #[inline]
-        pub fn new(family: &str, size: f64, weight: Weight, italic: Italic, stretch: Stretch)
-                   -> FontDescriptor {
+        pub fn new(
+            family: &str,
+            size: f64,
+            weight: Weight,
+            italic: Italic,
+            stretch: Stretch,
+        ) -> FontDescriptor {
             ffi_utils::ensure_initialized();
             FontDescriptor {
                 family: CString::new(family.as_bytes().to_vec()).unwrap(),
@@ -575,9 +561,7 @@ pub mod text {
                     Italic: self.italic,
                     Stretch: self.stretch,
                 };
-                Font {
-                    ui_draw_text_font: ui_sys::uiDrawLoadClosestFont(&font_descriptor),
-                }
+                Font { ui_draw_text_font: ui_sys::uiDrawLoadClosestFont(&font_descriptor) }
             }
         }
 
@@ -595,26 +579,20 @@ pub mod text {
         #[inline]
         fn drop(&mut self) {
             ffi_utils::ensure_initialized();
-            unsafe {
-                ui_sys::uiDrawFreeTextFont(self.ui_draw_text_font)
-            }
+            unsafe { ui_sys::uiDrawFreeTextFont(self.ui_draw_text_font) }
         }
     }
 
     impl Font {
         #[inline]
         pub unsafe fn from_ui_draw_text_font(ui_draw_text_font: *mut uiDrawTextFont) -> Font {
-            Font {
-                ui_draw_text_font: ui_draw_text_font,
-            }
+            Font { ui_draw_text_font: ui_draw_text_font }
         }
 
         #[inline]
         pub fn handle(&self) -> usize {
             ffi_utils::ensure_initialized();
-            unsafe {
-                ui_sys::uiDrawTextFontHandle(self.ui_draw_text_font)
-            }
+            unsafe { ui_sys::uiDrawTextFontHandle(self.ui_draw_text_font) }
         }
 
         #[inline]
@@ -622,10 +600,13 @@ pub mod text {
             ffi_utils::ensure_initialized();
             unsafe {
                 let mut ui_draw_text_font_descriptor = mem::uninitialized();
-                ui_sys::uiDrawTextFontDescribe(self.ui_draw_text_font,
-                                               &mut ui_draw_text_font_descriptor);
-                let family = CStr::from_ptr(ui_draw_text_font_descriptor.Family).to_bytes()
-                                                                                .to_vec();
+                ui_sys::uiDrawTextFontDescribe(
+                    self.ui_draw_text_font,
+                    &mut ui_draw_text_font_descriptor,
+                );
+                let family = CStr::from_ptr(ui_draw_text_font_descriptor.Family)
+                    .to_bytes()
+                    .to_vec();
                 let font_descriptor = FontDescriptor {
                     family: CString::new(family).unwrap(),
                     size: ui_draw_text_font_descriptor.Size,
@@ -657,9 +638,7 @@ pub mod text {
         #[inline]
         fn drop(&mut self) {
             ffi_utils::ensure_initialized();
-            unsafe {
-                ui_sys::uiDrawFreeTextLayout(self.ui_draw_text_layout)
-            }
+            unsafe { ui_sys::uiDrawFreeTextLayout(self.ui_draw_text_layout) }
         }
     }
 
@@ -670,10 +649,11 @@ pub mod text {
             unsafe {
                 let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
                 Layout {
-                    ui_draw_text_layout:
-                        ui_sys::uiDrawNewTextLayout(c_string.as_ptr(),
-                                                    default_font.ui_draw_text_font,
-                                                    width),
+                    ui_draw_text_layout: ui_sys::uiDrawNewTextLayout(
+                        c_string.as_ptr(),
+                        default_font.ui_draw_text_font,
+                        width,
+                    ),
                 }
             }
         }
@@ -686,9 +666,7 @@ pub mod text {
         #[inline]
         pub fn set_width(&self, width: f64) {
             ffi_utils::ensure_initialized();
-            unsafe {
-                ui_sys::uiDrawTextLayoutSetWidth(self.ui_draw_text_layout, width)
-            }
+            unsafe { ui_sys::uiDrawTextLayoutSetWidth(self.ui_draw_text_layout, width) }
         }
 
         #[inline]
@@ -696,9 +674,11 @@ pub mod text {
             ffi_utils::ensure_initialized();
             unsafe {
                 let mut extents = (0.0, 0.0);
-                ui_sys::uiDrawTextLayoutExtents(self.ui_draw_text_layout,
-                                                &mut extents.0,
-                                                &mut extents.1);
+                ui_sys::uiDrawTextLayoutExtents(
+                    self.ui_draw_text_layout,
+                    &mut extents.0,
+                    &mut extents.1,
+                );
                 extents
             }
         }
@@ -707,15 +687,16 @@ pub mod text {
         pub fn set_color(&self, start_char: i64, end_char: i64, r: f64, g: f64, b: f64, a: f64) {
             ffi_utils::ensure_initialized();
             unsafe {
-                ui_sys::uiDrawTextLayoutSetColor(self.ui_draw_text_layout,
-                                                 start_char,
-                                                 end_char,
-                                                 r,
-                                                 g,
-                                                 b,
-                                                 a)
+                ui_sys::uiDrawTextLayoutSetColor(
+                    self.ui_draw_text_layout,
+                    start_char,
+                    end_char,
+                    r,
+                    g,
+                    b,
+                    a,
+                )
             }
         }
     }
 }
-

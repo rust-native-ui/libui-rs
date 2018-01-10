@@ -7,7 +7,8 @@ use std::ffi::CString;
 use std::mem;
 use std::ptr;
 use ui_sys::{self, uiArea, uiAreaDrawParams, uiAreaHandler, uiAreaKeyEvent, uiAreaMouseEvent};
-use ui_sys::{uiBox, uiButton, uiCheckbox, uiColorButton, uiCombobox, uiEditableCombobox, uiControl, uiDateTimePicker};
+use ui_sys::{uiBox, uiButton, uiCheckbox, uiColorButton, uiCombobox, uiEditableCombobox,
+             uiControl, uiDateTimePicker};
 use ui_sys::{uiEntry, uiFontButton, uiGroup, uiLabel, uiMultilineEntry, uiProgressBar};
 use ui_sys::{uiRadioButtons, uiSeparator, uiSlider, uiSpinbox, uiTab};
 
@@ -90,9 +91,7 @@ impl Drop for Control {
 impl Clone for Control {
     #[inline]
     fn clone(&self) -> Control {
-        Control {
-            ui_control: self.ui_control,
-        }
+        Control { ui_control: self.ui_control }
     }
 }
 
@@ -100,9 +99,7 @@ impl Control {
     /// Creates a new `Control` object from an existing `uiControl`.
     #[inline]
     pub unsafe fn from_ui_control(ui_control: *mut uiControl) -> Control {
-        Control {
-            ui_control: ui_control,
-        }
+        Control { ui_control: ui_control }
     }
 
     #[inline]
@@ -121,9 +118,7 @@ impl Control {
     #[inline]
     pub fn handle(&self) -> usize {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiControlHandle(self.ui_control)
-        }
+        unsafe { ui_sys::uiControlHandle(self.ui_control) }
     }
 
     #[inline]
@@ -142,67 +137,55 @@ impl Control {
     #[inline]
     pub unsafe fn set_parent(&self, parent: Option<&Control>) {
         ffi_utils::ensure_initialized();
-        ui_sys::uiControlSetParent(self.ui_control,
-                                match parent {
-                                    None => ptr::null_mut(),
-                                    Some(parent) => parent.ui_control,
-                                })
+        ui_sys::uiControlSetParent(
+            self.ui_control,
+            match parent {
+                None => ptr::null_mut(),
+                Some(parent) => parent.ui_control,
+            },
+        )
     }
 
     #[inline]
     pub fn toplevel(&self) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiControlToplevel(self.ui_control) != 0
-        }
+        unsafe { ui_sys::uiControlToplevel(self.ui_control) != 0 }
     }
 
     #[inline]
     pub fn visible(&self) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiControlVisible(self.ui_control) != 0
-        }
+        unsafe { ui_sys::uiControlVisible(self.ui_control) != 0 }
     }
 
     #[inline]
     pub fn show(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiControlShow(self.ui_control)
-        }
+        unsafe { ui_sys::uiControlShow(self.ui_control) }
     }
 
     #[inline]
     pub fn hide(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiControlHide(self.ui_control)
-        }
+        unsafe { ui_sys::uiControlHide(self.ui_control) }
     }
 
     #[inline]
     pub fn enabled(&self) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiControlEnabled(self.ui_control) != 0
-        }
+        unsafe { ui_sys::uiControlEnabled(self.ui_control) != 0 }
     }
 
     #[inline]
     pub fn enable(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiControlEnable(self.ui_control)
-        }
+        unsafe { ui_sys::uiControlEnable(self.ui_control) }
     }
 
     #[inline]
     pub fn disable(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiControlDisable(self.ui_control)
-        }
+        unsafe { ui_sys::uiControlDisable(self.ui_control) }
     }
 }
 
@@ -212,9 +195,7 @@ impl Button {
     #[inline]
     pub fn text(&self) -> Text {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Text::new(ui_sys::uiButtonText(self.ui_button))
-        }
+        unsafe { Text::new(ui_sys::uiButtonText(self.ui_button)) }
     }
 
     #[inline]
@@ -231,17 +212,17 @@ impl Button {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Button)>> = Box::new(callback);
-            ui_sys::uiButtonOnClicked(self.ui_button,
-                                      c_callback,
-                                      &mut *data as *mut Box<FnMut(&Button)> as *mut c_void);
+            ui_sys::uiButtonOnClicked(
+                self.ui_button,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&Button)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
         extern "C" fn c_callback(button: *mut uiButton, data: *mut c_void) {
             unsafe {
-                let button = Button {
-                    ui_button: button,
-                };
+                let button = Button { ui_button: button };
                 mem::transmute::<*mut c_void, &mut Box<FnMut(&Button)>>(data)(&button)
             }
         }
@@ -275,41 +256,31 @@ impl BoxControl {
     #[inline]
     pub fn delete(&self, index: u64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiBoxDelete(self.ui_box, index)
-        }
+        unsafe { ui_sys::uiBoxDelete(self.ui_box, index) }
     }
 
     #[inline]
     pub fn padded(&self) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiBoxPadded(self.ui_box) != 0
-        }
+        unsafe { ui_sys::uiBoxPadded(self.ui_box) != 0 }
     }
 
     #[inline]
     pub fn set_padded(&self, padded: bool) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiBoxSetPadded(self.ui_box, padded as c_int)
-        }
+        unsafe { ui_sys::uiBoxSetPadded(self.ui_box, padded as c_int) }
     }
 
     #[inline]
     pub fn new_horizontal() -> BoxControl {
         ffi_utils::ensure_initialized();
-        unsafe {
-            BoxControl::from_ui_control(ui_sys::uiNewHorizontalBox())
-        }
+        unsafe { BoxControl::from_ui_control(ui_sys::uiNewHorizontalBox()) }
     }
 
     #[inline]
     pub fn new_vertical() -> BoxControl {
         ffi_utils::ensure_initialized();
-        unsafe {
-            BoxControl::from_ui_control(ui_sys::uiNewVerticalBox())
-        }
+        unsafe { BoxControl::from_ui_control(ui_sys::uiNewVerticalBox()) }
     }
 }
 
@@ -319,9 +290,7 @@ impl Entry {
     #[inline]
     pub fn text(&self) -> Text {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Text::new(ui_sys::uiEntryText(self.ui_entry))
-        }
+        unsafe { Text::new(ui_sys::uiEntryText(self.ui_entry)) }
     }
 
     #[inline]
@@ -338,9 +307,11 @@ impl Entry {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Entry)>> = Box::new(callback);
-            ui_sys::uiEntryOnChanged(self.ui_entry,
-                                     c_callback,
-                                     &mut *data as *mut Box<FnMut(&Entry)> as *mut c_void);
+            ui_sys::uiEntryOnChanged(
+                self.ui_entry,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&Entry)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
@@ -356,25 +327,19 @@ impl Entry {
     #[inline]
     pub fn read_only(&self) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiEntryReadOnly(self.ui_entry) != 0
-        }
+        unsafe { ui_sys::uiEntryReadOnly(self.ui_entry) != 0 }
     }
 
     #[inline]
     pub fn set_read_only(&self, readonly: bool) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiEntrySetReadOnly(self.ui_entry, readonly as c_int)
-        }
+        unsafe { ui_sys::uiEntrySetReadOnly(self.ui_entry, readonly as c_int) }
     }
 
     #[inline]
     pub fn new() -> Entry {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Entry::from_ui_control(ui_sys::uiNewEntry())
-        }
+        unsafe { Entry::from_ui_control(ui_sys::uiNewEntry()) }
     }
 }
 
@@ -384,9 +349,7 @@ impl Checkbox {
     #[inline]
     pub fn text(&self) -> Text {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Text::new(ui_sys::uiCheckboxText(self.ui_checkbox))
-        }
+        unsafe { Text::new(ui_sys::uiCheckboxText(self.ui_checkbox)) }
     }
 
     #[inline]
@@ -403,9 +366,11 @@ impl Checkbox {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Checkbox)>> = Box::new(callback);
-            ui_sys::uiCheckboxOnToggled(self.ui_checkbox,
-                                        c_callback,
-                                        &mut *data as *mut Box<FnMut(&Checkbox)> as *mut c_void);
+            ui_sys::uiCheckboxOnToggled(
+                self.ui_checkbox,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&Checkbox)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
@@ -421,17 +386,13 @@ impl Checkbox {
     #[inline]
     pub fn checked(&self) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiCheckboxChecked(self.ui_checkbox) != 0
-        }
+        unsafe { ui_sys::uiCheckboxChecked(self.ui_checkbox) != 0 }
     }
 
     #[inline]
     pub fn set_checked(&self, checked: bool) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiCheckboxSetChecked(self.ui_checkbox, checked as c_int)
-        }
+        unsafe { ui_sys::uiCheckboxSetChecked(self.ui_checkbox, checked as c_int) }
     }
 
     #[inline]
@@ -450,9 +411,7 @@ impl Label {
     #[inline]
     pub fn text(&self) -> Text {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Text::new(ui_sys::uiLabelText(self.ui_label))
-        }
+        unsafe { Text::new(ui_sys::uiLabelText(self.ui_label)) }
     }
 
     #[inline]
@@ -501,33 +460,25 @@ impl Tab {
     #[inline]
     pub fn delete(&self, index: u64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiTabDelete(self.ui_tab, index)
-        }
+        unsafe { ui_sys::uiTabDelete(self.ui_tab, index) }
     }
 
     #[inline]
     pub fn margined(&self, page: u64) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiTabMargined(self.ui_tab, page) != 0
-        }
+        unsafe { ui_sys::uiTabMargined(self.ui_tab, page) != 0 }
     }
 
     #[inline]
     pub fn set_margined(&self, page: u64, margined: bool) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiTabSetMargined(self.ui_tab, page, margined as c_int)
-        }
+        unsafe { ui_sys::uiTabSetMargined(self.ui_tab, page, margined as c_int) }
     }
 
     #[inline]
     pub fn new() -> Tab {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Tab::from_ui_control(ui_sys::uiNewTab())
-        }
+        unsafe { Tab::from_ui_control(ui_sys::uiNewTab()) }
     }
 }
 
@@ -537,9 +488,7 @@ impl Group {
     #[inline]
     pub fn title(&self) -> Text {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Text::new(ui_sys::uiGroupTitle(self.ui_group))
-        }
+        unsafe { Text::new(ui_sys::uiGroupTitle(self.ui_group)) }
     }
 
     #[inline]
@@ -554,25 +503,19 @@ impl Group {
     #[inline]
     pub fn set_child(&self, child: Control) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiGroupSetChild(self.ui_group, child.ui_control)
-        }
+        unsafe { ui_sys::uiGroupSetChild(self.ui_group, child.ui_control) }
     }
 
     #[inline]
     pub fn margined(&self) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiGroupMargined(self.ui_group) != 0
-        }
+        unsafe { ui_sys::uiGroupMargined(self.ui_group) != 0 }
     }
 
     #[inline]
     pub fn set_margined(&self, margined: bool) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiGroupSetMargined(self.ui_group, margined as c_int)
-        }
+        unsafe { ui_sys::uiGroupSetMargined(self.ui_group, margined as c_int) }
     }
 
     #[inline]
@@ -591,17 +534,13 @@ impl Spinbox {
     #[inline]
     pub fn value(&self) -> i64 {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiSpinboxValue(self.ui_spinbox)
-        }
+        unsafe { ui_sys::uiSpinboxValue(self.ui_spinbox) }
     }
 
     #[inline]
     pub fn set_value(&self, value: i64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiSpinboxSetValue(self.ui_spinbox, value)
-        }
+        unsafe { ui_sys::uiSpinboxSetValue(self.ui_spinbox, value) }
     }
 
     #[inline]
@@ -609,9 +548,11 @@ impl Spinbox {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Spinbox)>> = Box::new(callback);
-            ui_sys::uiSpinboxOnChanged(self.ui_spinbox,
-                                       c_callback,
-                                       &mut *data as *mut Box<FnMut(&Spinbox)> as *mut c_void);
+            ui_sys::uiSpinboxOnChanged(
+                self.ui_spinbox,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&Spinbox)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
@@ -627,9 +568,7 @@ impl Spinbox {
     #[inline]
     pub fn new(min: i64, max: i64) -> Spinbox {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Spinbox::from_ui_control(ui_sys::uiNewSpinbox(min, max))
-        }
+        unsafe { Spinbox::from_ui_control(ui_sys::uiNewSpinbox(min, max)) }
     }
 }
 
@@ -639,17 +578,13 @@ impl ProgressBar {
     #[inline]
     pub fn set_value(&self, n: i32) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiProgressBarSetValue(self.ui_progress_bar, n)
-        }
+        unsafe { ui_sys::uiProgressBarSetValue(self.ui_progress_bar, n) }
     }
 
     #[inline]
     pub fn new() -> ProgressBar {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ProgressBar::from_ui_control(ui_sys::uiNewProgressBar())
-        }
+        unsafe { ProgressBar::from_ui_control(ui_sys::uiNewProgressBar()) }
     }
 }
 
@@ -659,17 +594,13 @@ impl Slider {
     #[inline]
     pub fn value(&self) -> i64 {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiSliderValue(self.ui_slider)
-        }
+        unsafe { ui_sys::uiSliderValue(self.ui_slider) }
     }
 
     #[inline]
     pub fn set_value(&self, value: i64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiSliderSetValue(self.ui_slider, value)
-        }
+        unsafe { ui_sys::uiSliderSetValue(self.ui_slider, value) }
     }
 
     #[inline]
@@ -677,9 +608,11 @@ impl Slider {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Slider)>> = Box::new(callback);
-            ui_sys::uiSliderOnChanged(self.ui_slider,
-                                      c_callback,
-                                      &mut *data as *mut Box<FnMut(&Slider)> as *mut c_void);
+            ui_sys::uiSliderOnChanged(
+                self.ui_slider,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&Slider)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
@@ -695,9 +628,7 @@ impl Slider {
     #[inline]
     pub fn new(min: i64, max: i64) -> Slider {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Slider::from_ui_control(ui_sys::uiNewSlider(min, max))
-        }
+        unsafe { Slider::from_ui_control(ui_sys::uiNewSlider(min, max)) }
     }
 }
 
@@ -707,9 +638,7 @@ impl Separator {
     #[inline]
     pub fn new_horizontal() -> Separator {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Separator::from_ui_control(ui_sys::uiNewHorizontalSeparator())
-        }
+        unsafe { Separator::from_ui_control(ui_sys::uiNewHorizontalSeparator()) }
     }
 }
 
@@ -728,17 +657,13 @@ impl Combobox {
     #[inline]
     pub fn selected(&self) -> i64 {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiComboboxSelected(self.ui_combobox)
-        }
+        unsafe { ui_sys::uiComboboxSelected(self.ui_combobox) }
     }
 
     #[inline]
     pub fn set_selected(&self, n: i64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiComboboxSetSelected(self.ui_combobox, n)
-        }
+        unsafe { ui_sys::uiComboboxSetSelected(self.ui_combobox, n) }
     }
 
     #[inline]
@@ -746,9 +671,11 @@ impl Combobox {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&Combobox)>> = Box::new(callback);
-            ui_sys::uiComboboxOnSelected(self.ui_combobox,
-                                         c_callback,
-                                         &mut *data as *mut Box<FnMut(&Combobox)> as *mut c_void);
+            ui_sys::uiComboboxOnSelected(
+                self.ui_combobox,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&Combobox)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
@@ -764,9 +691,7 @@ impl Combobox {
     #[inline]
     pub fn new() -> Combobox {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Combobox::from_ui_control(ui_sys::uiNewCombobox())
-        }
+        unsafe { Combobox::from_ui_control(ui_sys::uiNewCombobox()) }
     }
 }
 
@@ -776,9 +701,7 @@ impl EditableCombobox {
     #[inline]
     pub fn new() -> EditableCombobox {
         ffi_utils::ensure_initialized();
-        unsafe {
-            EditableCombobox::from_ui_control(ui_sys::uiNewEditableCombobox())
-        }
+        unsafe { EditableCombobox::from_ui_control(ui_sys::uiNewEditableCombobox()) }
     }
     pub fn append(&self, name: &str) {
         ffi_utils::ensure_initialized();
@@ -806,9 +729,7 @@ impl RadioButtons {
     #[inline]
     pub fn new() -> RadioButtons {
         ffi_utils::ensure_initialized();
-        unsafe {
-            RadioButtons::from_ui_control(ui_sys::uiNewRadioButtons())
-        }
+        unsafe { RadioButtons::from_ui_control(ui_sys::uiNewRadioButtons()) }
     }
 }
 
@@ -819,23 +740,17 @@ define_control!(DateTimePicker, uiDateTimePicker, ui_date_time_picker);
 impl DateTimePicker {
     pub fn new_date_time_picker() -> DateTimePicker {
         ffi_utils::ensure_initialized();
-        unsafe {
-            DateTimePicker::from_ui_control(ui_sys::uiNewDateTimePicker())
-        }
+        unsafe { DateTimePicker::from_ui_control(ui_sys::uiNewDateTimePicker()) }
     }
 
     pub fn new_date_picker() -> DateTimePicker {
         ffi_utils::ensure_initialized();
-        unsafe {
-            DateTimePicker::from_ui_control(ui_sys::uiNewDatePicker())
-        }
+        unsafe { DateTimePicker::from_ui_control(ui_sys::uiNewDatePicker()) }
     }
 
     pub fn new_time_picker() -> DateTimePicker {
         ffi_utils::ensure_initialized();
-        unsafe {
-            DateTimePicker::from_ui_control(ui_sys::uiNewTimePicker())
-        }
+        unsafe { DateTimePicker::from_ui_control(ui_sys::uiNewTimePicker()) }
     }
 }
 
@@ -845,9 +760,7 @@ impl MultilineEntry {
     #[inline]
     pub fn text(&self) -> Text {
         ffi_utils::ensure_initialized();
-        unsafe {
-            Text::new(ui_sys::uiMultilineEntryText(self.ui_multiline_entry))
-        }
+        unsafe { Text::new(ui_sys::uiMultilineEntryText(self.ui_multiline_entry)) }
     }
 
     #[inline]
@@ -864,18 +777,20 @@ impl MultilineEntry {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&MultilineEntry)>> = Box::new(callback);
-            ui_sys::uiMultilineEntryOnChanged(self.ui_multiline_entry,
-                                              c_callback,
-                                              &mut *data as *mut Box<FnMut(&MultilineEntry)> as
-                                              *mut c_void);
+            ui_sys::uiMultilineEntryOnChanged(
+                self.ui_multiline_entry,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&MultilineEntry)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
         extern "C" fn c_callback(multiline_entry: *mut uiMultilineEntry, data: *mut c_void) {
             unsafe {
                 let multiline_entry = MultilineEntry::from_ui_control(multiline_entry);
-                mem::transmute::<*mut c_void,
-                                 &mut Box<FnMut(&MultilineEntry)>>(data)(&multiline_entry);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&MultilineEntry)>>(data)(
+                    &multiline_entry,
+                );
                 mem::forget(multiline_entry);
             }
         }
@@ -884,25 +799,19 @@ impl MultilineEntry {
     #[inline]
     pub fn read_only(&self) -> bool {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiMultilineEntryReadOnly(self.ui_multiline_entry) != 0
-        }
+        unsafe { ui_sys::uiMultilineEntryReadOnly(self.ui_multiline_entry) != 0 }
     }
 
     #[inline]
     pub fn set_read_only(&self, readonly: bool) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiMultilineEntrySetReadOnly(self.ui_multiline_entry, readonly as c_int)
-        }
+        unsafe { ui_sys::uiMultilineEntrySetReadOnly(self.ui_multiline_entry, readonly as c_int) }
     }
 
     #[inline]
     pub fn new() -> MultilineEntry {
         ffi_utils::ensure_initialized();
-        unsafe {
-            MultilineEntry::from_ui_control(ui_sys::uiNewMultilineEntry())
-        }
+        unsafe { MultilineEntry::from_ui_control(ui_sys::uiNewMultilineEntry()) }
     }
 }
 
@@ -937,41 +846,50 @@ impl RustAreaHandler {
             trait_object: trait_object,
         });
 
-        extern "C" fn draw(ui_area_handler: *mut uiAreaHandler,
-                           ui_area: *mut uiArea,
-                           ui_area_draw_params: *mut uiAreaDrawParams) {
+        extern "C" fn draw(
+            ui_area_handler: *mut uiAreaHandler,
+            ui_area: *mut uiArea,
+            ui_area_draw_params: *mut uiAreaDrawParams,
+        ) {
             unsafe {
                 let area = Area::from_ui_area(ui_area);
                 let area_draw_params =
                     AreaDrawParams::from_ui_area_draw_params(&*ui_area_draw_params);
-                (*(ui_area_handler as *mut RustAreaHandler)).trait_object.draw(&area,
-                                                                               &area_draw_params);
+                (*(ui_area_handler as *mut RustAreaHandler))
+                    .trait_object
+                    .draw(&area, &area_draw_params);
                 mem::forget(area_draw_params);
                 mem::forget(area);
             }
         }
 
-        extern "C" fn mouse_event(ui_area_handler: *mut uiAreaHandler,
-                                  ui_area: *mut uiArea,
-                                  ui_area_mouse_event: *mut uiAreaMouseEvent) {
+        extern "C" fn mouse_event(
+            ui_area_handler: *mut uiAreaHandler,
+            ui_area: *mut uiArea,
+            ui_area_mouse_event: *mut uiAreaMouseEvent,
+        ) {
             unsafe {
                 let area = Area::from_ui_area(ui_area);
                 let area_mouse_event =
                     AreaMouseEvent::from_ui_area_mouse_event(&*ui_area_mouse_event);
-                (*(ui_area_handler as *mut RustAreaHandler)).trait_object
-                                                            .mouse_event(&area, &area_mouse_event);
+                (*(ui_area_handler as *mut RustAreaHandler))
+                    .trait_object
+                    .mouse_event(&area, &area_mouse_event);
                 mem::forget(area_mouse_event);
                 mem::forget(area);
             }
         }
 
-        extern "C" fn mouse_crossed(ui_area_handler: *mut uiAreaHandler,
-                                    ui_area: *mut uiArea,
-                                    left: c_int) {
+        extern "C" fn mouse_crossed(
+            ui_area_handler: *mut uiAreaHandler,
+            ui_area: *mut uiArea,
+            left: c_int,
+        ) {
             unsafe {
                 let area = Area::from_ui_area(ui_area);
-                (*(ui_area_handler as *mut RustAreaHandler)).trait_object.mouse_crossed(&area,
-                                                                                        left != 0);
+                (*(ui_area_handler as *mut RustAreaHandler))
+                    .trait_object
+                    .mouse_crossed(&area, left != 0);
                 mem::forget(area);
             }
         }
@@ -979,21 +897,24 @@ impl RustAreaHandler {
         extern "C" fn drag_broken(ui_area_handler: *mut uiAreaHandler, ui_area: *mut uiArea) {
             unsafe {
                 let area = Area::from_ui_area(ui_area);
-                (*(ui_area_handler as *mut RustAreaHandler)).trait_object.drag_broken(&area);
+                (*(ui_area_handler as *mut RustAreaHandler))
+                    .trait_object
+                    .drag_broken(&area);
                 mem::forget(area);
             }
         }
 
-        extern "C" fn key_event(ui_area_handler: *mut uiAreaHandler,
-                                ui_area: *mut uiArea,
-                                ui_area_key_event: *mut uiAreaKeyEvent)
-                                -> c_int {
+        extern "C" fn key_event(
+            ui_area_handler: *mut uiAreaHandler,
+            ui_area: *mut uiArea,
+            ui_area_key_event: *mut uiAreaKeyEvent,
+        ) -> c_int {
             unsafe {
                 let area = Area::from_ui_area(ui_area);
                 let area_key_event = AreaKeyEvent::from_ui_area_key_event(&*ui_area_key_event);
-                let result =
-                    (*(ui_area_handler as *mut RustAreaHandler)).trait_object
-                                                                .key_event(&area, &area_key_event);
+                let result = (*(ui_area_handler as *mut RustAreaHandler))
+                    .trait_object
+                    .key_event(&area, &area_key_event);
                 mem::forget(area_key_event);
                 mem::forget(area);
                 result as c_int
@@ -1007,33 +928,25 @@ define_control!(Area, uiArea, ui_area);
 impl Area {
     #[inline]
     pub unsafe fn from_ui_area(ui_area: *mut uiArea) -> Area {
-        Area {
-            ui_area: ui_area,
-        }
+        Area { ui_area: ui_area }
     }
 
     #[inline]
     pub fn set_size(&self, width: i64, height: i64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiAreaSetSize(self.ui_area, width, height)
-        }
+        unsafe { ui_sys::uiAreaSetSize(self.ui_area, width, height) }
     }
 
     #[inline]
     pub fn queue_redraw_all(&self) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiAreaQueueRedrawAll(self.ui_area)
-        }
+        unsafe { ui_sys::uiAreaQueueRedrawAll(self.ui_area) }
     }
 
     #[inline]
     pub fn scroll_to(&self, x: f64, y: f64, width: f64, height: f64) {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiAreaScrollTo(self.ui_area, x, y, width, height)
-        }
+        unsafe { ui_sys::uiAreaScrollTo(self.ui_area, x, y, width, height) }
     }
 
     #[inline]
@@ -1041,10 +954,10 @@ impl Area {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut rust_area_handler = RustAreaHandler::new(area_handler);
-            let area =
-                Area::from_ui_control(ui_sys::uiNewArea(&mut *rust_area_handler as
-                                                        *mut RustAreaHandler as
-                                                        *mut uiAreaHandler));
+            let area = Area::from_ui_control(ui_sys::uiNewArea(
+                &mut *rust_area_handler as *mut RustAreaHandler as
+                    *mut uiAreaHandler,
+            ));
             mem::forget(rust_area_handler);
             area
         }
@@ -1055,12 +968,12 @@ impl Area {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut rust_area_handler = RustAreaHandler::new(area_handler);
-            let area =
-                Area::from_ui_control(ui_sys::uiNewScrollingArea(&mut *rust_area_handler as
-                                                                 *mut RustAreaHandler as
-                                                                 *mut uiAreaHandler,
-                                                                       width,
-                                                                       height));
+            let area = Area::from_ui_control(ui_sys::uiNewScrollingArea(
+                &mut *rust_area_handler as *mut RustAreaHandler as
+                    *mut uiAreaHandler,
+                width,
+                height,
+            ));
             mem::forget(rust_area_handler);
             area
         }
@@ -1180,10 +1093,11 @@ impl FontButton {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&FontButton)>> = Box::new(callback);
-            ui_sys::uiFontButtonOnChanged(self.ui_font_button,
-                                          c_callback,
-                                          &mut *data as *mut Box<FnMut(&FontButton)> as
-                                          *mut c_void);
+            ui_sys::uiFontButtonOnChanged(
+                self.ui_font_button,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&FontButton)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
@@ -1199,9 +1113,7 @@ impl FontButton {
     #[inline]
     pub fn new() -> FontButton {
         ffi_utils::ensure_initialized();
-        unsafe {
-            FontButton::from_ui_control(ui_sys::uiNewFontButton())
-        }
+        unsafe { FontButton::from_ui_control(ui_sys::uiNewFontButton()) }
     }
 }
 
@@ -1213,11 +1125,13 @@ impl ColorButton {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut color: Color = mem::uninitialized();
-            ui_sys::uiColorButtonColor(self.ui_color_button,
-                                       &mut color.r,
-                                       &mut color.g,
-                                       &mut color.b,
-                                       &mut color.a);
+            ui_sys::uiColorButtonColor(
+                self.ui_color_button,
+                &mut color.r,
+                &mut color.g,
+                &mut color.b,
+                &mut color.a,
+            );
             color
         }
     }
@@ -1235,10 +1149,11 @@ impl ColorButton {
         ffi_utils::ensure_initialized();
         unsafe {
             let mut data: Box<Box<FnMut(&ColorButton)>> = Box::new(callback);
-            ui_sys::uiColorButtonOnChanged(self.ui_color_button,
-                                           c_callback,
-                                           &mut *data as *mut Box<FnMut(&ColorButton)> as
-                                           *mut c_void);
+            ui_sys::uiColorButtonOnChanged(
+                self.ui_color_button,
+                c_callback,
+                &mut *data as *mut Box<FnMut(&ColorButton)> as *mut c_void,
+            );
             mem::forget(data);
         }
 
@@ -1254,9 +1169,7 @@ impl ColorButton {
     #[inline]
     pub fn new() -> ColorButton {
         ffi_utils::ensure_initialized();
-        unsafe {
-            ColorButton::from_ui_control(ui_sys::uiNewColorButton())
-        }
+        unsafe { ColorButton::from_ui_control(ui_sys::uiNewColorButton()) }
     }
 }
 
@@ -1267,4 +1180,3 @@ pub struct Color {
     b: f64,
     a: f64,
 }
-

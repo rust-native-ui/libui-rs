@@ -2,7 +2,8 @@
 
 extern crate ui;
 
-use ui::{BoxControl, Button, Checkbox, ColorButton, Combobox, EditableCombobox, DateTimePicker, Entry};
+use ui::{BoxControl, Button, Checkbox, ColorButton, Combobox, EditableCombobox, DateTimePicker,
+         Entry};
 use ui::{FontButton, Group, InitOptions, Label, Menu, MenuItem, ProgressBar, RadioButtons};
 use ui::{Separator, Slider, Spinbox, Tab, Window};
 
@@ -138,7 +139,11 @@ fn open_clicked(_: &MenuItem, mainwin: &Window) {
 fn save_clicked(_: &MenuItem, mainwin: &Window) {
     match ui::open_file(mainwin) {
         Some(filename) => {
-            ui::msg_box(mainwin, "File selected (don't worry, it's still there)", &*filename)
+            ui::msg_box(
+                mainwin,
+                "File selected (don't worry, it's still there)",
+                &*filename,
+            )
         }
         None => ui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
     }
@@ -147,4 +152,3 @@ fn save_clicked(_: &MenuItem, mainwin: &Window) {
 fn update(_: i64) {
     // TODO(pcwalton)
 }
-
