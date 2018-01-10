@@ -2,12 +2,12 @@
 
 extern crate ui;
 
-use ui::{BoxControl, Button, Checkbox, ColorButton, Combobox, EditableCombobox, DateTimePicker,
-         Entry};
-use ui::{FontButton, Group, InitOptions, Label, Menu, MenuItem, ProgressBar, RadioButtons};
-use ui::{Separator, Slider, Spinbox, Tab, Window};
+use std::rc::Rc;
 
-fn run() {
+use ui::{UI, BoxControl, Button, Checkbox, ColorButton, Combobox, EditableCombobox, DateTimePicker,
+         Entry, FontButton, Group, Label, Menu, MenuItem, ProgressBar, RadioButtons, Separator, Slider, Spinbox, Tab, Window};
+
+fn run(ui: Rc<UI>) {
     let menu = Menu::new("File");
     menu.append_item("Open").on_clicked(Box::new(open_clicked));
     menu.append_item("Save").on_clicked(Box::new(save_clicked));
@@ -27,10 +27,13 @@ fn run() {
 
     let mainwin = Window::new("ui Control Gallery", 640, 480, true);
     mainwin.set_margined(true);
-    mainwin.on_closing(Box::new(|_| {
-        ui::quit();
-        false
-    }));
+    {
+        let ui = ui.clone();
+        mainwin.on_closing(Box::new(move |_| {
+            ui.quit();
+            false
+        }));
+    }
 
     let vbox = BoxControl::new_vertical();
     vbox.set_padded(true);
@@ -120,32 +123,30 @@ fn run() {
     inner2.append(tab.into(), true);
 
     mainwin.show();
-    ui::main();
+    ui.main();
 }
 
 pub fn main() {
-    ui::init(InitOptions).unwrap();
-    run();
-    ui::uninit();
+    let ui = Rc::new(UI::init().unwrap());
+    run(ui.clone());
 }
 
 fn open_clicked(_: &MenuItem, mainwin: &Window) {
-    match ui::open_file(mainwin) {
-        Some(filename) => ui::msg_box(mainwin, "File selected", &*filename),
-        None => ui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
+    match mainwin.open_file() {
+        Some(filename) => mainwin.msg_box("File selected", &*filename),
+        None => mainwin.msg_box_error("No file selected", "Don't be alarmed!"),
     }
 }
 
 fn save_clicked(_: &MenuItem, mainwin: &Window) {
-    match ui::open_file(mainwin) {
+    match mainwin.open_file() {
         Some(filename) => {
-            ui::msg_box(
-                mainwin,
+            mainwin.msg_box(
                 "File selected (don't worry, it's still there)",
                 &*filename,
             )
         }
-        None => ui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
+        None => mainwin.msg_box_error("No file selected", "Don't be alarmed!"),
     }
 }
 

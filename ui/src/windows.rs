@@ -94,6 +94,46 @@ impl Window {
     }
 
     #[inline]
+    /// Allow the user to select an existing file.
+    pub fn open_file(&self) -> Option<Text> {
+        unsafe { Text::optional(ui_sys::uiOpenFile(self.as_ui_window())) }
+    }
+
+    #[inline]
+    /// Allow the user to select a new or existing file.
+    pub fn save_file(&self) -> Option<Text> {
+        unsafe { Text::optional(ui_sys::uiSaveFile(self.as_ui_window())) }
+    }
+
+    #[inline]
+    /// Open a generic message box to show a message to the user.
+    pub fn msg_box(&self, title: &str, description: &str) {
+        unsafe {
+            let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
+            let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
+            ui_sys::uiMsgBox(
+                self.as_ui_window(),
+                c_title.as_ptr(),
+                c_description.as_ptr(),
+            )
+        }
+    }
+
+    #[inline]
+    /// Open an error-themed message box to show a message to the user.
+    pub fn msg_box_error(&self, title: &str, description: &str) {
+        unsafe {
+            let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
+            let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
+            ui_sys::uiMsgBoxError(
+                self.as_ui_window(),
+                c_title.as_ptr(),
+                c_description.as_ptr(),
+            )
+        }
+    }
+
+    #[inline]
     pub unsafe fn from_ui_window(window: *mut uiWindow) -> Window {
         Window { ui_window: window }
     }

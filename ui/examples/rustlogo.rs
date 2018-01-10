@@ -4,7 +4,9 @@
 
 extern crate ui;
 
-use ui::{Area, AreaDrawParams, AreaHandler, InitOptions, Window};
+use std::rc::Rc;
+
+use ui::{UI, Area, AreaDrawParams, AreaHandler, Window};
 use ui::draw::{Brush, FillMode, Path, SolidBrush};
 
 struct RustLogoArea;
@@ -617,24 +619,28 @@ impl AreaHandler for RustLogoArea {
             a: 255.0,
         });
         area_draw_params.context.fill(&path, &brush);
+        area.show();
+        // FIXME (leotindall): This doesn't actually draw anything?
     }
 }
 
-fn run() {
+fn run(ui: Rc<UI>) {
     let window = Window::new("Rust logo", 640, 480, true);
-    window.on_closing(Box::new(|_| {
-        ui::quit();
-        false
-    }));
+    {
+        let ui = ui.clone();
+        window.on_closing(Box::new(move |_| {
+            ui.quit();
+            false
+        }));
+    }
 
     let area = Area::new(Box::new(RustLogoArea));
     window.set_child(area.into());
     window.show();
-    ui::main();
+    ui.main();
 }
 
 fn main() {
-    ui::init(InitOptions).unwrap();
-    run();
-    ui::uninit();
+    let ui = Rc::new(UI::init().unwrap());
+    run(ui);
 }

@@ -1,10 +1,10 @@
 extern crate ui;
 use std::rc::Rc;
-use ui::{Window, BoxControl, Button};
+use ui::{UI, Window, BoxControl, Button};
 
 fn main() {
     // Start up the UI toolkit
-    ui::init(ui::InitOptions);
+    let ui = Rc::new(UI::init().unwrap());
 
     // Create a new window, 200x100, titled "Test Window"
     // and put it in an Rc so it can be passed into callback functions.
@@ -15,10 +15,13 @@ fn main() {
 
     // Adding this callback means that when this window closes, the `ui::main` function returns.
     // This should be added to the primary window of any application.
-    main_window.on_closing(Box::new(|_| {
-        ui::quit();
-        false
-    }));
+    {
+        let ui = ui.clone();
+        main_window.on_closing(Box::new(move |_| {
+            ui.quit();
+            false
+        }));
+    }
 
     // Create a button that opens a dialog box.
     let button = Button::new("Button");
@@ -29,14 +32,16 @@ fn main() {
         // A lot of widgets provide this event, or others like it.
         button.on_clicked(Box::new(move |_| {
             // msg_box creates a modal dialog with the given title and text
-            ui::msg_box(&main_window, "Button", "You clicked the button!");
+            main_window.msg_box("Button", "You clicked the button!");
         }));
     }
 
     // Create a button that quits the app.
-    let mut quit_button = Button::new("Quit");
-    quit_button.on_clicked(Box::new(|_| { ui::quit(); }));
-
+    let quit_button = Button::new("Quit");
+    {
+        let ui = ui.clone();
+        quit_button.on_clicked(Box::new(move |_| { ui.quit(); }));
+    }
     // Add a box to lay out controls vertically.
     let vbox = BoxControl::new_vertical();
     vbox.set_padded(true);
@@ -50,8 +55,5 @@ fn main() {
     main_window.show();
 
     // Run the app.
-    ui::main();
-
-    // Clean up.
-    ui::uninit();
+    ui.main();
 }
