@@ -1,6 +1,17 @@
 //! Rust bindings to `libui`, a wrapper library for native(ish) GUI libraries - Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere.
 //! This library exposes the a Rusty procedural interface to the "Least Common Denominator" of GUI widgets. They are all available on all supported platforms.
 //!
+//! To use this library, import it in your `Cargo.toml`:
+//! 
+//! ```ignore
+//! ui = { git = "https://github.com/LeoTindall/libui-rs" }
+//! ```
+//! 
+//! `libui` requires some global initialization and, thus, deinitialization. This is implemented as the [`UI`](struct.UI.html) RAII guard.
+//! 
+//! Buttons, text entry boxes, and all other GUI elements are implemented as "controls". 
+//! They can only be displayed as children of a [`Window`](window/struct.Window.html).
+//! 
 //! # Example
 //!
 //! ```
