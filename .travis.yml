@@ -15,8 +15,5 @@ before_install:
 script:
     - cd ui-sys
     - cargo build --verbose --tests --examples
-    - cargo test
     - cd ../ui
     - cargo build --verbose --tests --examples
-    - cargo test
-
