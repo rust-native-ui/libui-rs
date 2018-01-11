@@ -16,7 +16,7 @@ script:
 - cd ../ui
 - cargo build --verbose --tests --examples
 after_success: |
-  [ $TRAVIS_BRANCH = travis ] &&
+  [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
   cd $TRAVIS_BUILD_DIR/ui/ &&
   cargo doc &&
