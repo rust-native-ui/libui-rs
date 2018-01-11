@@ -64,7 +64,7 @@ impl Window {
 
     #[inline]
     /// Set a callback to be run when the window closes.
-    /// 
+    ///
     /// This is often used on the main window of an application to quit
     /// the application when the window is closed.
     pub fn on_closing(&self, callback: Box<FnMut(&Window) -> bool>) {
@@ -82,8 +82,8 @@ impl Window {
         extern "C" fn c_callback(window: *mut uiWindow, data: *mut c_void) -> i32 {
             unsafe {
                 let window = Window { ui_window: window };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(&Window) -> bool>>>(data)(&window) as
-                    i32
+                mem::transmute::<*mut c_void, Box<Box<FnMut(&Window) -> bool>>>(data)(&window)
+                    as i32
             }
         }
     }

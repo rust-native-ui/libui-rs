@@ -4,7 +4,7 @@ use libc::{c_char, c_void};
 use std::ffi::CStr;
 use std::mem;
 use std::ops::Deref;
-use std::sync::atomic::{ATOMIC_BOOL_INIT, AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, Ordering, ATOMIC_BOOL_INIT};
 use ui_sys;
 
 static INITIALIZED: AtomicBool = ATOMIC_BOOL_INIT;

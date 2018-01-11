@@ -1,6 +1,6 @@
 extern crate ui;
-use std::rc::Rc;
-use ui::{UI, Window, BoxControl, Button};
+use ui::prelude::*;
+use ui::controls::{BoxControl, Button};
 
 fn main() {
     // Start up the UI toolkit

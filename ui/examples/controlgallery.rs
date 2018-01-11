@@ -2,10 +2,9 @@
 
 extern crate ui;
 
-use std::rc::Rc;
-
-use ui::{UI, BoxControl, Button, Checkbox, ColorButton, Combobox, EditableCombobox, DateTimePicker,
-         Entry, FontButton, Group, Label, Menu, MenuItem, ProgressBar, RadioButtons, Separator, Slider, Spinbox, Tab, Window};
+use ui::prelude::*;
+use ui::controls::*;
+use ui::menus::{Menu, MenuItem};
 
 fn run(ui: Rc<UI>) {
     let menu = Menu::new("File");

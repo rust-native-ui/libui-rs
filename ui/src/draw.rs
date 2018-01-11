@@ -25,7 +25,9 @@ impl Context {
     #[inline]
     pub unsafe fn from_ui_draw_context(ui_draw_context: *mut uiDrawContext) -> Context {
         ffi_utils::ensure_initialized();
-        Context { ui_draw_context: ui_draw_context }
+        Context {
+            ui_draw_context: ui_draw_context,
+        }
     }
 
     #[inline]
@@ -38,8 +40,8 @@ impl Context {
                 self.ui_draw_context,
                 path.ui_draw_path,
                 &brush.ui_draw_brush as *const uiDrawBrush as *mut uiDrawBrush,
-                &stroke_params.ui_draw_stroke_params as *const uiDrawStrokeParams as
-                    *mut uiDrawStrokeParams,
+                &stroke_params.ui_draw_stroke_params as *const uiDrawStrokeParams
+                    as *mut uiDrawStrokeParams,
             )
         }
     }
@@ -120,69 +122,63 @@ impl Brush {
     pub fn as_ui_draw_brush_ref(&self) -> UiDrawBrushRef {
         ffi_utils::ensure_initialized();
         match *self {
-            Brush::Solid(ref solid_brush) => {
-                UiDrawBrushRef {
-                    ui_draw_brush: uiDrawBrush {
-                        Type: uiDrawBrushType::Solid,
+            Brush::Solid(ref solid_brush) => UiDrawBrushRef {
+                ui_draw_brush: uiDrawBrush {
+                    Type: uiDrawBrushType::Solid,
 
-                        R: solid_brush.r,
-                        G: solid_brush.g,
-                        B: solid_brush.b,
-                        A: solid_brush.a,
+                    R: solid_brush.r,
+                    G: solid_brush.g,
+                    B: solid_brush.b,
+                    A: solid_brush.a,
 
-                        X0: 0.0,
-                        Y0: 0.0,
-                        X1: 0.0,
-                        Y1: 0.0,
-                        OuterRadius: 0.0,
-                        Stops: ptr::null_mut(),
-                        NumStops: 0,
-                    },
-                    phantom: PhantomData,
-                }
-            }
-            Brush::LinearGradient(ref linear_gradient_brush) => {
-                UiDrawBrushRef {
-                    ui_draw_brush: uiDrawBrush {
-                        Type: uiDrawBrushType::LinearGradient,
+                    X0: 0.0,
+                    Y0: 0.0,
+                    X1: 0.0,
+                    Y1: 0.0,
+                    OuterRadius: 0.0,
+                    Stops: ptr::null_mut(),
+                    NumStops: 0,
+                },
+                phantom: PhantomData,
+            },
+            Brush::LinearGradient(ref linear_gradient_brush) => UiDrawBrushRef {
+                ui_draw_brush: uiDrawBrush {
+                    Type: uiDrawBrushType::LinearGradient,
 
-                        R: 0.0,
-                        G: 0.0,
-                        B: 0.0,
-                        A: 0.0,
+                    R: 0.0,
+                    G: 0.0,
+                    B: 0.0,
+                    A: 0.0,
 
-                        X0: linear_gradient_brush.start_x,
-                        Y0: linear_gradient_brush.start_y,
-                        X1: linear_gradient_brush.end_x,
-                        Y1: linear_gradient_brush.end_y,
-                        OuterRadius: 0.0,
-                        Stops: linear_gradient_brush.stops.as_ptr() as *mut BrushGradientStop,
-                        NumStops: linear_gradient_brush.stops.len(),
-                    },
-                    phantom: PhantomData,
-                }
-            }
-            Brush::RadialGradient(ref radial_gradient_brush) => {
-                UiDrawBrushRef {
-                    ui_draw_brush: uiDrawBrush {
-                        Type: uiDrawBrushType::RadialGradient,
+                    X0: linear_gradient_brush.start_x,
+                    Y0: linear_gradient_brush.start_y,
+                    X1: linear_gradient_brush.end_x,
+                    Y1: linear_gradient_brush.end_y,
+                    OuterRadius: 0.0,
+                    Stops: linear_gradient_brush.stops.as_ptr() as *mut BrushGradientStop,
+                    NumStops: linear_gradient_brush.stops.len(),
+                },
+                phantom: PhantomData,
+            },
+            Brush::RadialGradient(ref radial_gradient_brush) => UiDrawBrushRef {
+                ui_draw_brush: uiDrawBrush {
+                    Type: uiDrawBrushType::RadialGradient,
 
-                        R: 0.0,
-                        G: 0.0,
-                        B: 0.0,
-                        A: 0.0,
+                    R: 0.0,
+                    G: 0.0,
+                    B: 0.0,
+                    A: 0.0,
 
-                        X0: radial_gradient_brush.start_x,
-                        Y0: radial_gradient_brush.start_y,
-                        X1: radial_gradient_brush.outer_circle_center_x,
-                        Y1: radial_gradient_brush.outer_circle_center_y,
-                        OuterRadius: radial_gradient_brush.outer_radius,
-                        Stops: radial_gradient_brush.stops.as_ptr() as *mut BrushGradientStop,
-                        NumStops: radial_gradient_brush.stops.len(),
-                    },
-                    phantom: PhantomData,
-                }
-            }
+                    X0: radial_gradient_brush.start_x,
+                    Y0: radial_gradient_brush.start_y,
+                    X1: radial_gradient_brush.outer_circle_center_x,
+                    Y1: radial_gradient_brush.outer_circle_center_y,
+                    OuterRadius: radial_gradient_brush.outer_radius,
+                    Stops: radial_gradient_brush.stops.as_ptr() as *mut BrushGradientStop,
+                    NumStops: radial_gradient_brush.stops.len(),
+                },
+                phantom: PhantomData,
+            },
             Brush::Image => {
                 // These don't work yet in `libui`, but just for completeness' sake…
                 UiDrawBrushRef {
@@ -286,7 +282,11 @@ impl Path {
     #[inline]
     pub fn new(fill_mode: FillMode) -> Path {
         ffi_utils::ensure_initialized();
-        unsafe { Path { ui_draw_path: ui_sys::uiDrawNewPath(fill_mode) } }
+        unsafe {
+            Path {
+                ui_draw_path: ui_sys::uiDrawNewPath(fill_mode),
+            }
+        }
     }
 
     #[inline]
@@ -382,7 +382,9 @@ pub struct Matrix {
 impl Matrix {
     #[inline]
     pub fn from_ui_matrix(ui_matrix: &uiDrawMatrix) -> Matrix {
-        Matrix { ui_matrix: *ui_matrix }
+        Matrix {
+            ui_matrix: *ui_matrix,
+        }
     }
 
     #[inline]
@@ -488,7 +490,11 @@ impl FontFamilies {
     #[inline]
     pub fn list() -> FontFamilies {
         ffi_utils::ensure_initialized();
-        unsafe { FontFamilies { ui_draw_font_families: ui_sys::uiDrawListFontFamilies() } }
+        unsafe {
+            FontFamilies {
+                ui_draw_font_families: ui_sys::uiDrawListFontFamilies(),
+            }
+        }
     }
 
     #[inline]
@@ -561,7 +567,9 @@ pub mod text {
                     Italic: self.italic,
                     Stretch: self.stretch,
                 };
-                Font { ui_draw_text_font: ui_sys::uiDrawLoadClosestFont(&font_descriptor) }
+                Font {
+                    ui_draw_text_font: ui_sys::uiDrawLoadClosestFont(&font_descriptor),
+                }
             }
         }
 
@@ -586,7 +594,9 @@ pub mod text {
     impl Font {
         #[inline]
         pub unsafe fn from_ui_draw_text_font(ui_draw_text_font: *mut uiDrawTextFont) -> Font {
-            Font { ui_draw_text_font: ui_draw_text_font }
+            Font {
+                ui_draw_text_font: ui_draw_text_font,
+            }
         }
 
         #[inline]

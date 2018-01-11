@@ -4,7 +4,7 @@ use libc::{c_int, c_void};
 use std::ffi::CString;
 use std::mem;
 use ui_sys::{self, uiMenu, uiMenuItem, uiWindow};
-use windows::Window;
+use window::Window;
 
 // NB: If there ever becomes a way to destroy menus and/or menu items, we'll need to reference
 // count these for memory safety.
@@ -46,7 +46,9 @@ impl MenuItem {
             data: *mut c_void,
         ) {
             unsafe {
-                let menu_item = MenuItem { ui_menu_item: menu_item };
+                let menu_item = MenuItem {
+                    ui_menu_item: menu_item,
+                };
                 let window = Window::from_ui_window(window);
                 mem::transmute::<*mut c_void, &mut Box<FnMut(&MenuItem, &Window)>>(data)(
                     &menu_item,
@@ -86,7 +88,9 @@ impl Menu {
     pub fn append_item(&self, name: &str) -> MenuItem {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
-            MenuItem { ui_menu_item: ui_sys::uiMenuAppendItem(self.ui_menu, c_string.as_ptr()) }
+            MenuItem {
+                ui_menu_item: ui_sys::uiMenuAppendItem(self.ui_menu, c_string.as_ptr()),
+            }
         }
     }
 
@@ -104,19 +108,31 @@ impl Menu {
     #[inline]
     /// Adds a new item to the menu with the lable "Quit".
     pub fn append_quit_item(&self) -> MenuItem {
-        unsafe { MenuItem { ui_menu_item: ui_sys::uiMenuAppendQuitItem(self.ui_menu) } }
+        unsafe {
+            MenuItem {
+                ui_menu_item: ui_sys::uiMenuAppendQuitItem(self.ui_menu),
+            }
+        }
     }
 
     #[inline]
     /// Adds a new item to the menu with the label "Preferences...".
     pub fn append_preferences_item(&self) -> MenuItem {
-        unsafe { MenuItem { ui_menu_item: ui_sys::uiMenuAppendPreferencesItem(self.ui_menu) } }
+        unsafe {
+            MenuItem {
+                ui_menu_item: ui_sys::uiMenuAppendPreferencesItem(self.ui_menu),
+            }
+        }
     }
 
     #[inline]
     /// Adds a new item to the menu with the label "About".
     pub fn append_about_item(&self) -> MenuItem {
-        unsafe { MenuItem { ui_menu_item: ui_sys::uiMenuAppendAboutItem(self.ui_menu) } }
+        unsafe {
+            MenuItem {
+                ui_menu_item: ui_sys::uiMenuAppendAboutItem(self.ui_menu),
+            }
+        }
     }
 
     #[inline]
@@ -130,7 +146,9 @@ impl Menu {
     pub fn new(name: &str) -> Menu {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
-            Menu { ui_menu: ui_sys::uiNewMenu(c_string.as_ptr()) }
+            Menu {
+                ui_menu: ui_sys::uiNewMenu(c_string.as_ptr()),
+            }
         }
     }
 }

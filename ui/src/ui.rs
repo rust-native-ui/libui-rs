@@ -9,40 +9,40 @@ use std::ops::Deref;
 use std::cell::RefCell;
 use std::marker::PhantomData;
 use ui_sys::{self, uiInitOptions};
-use windows::Window;
+use window::Window;
 
 thread_local! {
     static IS_INIT: RefCell<bool> = RefCell::new(false)
 }
 
 /// An initialized UI environment. You need to create one of these to do anything with this library.
-/// 
+///
 /// Only one `UI` can be active at a time. When dropped, it will automatically deinitialize the UI environment.
 /// A common pattern involves placing the `UI` in a [std::rc::Rc](https://doc.rust-lang.org/std/rc/struct.Rc.html)
 /// so it can be shared with UI closures.
 pub struct UI {
-    pd: PhantomData<* const ()>
+    pd: PhantomData<*const ()>,
 }
 
 impl UI {
     #[inline]
     /// Sets up the `libui` environment.
-    /// 
+    ///
     /// # Panics
     /// Will panic if two UIs are initialized simultaneously.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// This will cause a panic:
-    /// 
+    ///
     /// ```should_panic
     /// use ui::UI;
     /// let ui1 = UI::init();
     /// let ui2 = UI::init();
     /// ```
-    /// 
+    ///
     /// This, however, will not, as `UI` is `Drop`.
-    /// 
+    ///
     /// ```
     /// use ui::UI;
     /// {
@@ -50,7 +50,7 @@ impl UI {
     /// }
     /// let ui2 = UI::init();
     /// ```
-    /// 
+    ///
     pub fn init() -> Result<Self, InitError> {
         IS_INIT.with(|isinit| {
             if *isinit.borrow() == true {
@@ -58,11 +58,13 @@ impl UI {
             }
         });
         unsafe {
-            let mut init_options = uiInitOptions { Size: mem::size_of::<uiInitOptions>() };
+            let mut init_options = uiInitOptions {
+                Size: mem::size_of::<uiInitOptions>(),
+            };
             let err = ui_sys::uiInit(&mut init_options);
             if err.is_null() {
                 ffi_utils::set_initialized();
-                IS_INIT.with(|isinit|{
+                IS_INIT.with(|isinit| {
                     *isinit.borrow_mut() = true;
                 });
                 Ok(Self { pd: PhantomData })
@@ -112,7 +114,7 @@ impl UI {
 
 impl Drop for UI {
     fn drop(&mut self) {
-        IS_INIT.with(|isinit|{
+        IS_INIT.with(|isinit| {
             *isinit.borrow_mut() = false;
         });
         unsafe {
