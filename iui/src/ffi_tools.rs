@@ -4,20 +4,20 @@ use std::sync::atomic::{AtomicBool, Ordering, ATOMIC_BOOL_INIT};
 static INITIALIZED: AtomicBool = ATOMIC_BOOL_INIT;
 
 /// Set the global flag stating that libUI is initialized.
-/// 
+///
 /// # Unsafety
-/// If this is called when the library is not, in fact, initialized, 
+/// If this is called when the library is not, in fact, initialized,
 /// the program will be placed in an undefined state.
-/// 
+///
 /// # Panics
 /// Panics if called when libUI is already marked as initialized.
 pub unsafe fn set_initialized() {
-    assert!(!INITIALIZED.swap(true, Ordering::SeqCst), 
+    assert!(!INITIALIZED.swap(true, Ordering::SeqCst),
         "Tried to initialize libUI when it was already initialized. Aborting because this is an unsafe situation.");
 }
 
 /// Set the global flag stating that libUI is no longer initialized.
-/// 
+///
 /// # Unsafety
 /// If this is called when the library is actually still initialized,
 /// the program could try to create a new instance, violating the library's

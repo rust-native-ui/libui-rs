@@ -4,7 +4,7 @@ use controls::Control;
 use ui::UI;
 use libc::{c_int, c_void};
 use std::cell::RefCell;
-use std::ffi::{CString, CStr};
+use std::ffi::{CStr, CString};
 use std::mem;
 use ui_sys::{self, uiControl, uiWindow};
 
@@ -21,7 +21,7 @@ pub enum WindowType {
 
 define_control!{
     /// Contains a single child control and displays it and its children in a window on the screen.
-    rust_type: Window, 
+    rust_type: Window,
     sys_type: uiWindow
 }
 
@@ -50,14 +50,20 @@ impl Window {
 
         // Windows, by default, quit the application on closing.
         let ui = _ctx.clone();
-        window.on_closing(_ctx, move |_|{ ui.quit(); });
+        window.on_closing(_ctx, move |_| {
+            ui.quit();
+        });
 
         window
     }
 
     /// Get the current title of the window.
     pub fn title(&self, _ctx: &UI) -> String {
-        unsafe { CStr::from_ptr(ui_sys::uiWindowTitle(self.uiWindow)).to_string_lossy().into_owned() }
+        unsafe {
+            CStr::from_ptr(ui_sys::uiWindowTitle(self.uiWindow))
+                .to_string_lossy()
+                .into_owned()
+        }
     }
 
     /// Get a reference to the current title of the window.
@@ -80,7 +86,10 @@ impl Window {
     /// the application when the window is closed.
     pub fn on_closing<F: FnMut(&Window)>(&self, _ctx: &UI, mut callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(&Window) -> bool>> = Box::new(Box::new(|window|{ callback(window); false }));
+            let mut data: Box<Box<FnMut(&Window) -> bool>> = Box::new(Box::new(|window| {
+                callback(window);
+                false
+            }));
             ui_sys::uiWindowOnClosing(
                 self.uiWindow,
                 c_callback,

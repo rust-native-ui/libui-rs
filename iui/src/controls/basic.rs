@@ -1,7 +1,7 @@
 use std::mem;
-use std::ffi::{CString, CStr};
+use std::ffi::{CStr, CString};
 use libc::c_void;
-use ui_sys::{self, uiButton, uiLabel, uiControl};
+use ui_sys::{self, uiButton, uiControl, uiLabel};
 use super::Control;
 use ui::UI;
 
@@ -22,7 +22,11 @@ impl Button {
 
     /// Get a copy of the existing text on the button.
     pub fn text(&self, _ctx: &UI) -> String {
-        unsafe { CStr::from_ptr(ui_sys::uiButtonText(self.uiButton)).to_string_lossy().into_owned() }
+        unsafe {
+            CStr::from_ptr(ui_sys::uiButtonText(self.uiButton))
+                .to_string_lossy()
+                .into_owned()
+        }
     }
 
     /// Get a reference to the existing text on the button.
@@ -64,4 +68,3 @@ define_control!{
     rust_type: Label,
     sys_type: uiLabel
 }
-

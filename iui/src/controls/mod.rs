@@ -5,7 +5,8 @@ use ui::UI;
 
 use std::ptr;
 
-#[macro_use] mod create_macro;
+#[macro_use]
+mod create_macro;
 mod basic;
 pub use self::basic::*;
 mod window;
@@ -54,7 +55,6 @@ impl Control {
         // Don't check for initialization here since this can be run during deinitialization.
         ui_sys::uiControlDestroy(self.ui_control)
     }
-
 }
 
 impl UI {
