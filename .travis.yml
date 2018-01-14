@@ -4,16 +4,29 @@ rust:
     - beta
     - nightly
 matrix:
-    allow_failures:
-        - rust: nightly
-
-before_install: 
+  allow_failures:
+    - rust: nightly
+before_install:
     - sudo apt-get -qq update
     - sudo apt-get install -y cmake
     - sudo apt-get install -y libgtk-3-dev
-
 script:
     - cd ui-sys
     - cargo build --verbose --tests --examples
     - cd ../ui
     - cargo build --verbose --tests --examples
+    - cd ../iui
+    - cargo build --verbose --tests --examples
+after_success: |
+  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  cd $TRAVIS_BUILD_DIR/iui/ &&
+  cargo doc &&
+  echo "<meta http-equiv=refresh content=0;url=iui/index.html>" > target/doc/index.html &&
+  sudo pip install ghp-import &&
+  ghp-import -n target/doc &&
+  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
+
+env:
+  global:
+    secure: dfPG6E3lrxnbah17u8S4xJmqFMhrAKoXNxQKGSnEoP3HjZL1NrFFsGCtGbIGPGyz02sCQ3U35nmuGHjUP9SOn+oRV6oQlBx41PPHULoDfsMKojEG80Uphjhd6rCXhdTG10EeIjqK+thNvbhnKXJoSPxe7rIk+r+z4HWHjQhxQuT6i4A6AsjvLGV1UI/WxCzrRFJohnaSyd/jx4/BgBd6XXsHzBvrjYSKSDrrBfJJwqrVchLozD6wSKTaTYdK9CSVGYx8S58Kx2m1j1Hk7FuuC6tqPtOARpwlNOX83p4PUMgZln74QzPN65Y2oYx5dszjflyAf5p264ltDwMLlygDTs92kilRCrznnP1iHgtrO3+aV2jwtRtqXB16JpeYKGFMkRtd3afWZ1SaMjU7s+6tVbSvlXg88GstZPqYYw7B4qYP1BGPX6UGiYMtpqH3Tm1Ne3lX3sPQYDFaV7vkd4JoS05vuHuGU+FERJRmaMAHjz2PCEhcgwnQTzL5LFKTcfNHEFv7NkQ8zPiJ7GELg9n2KnWiRhdB4JGUu8WB1LyYP6j3CQ9NwfBj0VGiH8Urgl9fC3IJnXQW3f284vk0VxBQnSdKILHsvdo8pe6INbDu97XOhzZNIc4jLZRT08aQe5Lk+3e7nGf0CCxFNQSlP6FFN7UP9c/Qvd4M3Ys5atBAryQ=

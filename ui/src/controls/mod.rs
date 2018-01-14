@@ -181,10 +181,10 @@ impl Button {
 
     #[inline]
     /// Run the given callback when the button is clicked.
-    pub fn on_clicked(&self, callback: Box<FnMut(&Button)>) {
+    pub fn on_clicked<F: FnMut(&Button)>(&self, callback: F) {
         ffi_utils::ensure_initialized();
         unsafe {
-            let mut data: Box<Box<FnMut(&Button)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Button)>> = Box::new(Box::new(callback));
             ui_sys::uiButtonOnClicked(
                 self.ui_button,
                 c_callback,
@@ -224,11 +224,23 @@ impl BoxControl {
 
     #[inline]
     /// Add the given widget to the `BoxControl`, at the end of the list of widgets.
-    pub fn append(&self, child: Control, stretchy: bool) {
+    pub fn append<T: Into<Control>>(&self, child: T) {
         ffi_utils::ensure_initialized();
+        let control = child.into();
         unsafe {
-            assert!(child.parent().is_none());
-            ui_sys::uiBoxAppend(self.ui_box, child.ui_control, stretchy as c_int)
+            assert!(control.parent().is_none());
+            ui_sys::uiBoxAppend(self.ui_box, control.ui_control, false as c_int)
+        }
+    }
+
+    #[inline]
+    /// Add the given widget to the `BoxControl`, at the end of the list of widgets, allowing it to stretch to its maximum size.
+    pub fn append_stretchy<T: Into<Control>>(&self, child: T) {
+        ffi_utils::ensure_initialized();
+        let control = child.into();
+        unsafe {
+            assert!(control.parent().is_none());
+            ui_sys::uiBoxAppend(self.ui_box, control.ui_control, true as c_int)
         }
     }
 
@@ -278,10 +290,10 @@ impl Entry {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(&Entry)>) {
+    pub fn on_changed<F: FnMut(&Entry)>(&self, callback: F) {
         ffi_utils::ensure_initialized();
         unsafe {
-            let mut data: Box<Box<FnMut(&Entry)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Entry)>> = Box::new(Box::new(callback));
             ui_sys::uiEntryOnChanged(
                 self.ui_entry,
                 c_callback,
@@ -340,10 +352,10 @@ impl Checkbox {
     }
 
     #[inline]
-    pub fn on_toggled(&self, callback: Box<FnMut(&Checkbox)>) {
+    pub fn on_toggled<F: FnMut(&Checkbox)>(&self, callback: F) {
         ffi_utils::ensure_initialized();
         unsafe {
-            let mut data: Box<Box<FnMut(&Checkbox)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Checkbox)>> = Box::new(Box::new(callback));
             ui_sys::uiCheckboxOnToggled(
                 self.ui_checkbox,
                 c_callback,
@@ -421,8 +433,9 @@ define_control!{
 
 impl Tab {
     #[inline]
-    pub fn append(&self, name: &str, control: Control) {
+    pub fn append<T: Into<Control>>(&self, name: &str, control: T) {
         ffi_utils::ensure_initialized();
+        let control = control.into();
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ui_sys::uiTabAppend(self.ui_tab, c_string.as_ptr(), control.ui_control)
@@ -534,10 +547,10 @@ impl Spinbox {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(&Spinbox)>) {
+    pub fn on_changed<F: FnMut(&Spinbox)>(&self, callback: F) {
         ffi_utils::ensure_initialized();
         unsafe {
-            let mut data: Box<Box<FnMut(&Spinbox)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Spinbox)>> = Box::new(Box::new(callback));
             ui_sys::uiSpinboxOnChanged(
                 self.ui_spinbox,
                 c_callback,
@@ -599,10 +612,10 @@ impl Slider {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(&Slider)>) {
+    pub fn on_changed<F: FnMut(&Slider)>(&self, callback: F) {
         ffi_utils::ensure_initialized();
         unsafe {
-            let mut data: Box<Box<FnMut(&Slider)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Slider)>> = Box::new(Box::new(callback));
             ui_sys::uiSliderOnChanged(
                 self.ui_slider,
                 c_callback,
@@ -647,6 +660,7 @@ define_control!{
 
 impl Combobox {
     #[inline]
+    /// Adds a new option to the combination box.
     pub fn append(&self, name: &str) {
         ffi_utils::ensure_initialized();
         unsafe {
@@ -656,6 +670,7 @@ impl Combobox {
     }
 
     #[inline]
+    /// Returns the number of the selected option.
     pub fn selected(&self) -> i64 {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiComboboxSelected(self.ui_combobox) }
