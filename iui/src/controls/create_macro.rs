@@ -9,7 +9,7 @@
 //      }
 macro_rules! define_control {
     // Match first any attributes (incl. doc comments) and then the actual invocation
-    {$(#[$attr:meta])* rust_type: $rust_type:ident, sys_type: $sys_type:ident } => {
+    {$(#[$attr:meta])* rust_type: $rust_type:ident, sys_type: $sys_type:ident$(,)* } => {
         #[allow(non_snake_case)]
         // Include all attributes
         $(#[$attr])*
