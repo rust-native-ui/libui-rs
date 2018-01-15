@@ -1,4 +1,6 @@
-//! Available controls and related functionality. Note that these structs are created by methods on the `UI` struct.
+//! Available user interface controls and related functionality.
+//! 
+//! Note that `Control` and all specific control types are references to memory which is owned by the UI library.
 
 use ui_sys::{self, uiControl};
 use ui::UI;
@@ -11,8 +13,11 @@ mod basic;
 pub use self::basic::*;
 mod window;
 pub use self::window::*;
+mod layout;
+pub use self::layout::*;
 
 /// A generic UI control. Any UI control can be turned into this type.
+/// 
 /// Note that `Control` and all specific control types are references
 /// whose memory is owned by the UI library.
 pub struct Control {
@@ -20,7 +25,6 @@ pub struct Control {
 }
 
 impl Drop for Control {
-    #[inline]
     fn drop(&mut self) {
         // For now this does nothing, but in the future, when `libui` supports proper memory
         // management, this will likely need to twiddle reference counts.
@@ -28,7 +32,6 @@ impl Drop for Control {
 }
 
 impl Clone for Control {
-    #[inline]
     fn clone(&self) -> Control {
         Control {
             ui_control: self.ui_control,

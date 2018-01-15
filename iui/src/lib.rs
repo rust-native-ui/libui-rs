@@ -25,7 +25,9 @@ pub mod controls;
 pub use ui::UI;
 pub use error::UIError;
 
+/// Common imports are packaged into this module. It's meant to be glob-imported: `use iui::prelude::*`.
 pub mod prelude {
     pub use ui::UI;
     pub use controls::{Window, WindowType};
+    pub use controls::{LayoutStrategy};
 }
