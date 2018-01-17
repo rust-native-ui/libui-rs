@@ -1,9 +1,10 @@
 use std::mem;
 use std::ffi::{CStr, CString};
 use libc::c_int;
-use ui_sys::{self, uiBox, uiControl, uiGroup};
+use ui_sys::{self, uiBox, uiControl, uiTab, uiGroup};
 use super::Control;
 use ui::UI;
+use error::UIError;
 
 /// Defines the ways in which the children of boxes can be layed out.
 pub enum LayoutStrategy {
@@ -95,4 +96,124 @@ impl HorizontalBox {
     pub fn set_padded(&self, _ctx: &UI, padded: bool) {
         set_padded(self.uiBox, padded, _ctx)
     }
+}
+
+define_control! {
+    /// A group of tabs, each of which shows a different sub-control.
+    rust_type: TabGroup,
+    sys_type: uiTab
+}
+
+define_control! {
+    /// A group collects controls together, with (optionally) a margin and/or title.
+    rust_type: Group,
+    sys_type: uiGroup
+}
+
+impl Group {
+    /// Create a new group with the given title.
+    pub fn new(_ctx: &UI, title: &str) -> Group {
+        let group = unsafe {
+            let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
+            Group::from_raw(ui_sys::uiNewGroup(c_string.as_ptr()))
+        };
+        group.set_margined(_ctx, true);
+        group
+    }
+
+    /// Get a copy of the current group title.
+    pub fn title(&self, _ctx: &UI) -> String {
+        unsafe {
+            CStr::from_ptr(ui_sys::uiGroupTitle(self.uiGroup))
+                .to_string_lossy()
+                .into_owned()
+        }
+    }
+
+    /// Get a reference to the existing group title.
+    pub fn title_ref(&self, _ctx: &UI) -> &CStr {
+        unsafe { CStr::from_ptr(ui_sys::uiGroupTitle(self.uiGroup)) }
+    }
+
+    // Set the group's title.
+    pub fn set_title(&self, _ctx: &UI, title: &str) {
+        unsafe {
+            let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
+            ui_sys::uiGroupSetTitle(self.uiGroup, c_string.as_ptr())
+        }
+    }
+
+    // Set the group's child widget.
+    pub fn set_child<T: Into<Control>>(&self, _ctx: &UI, child: T) {
+        unsafe { ui_sys::uiGroupSetChild(self.uiGroup, child.into().ui_control) }
+    }
+
+    // Check whether or not the group draws a margin.
+    pub fn margined(&self, _ctx: &UI) -> bool {
+        unsafe { ui_sys::uiGroupMargined(self.uiGroup) != 0 }
+    }
+
+    // Set whether or not the group draws a margin.
+    pub fn set_margined(&self, _ctx: &UI, margined: bool) {
+        unsafe { ui_sys::uiGroupSetMargined(self.uiGroup, margined as c_int) }
+    }
+}
+
+impl TabGroup {
+    /// Create a new, empty group of tabs.
+    pub fn new(_ctx: &UI) -> TabGroup {
+        unsafe { TabGroup::from_raw(ui_sys::uiNewTab()) }
+    }
+    
+    /// Add the given control as a new tab in the tab group with the given name.
+    /// 
+    /// Returns the number of tabs in the group after adding the new tab.
+    pub fn append<T: Into<Control>>(&self, _ctx: &UI, name: &str, control: T) -> u64 {
+        let control = control.into();
+        unsafe {
+            let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
+            ui_sys::uiTabAppend(self.uiTab, c_string.as_ptr(), control.ui_control);
+            ui_sys::uiTabNumPages(self.uiTab) as u64
+        }
+    }
+
+    /// Add the given control before the given index in the tab group, as a new tab with a given name.
+    /// 
+    /// Returns the number of tabs in the group after adding the new tab.
+    pub fn insert_at<T: Into<Control>>(&self, _ctx: &UI, name: &str, before: u64, control: T) -> u64 {
+        unsafe {
+            let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
+            ui_sys::uiTabInsertAt(self.uiTab, c_string.as_ptr(), before, control.into().ui_control);
+            ui_sys::uiTabNumPages(self.uiTab) as u64
+        }
+    }
+
+    /// Remove the control at the given index in the tab group.
+    /// 
+    /// Returns the number of tabs in the group after removing the tab, or an error if that index was out of bounds.
+    /// 
+    /// NOTE: This will leak the deleted control! We have no way of actually getting it
+    /// to decrement its reference count per `libui`'s UI as of today, unless we maintain a
+    /// separate list of children ourselves…
+    pub fn delete(&self, _ctx: &UI, index: u64) -> Result<u64, UIError> {
+        let n = unsafe { ui_sys::uiTabNumPages(self.uiTab) as u64 };
+        if index < n {
+            unsafe { ui_sys::uiTabDelete(self.uiTab, index) };
+            Ok(n)
+        } else {
+            Err(UIError::TabGroupIndexOutOfBounds { index: index, n: n } )
+        }
+    }
+
+    /// Determine whether or not the tab group provides margins around its children.
+    pub fn margined(&self, _ctx: &UI, page: u64) -> bool {
+        unsafe { ui_sys::uiTabMargined(self.uiTab, page) != 0 }
+    }
+
+    /// Set whether or not the tab group provides margins around its children.
+    pub fn set_margined(&self, _ctx: &UI, page: u64, margined: bool) {
+        unsafe { ui_sys::uiTabSetMargined(self.uiTab, page, margined as c_int) }
+    }
+
+
 }

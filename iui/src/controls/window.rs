@@ -54,6 +54,9 @@ impl Window {
             ui.quit();
         });
 
+        // Windows, by default, draw margins
+        window.set_margined(_ctx, true);
+
         window
     }
 
@@ -105,6 +108,16 @@ impl Window {
                     as i32
             }
         }
+    }
+
+    /// Check whether or not this window has margins around the edges.
+    pub fn margined(&self, _ctx: &UI) -> bool {
+        unsafe { ui_sys::uiWindowMargined(self.uiWindow) != 0 }
+    }
+
+    /// Set whether or not the window has margins around the edges.
+    pub fn set_margined(&self, _ctx: &UI, margined: bool) {
+        unsafe { ui_sys::uiWindowSetMargined(self.uiWindow, margined as c_int) }
     }
 
     /// Sets the window's child widget. The window can only have one child widget at a time.
