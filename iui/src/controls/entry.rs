@@ -1,10 +1,10 @@
 //! User input mechanisms: numbers, colors, and text in various forms.
 
 use std::mem;
-use std::ffi::{CString};
+use std::ffi::{CStr, CString};
 use std::i64;
 use libc::c_void;
-use ui_sys::{self, uiControl, uiSpinbox, uiSlider};
+use ui_sys::{self, uiControl, uiSpinbox, uiSlider, uiEntry, uiMultilineEntry};
 use super::Control;
 use ui::UI;
 
@@ -21,13 +21,13 @@ pub trait TextEntry {
 }
 
 define_control!{
-    /// Numerical entry control which allows users to set any value in a range.
+    /// Numerical entry control which allows users to set any value in a range by typing or incrementing/decrementing.
     rust_type: Spinbox, 
     sys_type: uiSpinbox
 }
 
 define_control!{ 
-    /// Allows users to select a value by picking a location along a line.
+    /// Numerical entry which allows users to select a value by picking a location along a line.
     rust_type: Slider, 
     sys_type: uiSlider
 }
@@ -104,6 +104,90 @@ impl NumericEntry for Slider {
             unsafe {
                 let val = ui_sys::uiSliderValue(slider);
                 mem::transmute::<*mut c_void, &mut Box<FnMut(i64)>>(data)(val);
+            }
+        }
+    }
+}
+
+define_control! {
+    /// Single-line editable text buffer.
+    rust_type: Entry,
+    sys_type: uiEntry
+}
+
+define_control! {
+    /// Multi-line editable text buffer.
+    rust_type: MultilineEntry,
+    sys_type: uiMultilineEntry
+}
+
+impl Entry {
+    pub fn new(_ctx: &UI) -> Entry {
+        unsafe { Entry::from_raw(ui_sys::uiNewEntry()) }
+    }
+}
+
+impl MultilineEntry {
+    pub fn new(_ctx: &UI) -> MultilineEntry {
+        unsafe { MultilineEntry::from_raw(ui_sys::uiNewMultilineEntry()) }
+    }
+}
+
+impl TextEntry for Entry {
+    fn value(&self, _ctx: &UI) -> String {
+        unsafe { CStr::from_ptr(ui_sys::uiEntryText(self.uiEntry)).to_string_lossy().into_owned() }
+    }
+    fn set_value(&self, ctx: &UI, value: &str) {
+        let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
+        unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
+    }
+
+    fn on_changed<F: FnMut(String)>(&self, _ctx: &UI, callback: F) {
+        unsafe {
+            let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
+            ui_sys::uiEntryOnChanged(
+                self.uiEntry,
+                c_callback,
+                &mut *data as *mut Box<FnMut(String)> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(entry: *mut uiEntry, data: *mut c_void) {
+            unsafe {
+                let string = CStr::from_ptr(ui_sys::uiEntryText(entry)).to_string_lossy().into_owned();
+                mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
+                mem::forget(entry);
+            }
+        }
+    }
+}
+
+impl TextEntry for MultilineEntry {
+    fn value(&self, _ctx: &UI) -> String {
+        unsafe { CStr::from_ptr(ui_sys::uiMultilineEntryText(self.uiMultilineEntry)).to_string_lossy().into_owned() }
+    }
+    fn set_value(&self, _ctx: &UI, value: &str) {
+        let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
+        unsafe { ui_sys::uiMultilineEntrySetText(self.uiMultilineEntry, cstring.as_ptr()) }
+    }
+
+    fn on_changed<F: FnMut(String)>(&self, _ctx: &UI, callback: F) {
+        unsafe {
+            let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
+            ui_sys::uiMultilineEntryOnChanged(
+                self.uiMultilineEntry,
+                c_callback,
+                &mut *data as *mut Box<FnMut(String)> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(entry: *mut uiMultilineEntry, data: *mut c_void) {
+            unsafe {
+                let string = CStr::from_ptr(ui_sys::uiMultilineEntryText(entry)).to_string_lossy().into_owned();
+                mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
+                mem::forget(entry);
             }
         }
     }

@@ -9,6 +9,8 @@
 //!
 //! Most of the functionality of the crate is exposed via the [UI](struct.UI.html) RAII guard, which handles all initialization and cleanup for the
 //! underlying library.
+//! 
+//! After initialization, all the functionality used for creating actual UIs is in the [`controls`](controls/index.html) module. 
 
 #[macro_use]
 extern crate bitflags;

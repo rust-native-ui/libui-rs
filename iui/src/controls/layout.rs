@@ -15,13 +15,13 @@ pub enum LayoutStrategy {
 }
 
 define_control! {
-    /// A box that lays out its children vertically; see [`BoxExt`](trait.BoxExt.html) for functionality.
+    /// Lays out its children vertically; see [`BoxExt`](trait.BoxExt.html) for functionality.
     rust_type: VerticalBox,
     sys_type: uiBox
 }
 
 define_control! {
-    /// A box that lays out its children horizontally; see [`BoxExt`](trait.BoxExt.html) for functionality.
+    /// Lays out its children horizontally; see [`BoxExt`](trait.BoxExt.html) for functionality.
     rust_type: HorizontalBox,
     sys_type: uiBox
 }
@@ -99,13 +99,13 @@ impl HorizontalBox {
 }
 
 define_control! {
-    /// A group of tabs, each of which shows a different sub-control.
+    /// Group of tabs, each of which shows a different sub-control.
     rust_type: TabGroup,
     sys_type: uiTab
 }
 
 define_control! {
-    /// A group collects controls together, with (optionally) a margin and/or title.
+    /// Collects controls together, with (optionally) a margin and/or title.
     rust_type: Group,
     sys_type: uiGroup
 }
@@ -217,7 +217,7 @@ impl TabGroup {
 }
 
 define_control!{
-    /// Simply adds a horizontal line, to seperate things visually.
+    /// Horizontal line, to seperate things visually.
     rust_type: HorizontalSeparator, 
     sys_type: uiSeparator
 }
@@ -225,5 +225,17 @@ define_control!{
 impl HorizontalSeparator {
     pub fn new(_ctx: &UI) -> Self {
         unsafe { HorizontalSeparator::from_raw(ui_sys::uiNewHorizontalSeparator()) }
+    }
+}
+
+define_control! {
+    /// Seperates components with empty space.
+    rust_type: Spacer,
+    sys_type: uiBox
+}
+
+impl Spacer {
+    pub fn new(_ctx: &UI) -> Self {
+        unsafe { Spacer::from_raw(ui_sys::uiNewHorizontalBox()) }
     }
 }
