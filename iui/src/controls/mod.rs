@@ -15,6 +15,8 @@ mod window;
 pub use self::window::*;
 mod layout;
 pub use self::layout::*;
+mod entry;
+pub use self::entry::*;
 
 /// A generic UI control. Any UI control can be turned into this type.
 /// 

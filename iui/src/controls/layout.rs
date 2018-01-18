@@ -1,7 +1,7 @@
 use std::mem;
 use std::ffi::{CStr, CString};
 use libc::c_int;
-use ui_sys::{self, uiBox, uiControl, uiTab, uiGroup};
+use ui_sys::{self, uiBox, uiControl, uiTab, uiGroup, uiSeparator};
 use super::Control;
 use ui::UI;
 use error::UIError;
@@ -214,6 +214,16 @@ impl TabGroup {
     pub fn set_margined(&self, _ctx: &UI, page: u64, margined: bool) {
         unsafe { ui_sys::uiTabSetMargined(self.uiTab, page, margined as c_int) }
     }
+}
 
+define_control!{
+    /// Simply adds a horizontal line, to seperate things visually.
+    rust_type: HorizontalSeparator, 
+    sys_type: uiSeparator
+}
 
+impl HorizontalSeparator {
+    pub fn new(_ctx: &UI) -> Self {
+        unsafe { HorizontalSeparator::from_raw(ui_sys::uiNewHorizontalSeparator()) }
+    }
 }

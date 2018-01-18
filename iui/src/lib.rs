@@ -30,4 +30,5 @@ pub mod prelude {
     pub use ui::UI;
     pub use controls::{Window, WindowType};
     pub use controls::{LayoutStrategy};
+    pub use controls::{NumericEntry, TextEntry};
 }
