@@ -1,11 +1,14 @@
 use ui_sys;
 use error::UIError;
 use ffi_tools;
+use libc::{c_void, c_int};
 
 use std::rc::Rc;
 use std::marker::PhantomData;
 use std::ffi::CStr;
 use std::mem;
+use std::thread::sleep;
+use std::time::Duration;
 
 use controls::Window;
 
@@ -89,13 +92,125 @@ impl UI {
         }
     }
 
-    /// Hands control of this thread to the UI toolkit, allowing it to display the UI and respond to events. Does not return until the UI [quit](struct.UI.html#method.quit)s.
+    /// Hands control of this thread to the UI toolkit, allowing it to display the UI and respond to events. 
+    /// Does not return until the UI [quit](struct.UI.html#method.quit)s.
+    /// 
+    /// For more control, use the `EventLoop` struct.
     pub fn main(&self) {
-        unsafe { ui_sys::uiMain() }
+        self.event_loop().run(self);
+    }
+
+    /// Returns an `EventLoop`, a struct that allows you to step over iterations or events in the UI.
+    pub fn event_loop(&self) -> EventLoop {
+        unsafe { ui_sys::uiMainSteps() };
+        return EventLoop { _pd: PhantomData, callback: None }
     }
 
     /// Running this function causes the UI to quit, exiting from [main](struct.UI.html#method.main) and no longer showing any widgets.
+    /// 
+    /// Run in every window's default `on_closing` callback.
     pub fn quit(&self) {
         unsafe { ui_sys::uiQuit() }
+    }
+
+    /// Add a callback to the UI queue. These callbacks are run when the UI main() method is called,
+    /// in the order in which they were queued.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use iui::prelude::*;
+    /// 
+    /// let ui = UI::init().unwrap();
+    /// 
+    /// // Let the UI exit immediately
+    /// ui.quit();
+    /// 
+    /// ui.queue_main(|| { println!("Runs first") } );
+    /// ui.queue_main(|| { println!("Runs second") } );
+    /// ```
+    pub fn queue_main<F: FnMut()>(&self, callback: F) {
+        unsafe {
+            let mut data: Box<Box<FnMut()>> = Box::new(Box::new((callback)));
+            ui_sys::uiQueueMain(
+                ffi_tools::void_void_callback,
+                &mut *data as *mut Box<FnMut()> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+    }
+
+    /// Set a callback to be run when the application quits.
+    pub fn on_should_quit<F: FnMut()>(&self, callback: F) {
+        unsafe {
+            let mut data: Box<Box<FnMut()>> = Box::new(Box::new(callback));
+            ui_sys::uiOnShouldQuit(
+                ffi_tools::void_void_callback,
+                &mut *data as *mut Box<FnMut()> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+    }
+}
+
+/// Provides fine-grained control over the user interface event loop, exposing the `on_tick` event
+/// which allows integration with other event loops, custom logic on event ticks, etc.
+pub struct EventLoop {
+    // This PhantomData prevents UIToken from being Send and Sync
+    _pd: PhantomData<*mut ()>,
+    // This callback gets run during "run_delay" loops.
+    callback: Option<Box<FnMut()>>
+}
+
+impl EventLoop {
+    /// Set the given callback to run when the event loop is executed.
+    /// Note that if integrating other event loops you should consider
+    /// the potential benefits and drawbacks of the various run modes.
+    pub fn on_tick<F: FnMut() + 'static>(&mut self, _ctx: &UI, callback: F) {
+        self.callback = Some(Box::new(callback));
+    }
+
+    /// Executes a tick in the event loop, returning immediately.
+    /// The `on_tick` callback is executed after the UI step.
+    /// 
+    /// Returns `true` if the application should continue running, and `false`
+    /// if it should quit.
+    pub fn next_tick(&mut self, _ctx: &UI) -> bool {
+        let result = unsafe { ui_sys::uiMainStep(false as c_int) == 1 };
+        if let Some(ref mut c) = self.callback {
+            c();
+        }
+        result
+    }
+
+    /// Hands control to the event loop until the next UI event occurs.
+    /// The `on_tick` callback is executed after the UI step.
+    /// 
+    /// Returns `true` if the application should continue running, and `false`
+    /// if it should quit.
+    pub fn next_event_tick(&mut self, _ctx: &UI) -> bool {
+        let result = unsafe { ui_sys::uiMainStep(true as c_int) == 1 };
+        if let Some(ref mut c) = self.callback {
+            c();
+        }
+        result
+    }
+
+    /// Hands control to the event loop until [`UI::quit()`](struct.UI.html#method.quit) is called,
+    /// running the callback given with `on_tick` after each UI event.
+    pub fn run(&mut self, ctx: &UI) {
+        loop {
+            if !self.next_event_tick(ctx) { break; }
+        }
+    }
+
+    /// Hands control to the event loop until [`UI::quit()`](struct.UI.html#method.quit) is called,
+    /// running the callback given with `on_tick` approximately every
+    /// `delay` milliseconds.
+    pub fn run_delay(&mut self, ctx: &UI, delay_ms: u32) {
+        loop {
+            if !self.next_tick(ctx) { break; }
+        }
+        sleep(Duration::new(0, delay_ms * 1000000))
     }
 }

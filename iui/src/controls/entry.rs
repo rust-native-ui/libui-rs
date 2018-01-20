@@ -137,7 +137,7 @@ impl TextEntry for Entry {
     fn value(&self, _ctx: &UI) -> String {
         unsafe { CStr::from_ptr(ui_sys::uiEntryText(self.uiEntry)).to_string_lossy().into_owned() }
     }
-    fn set_value(&self, ctx: &UI, value: &str) {
+    fn set_value(&self, _ctx: &UI, value: &str) {
         let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
         unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
     }

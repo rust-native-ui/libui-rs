@@ -25,6 +25,8 @@ extern {
     pub fn uiFreeInitError(err: *const c_char);
 
     pub fn uiMain();
+    pub fn uiMainStep(wait: c_int) -> c_int;
+    pub fn uiMainSteps();
     pub fn uiQuit();
 
     pub fn uiQueueMain(f: extern "C" fn(data: *mut c_void), data: *mut c_void);

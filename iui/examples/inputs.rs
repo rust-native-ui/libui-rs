@@ -50,7 +50,8 @@ fn main() {
         (input_group, slider, spinner, entry, multi)
     };
 
-    // Set up the outputs for the application.
+    // Set up the outputs for the application. Organization is very similar to the
+    // previous setup.
     let (output_group, add_label, sub_label, text_label, bigtext_label) = {
         let output_group = Group::new(&ui, "Outputs");
         let output_vbox = VerticalBox::new(&ui);
@@ -76,16 +77,41 @@ fn main() {
     window.set_child(&ui, hbox);
     window.show(&ui);
 
+    // These on_changed functions allow updating the application state when a
+    // control changes its value.
+
+    slider.on_changed(&ui, {
+        let state = state.clone();
+        move |val| { state.borrow_mut().slider_val = val; }
+    });
+
+    spinner.on_changed(&ui, {
+        let state = state.clone();
+        move |val| { state.borrow_mut().spinner_val = val; }
+    });
+
+    entry.on_changed(&ui, {
+        let state = state.clone();
+        move |val| { state.borrow_mut().entry_val = val; }
+    });
+
+    multi.on_changed(&ui, {
+        let state = state.clone();
+        move |val| { state.borrow_mut().multi_val = val; }
+    });
+
+
     // This update_view function is defined inline so that it can capture the environment, rather than
     // needing to be passed ui, the labels, and the state each time it is invoked.
+    // It is defined last so that it can operate with the minimum number of `.clone()` calls (since
+    // the code won't need to access the controls after this).
     // It is wrapped in a refcounted pointer so it can be shared with several other closures.
     let update_view = Rc::new({
         let ui = ui.clone();
-        let add_label = add_label.clone();
-        let sub_label = sub_label.clone();
-        let state = state.clone();
         move || {
             let state = state.borrow();
+
+            // Update all the labels
             add_label.set_text(&ui, &format!("Added: {}", state.slider_val + state.spinner_val));
             sub_label.set_text(&ui, &format!("Subtracted: {}", state.slider_val - state.spinner_val));
             text_label.set_text(&ui, &format!("Text: {}", state.entry_val));
@@ -93,49 +119,10 @@ fn main() {
         }
     });
 
-    // These on_changed functions allow updating the application state when a
-    // control changes its value.
-    // Note the calls to update_view after each change to the state!
-
-    slider.on_changed(&ui, {
-        let update_view = update_view.clone();
-        let state = state.clone();
-        move |val| {
-            state.borrow_mut().slider_val = val;
-            update_view();
-        }
-    });
-
-    spinner.on_changed(&ui, {
-        let update_view = update_view.clone();
-        let state = state.clone();
-        move |val| {
-            state.borrow_mut().spinner_val = val;
-            update_view();
-        }
-    });
-
-    entry.on_changed(&ui, {
-        let update_view = update_view.clone();
-        let state = state.clone();
-        move |val| {
-            state.borrow_mut().entry_val = val;
-            update_view();
-        }
-    });
-
-    multi.on_changed(&ui, {
-        let update_view = update_view.clone();
-        let state = state.clone();
-        move |val| {
-            state.borrow_mut().multi_val = val;
-            update_view();
-        }
-    });
-
-    // The initial call to update_view sets up the initial GUI state.
-    update_view();
-
-    // Start the application.
-    ui.main();
+    // Rather than just invoking ui.run(), using EventLoop gives a lot more control
+    // over the user interface event loop.
+    // Here, the on_tick() callback is used to update the view against the state.
+    let mut event_loop = ui.event_loop();
+    event_loop.on_tick(&ui, move || { update_view(); });
+    event_loop.run(&ui);
 }

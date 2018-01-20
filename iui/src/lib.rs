@@ -11,6 +11,8 @@
 //! underlying library.
 //! 
 //! After initialization, all the functionality used for creating actual UIs is in the [`controls`](controls/index.html) module. 
+//! 
+//! Fine-grained control of the event loop is avilable via the [`EventLoop`](struct.EventLoop.html) struct.
 
 #[macro_use]
 extern crate bitflags;
@@ -24,7 +26,7 @@ mod error;
 mod ffi_tools;
 pub mod controls;
 
-pub use ui::UI;
+pub use ui::{UI, EventLoop};
 pub use error::UIError;
 
 /// Common imports are packaged into this module. It's meant to be glob-imported: `use iui::prelude::*`.
