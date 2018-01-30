@@ -1,7 +1,7 @@
 [package]
 name = "ui-sys"
-version = "0.1.0"
-authors = ["Leo Tindall <lfstindall@gmail.com", "Patrick Walton <pcwalton@mimiga.net>"]
+version = "0.1.1"
+authors = ["Leo Tindall <lfstindall@gmail.com>", "Patrick Walton <pcwalton@mimiga.net>"]
 build = "build.rs"
 license = "MIT"
 description = "Native bindings to the minimalist, cross-platform, widget set `libui`"
