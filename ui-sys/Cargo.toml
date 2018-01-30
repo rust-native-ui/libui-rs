@@ -1,10 +1,45 @@
 [package]
 name = "ui-sys"
 version = "0.1.0"
-authors = ["Patrick Walton <pcwalton@mimiga.net>"]
+authors = ["Leo Tindall <lfstindall@gmail.com", "Patrick Walton <pcwalton@mimiga.net>"]
 build = "build.rs"
 license = "MIT/Apache 2.0"
 description = "Native bindings to the minimalist, cross-platform, widget set `libui`"
+
+
+# These URLs point to more information about the package. These are
+# intended to be webviews of the relevant data, not necessarily compatible
+# with VCS tools and the like.
+documentation = "https://docs.rs/ui-sys/"
+repository = "https://github.com/LeoTindall/libui-rs"
+
+# This points to a file under the package root (relative to this `Cargo.toml`).
+# The contents of this file are stored and indexed in the registry.
+# crates.io will render this file and place the result on the crate's page.
+readme = "../README.md"
+
+# This is a list of up to five keywords that describe this crate. Keywords
+# are searchable on crates.io, and you may choose any words that would
+# help someone find this crate.
+keywords = ["windows", "gtk", "gui", "user interface", "macos"]
+
+# This is a list of up to five categories where this crate would fit.
+# Categories are a fixed list available at crates.io/category_slugs, and
+# they must match exactly.
+categories = ["gui", "os::macos-apis", "os::unix-apis", "os::windows-apis"]
+
+[badges]
+# Travis CI: `repository` in format "<user>/<project>" is required.
+# `branch` is optional; default is `master`
+travis-ci = { repository = "LeoTindall/libui-rs", branch = "master" }
+
+# Is it maintained resolution time: `repository` is required.
+is-it-maintained-issue-resolution = { repository = "LeoTindall/libui-rs" }
+
+# Is it maintained percentage of open issues: `repository` is required.
+is-it-maintained-open-issues = { repository = "LeoTindall/libui-rs" }
+
+maintenance = { status = "actively-developed" }
 
 [dependencies]
 libc = "0.2"
