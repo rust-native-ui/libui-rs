@@ -3,7 +3,7 @@ name = "ui-sys"
 version = "0.1.0"
 authors = ["Leo Tindall <lfstindall@gmail.com", "Patrick Walton <pcwalton@mimiga.net>"]
 build = "build.rs"
-license = "MIT/Apache 2.0"
+license = "MIT"
 description = "Native bindings to the minimalist, cross-platform, widget set `libui`"
 
 
