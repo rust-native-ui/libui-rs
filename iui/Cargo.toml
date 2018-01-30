@@ -46,6 +46,4 @@ maintenance = { status = "actively-developed" }
 bitflags = "0.7"
 libc = "0.2"
 failure = "0.1.1"
-
-[dependencies.ui-sys]
-path = "../ui-sys"
+ui-sys = "0.1.0"
