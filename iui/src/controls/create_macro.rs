@@ -43,10 +43,18 @@ macro_rules! define_control {
         }
 
         impl $rust_type {
+            // Show this control to the user. This will also show its non-hidden children.
             pub fn show(&self, _ctx: &UI) {
                 let control: Control = self.clone().into();
                 unsafe { ui_sys::uiControlShow(control.ui_control) }
             }
+
+            // Hide this control from the user. This will hide its children.
+            pub fn hide(&self, _ctx: &UI) {
+                let control: Control = self.clone().into();
+                unsafe { ui_sys::uiControlHide(control.ui_control) }
+            }
+
             /// Create an `iui` struct for this control from the raw pointer for it.
             ///
             /// # Unsafety
@@ -57,6 +65,11 @@ macro_rules! define_control {
                 $rust_type {
                     $sys_type: $sys_type
                 }
+            }
+
+            #[allow(non_snake_case)]
+            pub unsafe fn ptr(&self) -> *mut $sys_type {
+                self.$sys_type
             }
         }
     }

@@ -6,6 +6,7 @@ use libc::{c_int, c_void};
 use std::cell::RefCell;
 use std::ffi::{CStr, CString};
 use std::mem;
+use std::path::PathBuf;
 use ui_sys::{self, uiControl, uiWindow};
 
 thread_local! {
@@ -36,7 +37,7 @@ impl Window {
         };
         let window = unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
-            let window = Window::from_ui_window(ui_sys::uiNewWindow(
+            let window = Window::from_raw(ui_sys::uiNewWindow(
                 c_string.as_ptr(),
                 width,
                 height,
@@ -125,12 +126,49 @@ impl Window {
         unsafe { ui_sys::uiWindowSetChild(self.uiWindow, child.into().as_ui_control()) }
     }
 
-    pub unsafe fn from_ui_window(window: *mut uiWindow) -> Window {
-        Window { uiWindow: window }
+    /// Allow the user to select an existing file.
+    pub fn open_file(&self, _ctx: &UI) -> Option<PathBuf> {
+        let ptr = unsafe { ui_sys::uiOpenFile(self.uiWindow) };
+        if ptr.is_null() { return None };
+        let path_string: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
+        Some(path_string.into())
     }
 
-    pub fn as_ui_window(&self) -> *mut uiWindow {
-        self.uiWindow
+    /// Allow the user to select a new or existing file.
+    pub fn save_file(&self, _ctx: &UI) -> Option<PathBuf> {
+        let ptr = unsafe { ui_sys::uiSaveFile(self.uiWindow) };
+        if ptr.is_null() { return None };
+        let path_string: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
+        Some(path_string.into())
+    }
+
+    
+    /// Open a generic message box to show a message to the user.
+    /// Returns when the user acknowledges the message.
+    pub fn modal_msg(&self, _ctx: &UI, title: &str, description: &str) {
+        unsafe {
+            let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
+            let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
+            ui_sys::uiMsgBox(
+                self.uiWindow,
+                c_title.as_ptr(),
+                c_description.as_ptr(),
+            )
+        }
+    }
+
+    /// Open an error-themed message box to show a message to the user.
+    /// Returns when the user acknowledges the message.
+    pub fn modal_err(&self, _ctx: &UI, title: &str, description: &str) {
+        unsafe {
+            let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
+            let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
+            ui_sys::uiMsgBoxError(
+                self.uiWindow,
+                c_title.as_ptr(),
+                c_description.as_ptr(),
+            )
+        }
     }
 
     pub unsafe fn destroy_all_windows() {
