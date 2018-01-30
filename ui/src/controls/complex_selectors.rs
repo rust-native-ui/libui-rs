@@ -23,10 +23,10 @@ impl FontButton {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(&FontButton)>) {
+    pub fn on_changed<F: FnMut(&FontButton)>(&self, callback: F) {
         ffi_utils::ensure_initialized();
         unsafe {
-            let mut data: Box<Box<FnMut(&FontButton)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&FontButton)>> = Box::new(Box::new(callback));
             ui_sys::uiFontButtonOnChanged(
                 self.ui_font_button,
                 c_callback,
@@ -82,10 +82,10 @@ impl ColorButton {
     }
 
     #[inline]
-    pub fn on_changed(&self, callback: Box<FnMut(&ColorButton)>) {
+    pub fn on_changed<F: FnMut(&ColorButton)>(&self, callback: F) {
         ffi_utils::ensure_initialized();
         unsafe {
-            let mut data: Box<Box<FnMut(&ColorButton)>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&ColorButton)>> = Box::new(Box::new(callback));
             ui_sys::uiColorButtonOnChanged(
                 self.ui_color_button,
                 c_callback,

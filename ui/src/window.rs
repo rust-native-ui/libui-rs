@@ -67,10 +67,10 @@ impl Window {
     ///
     /// This is often used on the main window of an application to quit
     /// the application when the window is closed.
-    pub fn on_closing(&self, callback: Box<FnMut(&Window) -> bool>) {
+    pub fn on_closing<F: FnMut(&Window) -> bool>(&self, callback: F) {
         ffi_utils::ensure_initialized();
         unsafe {
-            let mut data: Box<Box<FnMut(&Window) -> bool>> = Box::new(callback);
+            let mut data: Box<Box<FnMut(&Window) -> bool>> = Box::new(Box::new(callback));
             ui_sys::uiWindowOnClosing(
                 self.ui_window,
                 c_callback,

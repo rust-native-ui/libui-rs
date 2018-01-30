@@ -1,26 +1,28 @@
 language: rust
 rust:
-- stable
-- beta
-- nightly
+    - stable
+    - beta
+    - nightly
 matrix:
   allow_failures:
-  - rust: nightly
+    - rust: nightly
 before_install:
-- sudo apt-get -qq update
-- sudo apt-get install -y cmake
-- sudo apt-get install -y libgtk-3-dev
+    - sudo apt-get -qq update
+    - sudo apt-get install -y cmake
+    - sudo apt-get install -y libgtk-3-dev
 script:
-- cd ui-sys
-- cargo build --verbose --tests --examples
-- cd ../ui
-- cargo build --verbose --tests --examples
+    - cd ui-sys
+    - cargo build --verbose --tests --examples
+    - cd ../ui
+    - cargo build --verbose --tests --examples
+    - cd ../iui
+    - cargo build --verbose --tests --examples
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
-  cd $TRAVIS_BUILD_DIR/ui/ &&
+  cd $TRAVIS_BUILD_DIR/iui/ &&
   cargo doc &&
-  echo "<meta http-equiv=refresh content=0;url=ui/index.html>" > target/doc/index.html &&
+  echo "<meta http-equiv=refresh content=0;url=iui/index.html>" > target/doc/index.html &&
   sudo pip install ghp-import &&
   ghp-import -n target/doc &&
   git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages

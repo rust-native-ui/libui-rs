@@ -1,18 +1,6 @@
-# The Improved User Interface Crate
-[![libui-rs build status](https://api.travis-ci.org/LeoTindall/libui-rs.svg?branch=master)](https://travis-ci.org/LeoTindall/libui-rs/)
+//! Demonstrates the use of the Window::save_file() call to get a filename via a friendly GUI,
+//! and the Window::modal_err() call to display modal dialog boxes.
 
-`iui` is a simple, small, easy to distribute GUI library, a Rusty user interface library that binds to platform native APIs.
-These are work-in-progress bindings to the minimalistic native UI library [libui][libui].
-
-Add this to your crate with:
-
-```
-iui = "0.1.0"
-```
-
-## Example
-
-```
 extern crate iui;
 use iui::prelude::*;
 use iui::controls::{VerticalBox, MultilineEntry, Button};
@@ -56,21 +44,5 @@ fn main() {
     });
 
     ui.main();
+
 }
-```
-
-## Organization
-
-`iui` is the safe Rust wrapper, to be used by most users.
-`ui` is the old version of the safe wrapper. Don't use this.
-`ui-sys` is the raw unsafe bindings to the `libui` C code. Requires `cmake` so it can build `libui`.
-
-## Building
-`libui` is included as a submodule. You will need CMake to build `libui` itself.
-
-Based on work by @pcwalton. Licensed MIT.
-
-## Testing Note
-Travis does not connect video devices to their testing environments, so the tests cannot be run. Therefore, the "tests" only check compilation.
-
-[libui]: https://github.com/andlabs/libui
