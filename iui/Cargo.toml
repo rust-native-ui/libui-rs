@@ -21,7 +21,7 @@ readme = "../README.md"
 # This is a list of up to five keywords that describe this crate. Keywords
 # are searchable on crates.io, and you may choose any words that would
 # help someone find this crate.
-keywords = ["windows", "gtk", "gui", "user interface", "macos"]
+keywords = ["windows", "gtk", "gui", "user_interface", "macos"]
 
 # This is a list of up to five categories where this crate would fit.
 # Categories are a fixed list available at crates.io/category_slugs, and
