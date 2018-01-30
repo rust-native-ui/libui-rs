@@ -1,6 +1,6 @@
 [package]
 name = "iui"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Leo Tindall <lfstindall@gmail.com>"]
 
 # A short blurb about the package. This is not rendered in any format when
