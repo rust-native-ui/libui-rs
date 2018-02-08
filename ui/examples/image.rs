@@ -1,4 +1,4 @@
-//! An example control gallery: a port of the same `ui` example.
+//! Pixmap example: Initializes and draws and empty 100x100 pixmap
 
 extern crate ui;
 
@@ -10,7 +10,7 @@ struct ImageAreaHandler {
 }
 
 impl AreaHandler for ImageAreaHandler {
-    fn draw(&mut self, area: &Area, area_draw_params: &AreaDrawParams) {
+    fn draw(&mut self, _area: &Area, area_draw_params: &AreaDrawParams) {
         let img = Image::new(100, 100);
         img.load_pixmap(0, 0, 100, 100, &self.data);
         area_draw_params.context.draw_image(0.0, 0.0, &img);

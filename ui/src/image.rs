@@ -1,25 +1,22 @@
 use libc::c_void;
-use ui_sys::{self, uiPixmapImage, uiImageData, uiNewPixmapImage,
-             uiFreePixmapImage, uiPixmapImageGetFormat, uiPixmapImageGetData,
-             uiImageLoadPixmap32Raw, uiDrawPixmapImage};
-use ui_sys::uiDrawContext;
+use ui_sys::{uiPixmapImage, uiImageData, uiNewPixmapImage,
+             uiFreePixmapImage, uiPixmapImageGetData,
+             uiImageLoadPixmap32Raw};
 
 pub struct Image {
     ui_image: *mut uiPixmapImage
 }
 
 // #define uiPixmap32FormatOffsets(a,r,g,b)    ((a) << 0 | (r) << 2 | (g) << 4 | (b) << 6)
-const uiPixmap32FormatOffsetMask: u32        = 0x0ff;
-const uiPixmap32FormatHasAlpha: u32          = 0x100;
-const uiPixmap32FormatAlphaPremultiplied: u32    = 0x200;
-const uiPixmap32FormatZeroRowBottom: u32         = 0x400;
+const _UI_PIXMAP32_FORMAT_OFFSET_MASK: u32         = 0x0ff;
+const _UI_PIXMAP32_FORMAT_HAS_ALPHA: u32           = 0x100;
+const _UI_PIXMAP32_FORMAT_ALPHA_PREMULTIPLIED: u32 = 0x200;
+const _UI_PIXMAP32_FORMAT_ZERO_ROW_BOTTOM: u32     = 0x400;
 
 impl Image {
     pub fn new(w: i32, h: i32) -> Image {
-        unsafe {
-            Image {
-                ui_image: uiNewPixmapImage(w, h)
-            }
+        Image {
+            ui_image: unsafe { uiNewPixmapImage(w, h) }
         }
     }
 
@@ -33,7 +30,16 @@ impl Image {
             // uiImageLoadPixmap32Raw(uiImage *img, int x, int y, int width, int height,
             // int rowstrideBytes, uiPixmap32Format fmt, void *data);
             let img_data = get_image_data(self.ui_image);
-            uiImageLoadPixmap32Raw(self.ui_image, offset_x, offset_y, w, h, w*4, img_data.fmt, data.as_ptr() as *const c_void);
+            uiImageLoadPixmap32Raw(
+                self.ui_image,
+                offset_x,
+                offset_y,
+                w,
+                h,
+                w*4,
+                img_data.fmt,
+                data.as_ptr() as *const c_void
+            );
         }
     }
 }
@@ -53,8 +59,6 @@ fn get_image_data(img: *const uiPixmapImage) -> uiImageData {
         rowstride: 0,
         data: ptr::null_mut(),
     };
-
     unsafe { uiPixmapImageGetData(img, &mut d) }
-
     d
 }

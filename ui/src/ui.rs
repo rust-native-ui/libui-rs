@@ -1,7 +1,7 @@
 //! General functions.
 
 use ffi_utils::{self, Text};
-use libc::{c_char, c_int, c_void};
+use libc::{c_char, c_void};
 use std::fmt::{self, Debug, Formatter};
 use std::ffi::{CStr, CString};
 use std::mem;
