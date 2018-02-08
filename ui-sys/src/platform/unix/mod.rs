@@ -14,7 +14,6 @@ pub struct uiUnixControl {
     pub SetContainer: extern "C" fn(*mut uiUnixControl, *mut GtkContainer, gboolean),
 }
 
-#[link(name = "ui")]
 extern {
     pub fn uiUnixControlSetContainer(control: *mut uiUnixControl,
                                      container: *mut GtkContainer,

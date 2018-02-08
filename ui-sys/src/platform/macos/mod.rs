@@ -23,7 +23,6 @@ pub struct uiDarwinControl {
                                           NSLayoutConstraintOrientation),
 }
 
-#[link(name = "ui")]
 extern {
     pub fn uiDarwinControlSyncEnableState(control: *mut uiDarwinControl, state: c_int);
     pub fn uiDarwinControlSetSuperview(control: *mut uiDarwinControl, view: *mut NSView);
