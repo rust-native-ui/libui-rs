@@ -2,17 +2,19 @@
 
 extern crate ui;
 
+use std::sync::{Arc, Mutex};
+
 use ui::{BoxControl, Window, InitOptions};
 use ui::{Image, Area, AreaHandler, AreaKeyEvent, AreaDrawParams};
 
 struct ImageAreaHandler {
-    data: Vec<u32>
+    data: Arc<Mutex<Vec<u32>>>
 }
 
 impl AreaHandler for ImageAreaHandler {
     fn draw(&mut self, _area: &Area, area_draw_params: &AreaDrawParams) {
         let img = Image::new(100, 100);
-        img.load_pixmap(0, 0, 100, 100, &self.data);
+        img.load_pixmap(0, 0, 100, 100, &*self.data.lock().unwrap());
         area_draw_params.context.draw_image(0.0, 0.0, &img);
     }
 
@@ -35,8 +37,28 @@ fn run() {
     vbox.set_padded(true);
     mainwin.set_child(vbox.clone().into());
 
-    let area = Area::new(Box::new(ImageAreaHandler {data: vec![0xff123456;100*100]}));
-    vbox.append(area.into(),false);
+    let mut data = Arc::new(Mutex::new(vec![0xff123456;100*100]));
+
+    let area = Area::new(Box::new(ImageAreaHandler { data: data.clone() }));
+    vbox.append((&area).into(),false);
+
+    ::std::thread::spawn(move || {
+        let mut color = 0x0000ff;
+        loop {
+            color = color << 4 | (color & 0xff000000) >> 24;
+            for j in 0..100 {
+            ::std::thread::sleep_ms(10);
+            {
+                let mut d = data.lock().unwrap();
+                for i in 0..100 {
+                    d[i+j*100] = 0xff000000 | color;
+                }
+            }
+            area.queue_redraw_all();
+            }
+        }
+    });
+
 
     mainwin.show();
     ui::main();
