@@ -92,9 +92,9 @@ impl UI {
         }
     }
 
-    /// Hands control of this thread to the UI toolkit, allowing it to display the UI and respond to events. 
+    /// Hands control of this thread to the UI toolkit, allowing it to display the UI and respond to events.
     /// Does not return until the UI [quit](struct.UI.html#method.quit)s.
-    /// 
+    ///
     /// For more control, use the `EventLoop` struct.
     pub fn main(&self) {
         self.event_loop().run(self);
@@ -107,7 +107,7 @@ impl UI {
     }
 
     /// Running this function causes the UI to quit, exiting from [main](struct.UI.html#method.main) and no longer showing any widgets.
-    /// 
+    ///
     /// Run in every window's default `on_closing` callback.
     pub fn quit(&self) {
         unsafe { ui_sys::uiQuit() }
@@ -115,23 +115,23 @@ impl UI {
 
     /// Add a callback to the UI queue. These callbacks are run when the UI main() method is called,
     /// in the order in which they were queued.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use iui::prelude::*;
-    /// 
+    ///
     /// let ui = UI::init().unwrap();
-    /// 
+    ///
     /// // Let the UI exit immediately
     /// ui.quit();
-    /// 
+    ///
     /// ui.queue_main(|| { println!("Runs first") } );
     /// ui.queue_main(|| { println!("Runs second") } );
     /// ```
     pub fn queue_main<F: FnMut()>(&self, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut()>> = Box::new(Box::new((callback)));
+            let mut data: Box<Box<FnMut()>> = Box::new(Box::new(callback));
             ui_sys::uiQueueMain(
                 ffi_tools::void_void_callback,
                 &mut *data as *mut Box<FnMut()> as *mut c_void,
@@ -172,7 +172,7 @@ impl EventLoop {
 
     /// Executes a tick in the event loop, returning immediately.
     /// The `on_tick` callback is executed after the UI step.
-    /// 
+    ///
     /// Returns `true` if the application should continue running, and `false`
     /// if it should quit.
     pub fn next_tick(&mut self, _ctx: &UI) -> bool {
@@ -185,7 +185,7 @@ impl EventLoop {
 
     /// Hands control to the event loop until the next UI event occurs.
     /// The `on_tick` callback is executed after the UI step.
-    /// 
+    ///
     /// Returns `true` if the application should continue running, and `false`
     /// if it should quit.
     pub fn next_event_tick(&mut self, _ctx: &UI) -> bool {

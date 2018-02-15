@@ -25,6 +25,7 @@ extern crate ui_sys;
 mod ui;
 mod error;
 mod ffi_tools;
+pub mod menus;
 pub mod controls;
 
 pub use ui::{UI, EventLoop};
