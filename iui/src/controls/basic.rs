@@ -41,7 +41,7 @@ impl Button {
     }
 
     /// Set the text on the button.
-    pub fn set_text(&self, _ctx: &UI, text: &str) {
+    pub fn set_text(&mut self, _ctx: &UI, text: &str) {
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             ui_sys::uiButtonSetText(self.uiButton, c_string.as_ptr())
@@ -49,21 +49,21 @@ impl Button {
     }
 
     /// Run the given callback when the button is clicked.
-    pub fn on_clicked<F: FnMut(&Button)>(&self, _ctx: &UI, callback: F) {
+    pub fn on_clicked<F: FnMut(&mut Button)>(&mut self, _ctx: &UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(&Button)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<FnMut(&mut Button)>> = Box::new(Box::new(callback));
             ui_sys::uiButtonOnClicked(
                 self.uiButton,
                 c_callback,
-                &mut *data as *mut Box<FnMut(&Button)> as *mut c_void,
+                &mut *data as *mut Box<FnMut(&mut Button)> as *mut c_void,
             );
             mem::forget(data);
         }
 
         extern "C" fn c_callback(button: *mut uiButton, data: *mut c_void) {
             unsafe {
-                let button = Button { uiButton: button };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&Button)>>(data)(&button)
+                let mut button = Button { uiButton: button };
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&mut Button)>>(data)(&mut button)
             }
         }
     }
@@ -71,6 +71,8 @@ impl Button {
 
 impl Label {
     /// Create a new label with the given string as its text.
+    /// Note that labels do not auto-wrap their text; they will expand as far as needed
+    /// to fit.
     pub fn new(_ctx: &UI, text: &str) -> Label {
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
@@ -93,7 +95,7 @@ impl Label {
     }
 
     /// Set the text on the label.
-    pub fn set_text(&self, _ctx: &UI, text: &str) {
+    pub fn set_text(&mut self, _ctx: &UI, text: &str) {
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             ui_sys::uiLabelSetText(self.uiLabel, c_string.as_ptr())

@@ -10,14 +10,14 @@ use ui::UI;
 
 pub trait NumericEntry {
     fn value(&self, ctx: &UI) -> i64;
-    fn set_value(&self, ctx: &UI, value: i64);
-    fn on_changed<F: FnMut(i64)>(&self, ctx: &UI, callback: F);
+    fn set_value(&mut self, ctx: &UI, value: i64);
+    fn on_changed<F: FnMut(i64)>(&mut self, ctx: &UI, callback: F);
 }
 
 pub trait TextEntry {
     fn value(&self, ctx: &UI) -> String;
-    fn set_value(&self, ctx: &UI, value: &str);
-    fn on_changed<F: FnMut(String)>(&self, ctx: &UI, callback: F);
+    fn set_value(&mut self, ctx: &UI, value: &str);
+    fn on_changed<F: FnMut(String)>(&mut self, ctx: &UI, callback: F);
 }
 
 define_control!{
@@ -56,11 +56,11 @@ impl NumericEntry for Spinbox {
         unsafe { ui_sys::uiSpinboxValue(self.uiSpinbox) }
     }
 
-    fn set_value(&self, _ctx: &UI, value: i64) {
+    fn set_value(&mut self, _ctx: &UI, value: i64) {
         unsafe { ui_sys::uiSpinboxSetValue(self.uiSpinbox, value) }
     }
 
-    fn on_changed<F: FnMut(i64)>(&self, _ctx: &UI, callback: F) {
+    fn on_changed<F: FnMut(i64)>(&mut self, _ctx: &UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(i64)>> = Box::new(Box::new(callback));
             ui_sys::uiSpinboxOnChanged(
@@ -85,11 +85,11 @@ impl NumericEntry for Slider {
         unsafe { ui_sys::uiSliderValue(self.uiSlider) }
     }
 
-    fn set_value(&self, _ctx: &UI, value: i64) {
+    fn set_value(&mut self, _ctx: &UI, value: i64) {
         unsafe { ui_sys::uiSliderSetValue(self.uiSlider, value) }
     }
 
-    fn on_changed<F: FnMut(i64)>(&self, _ctx: &UI, callback: F) {
+    fn on_changed<F: FnMut(i64)>(&mut self, _ctx: &UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(i64)>> = Box::new(Box::new(callback));
             ui_sys::uiSliderOnChanged(
@@ -137,12 +137,12 @@ impl TextEntry for Entry {
     fn value(&self, _ctx: &UI) -> String {
         unsafe { CStr::from_ptr(ui_sys::uiEntryText(self.uiEntry)).to_string_lossy().into_owned() }
     }
-    fn set_value(&self, _ctx: &UI, value: &str) {
+    fn set_value(&mut self, _ctx: &UI, value: &str) {
         let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
         unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<F: FnMut(String)>(&self, _ctx: &UI, callback: F) {
+    fn on_changed<F: FnMut(String)>(&mut self, _ctx: &UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
             ui_sys::uiEntryOnChanged(
@@ -167,12 +167,12 @@ impl TextEntry for MultilineEntry {
     fn value(&self, _ctx: &UI) -> String {
         unsafe { CStr::from_ptr(ui_sys::uiMultilineEntryText(self.uiMultilineEntry)).to_string_lossy().into_owned() }
     }
-    fn set_value(&self, _ctx: &UI, value: &str) {
+    fn set_value(&mut self, _ctx: &UI, value: &str) {
         let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
         unsafe { ui_sys::uiMultilineEntrySetText(self.uiMultilineEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<F: FnMut(String)>(&self, _ctx: &UI, callback: F) {
+    fn on_changed<F: FnMut(String)>(&mut self, _ctx: &UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
             ui_sys::uiMultilineEntryOnChanged(

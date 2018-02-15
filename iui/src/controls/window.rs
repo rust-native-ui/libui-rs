@@ -35,7 +35,7 @@ impl Window {
             WindowType::HasMenubar => true,
             WindowType::NoMenubar => false,
         };
-        let window = unsafe {
+        let mut window = unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
             let window = Window::from_raw(ui_sys::uiNewWindow(
                 c_string.as_ptr(),
@@ -75,9 +75,8 @@ impl Window {
         unsafe { &CStr::from_ptr(ui_sys::uiWindowTitle(self.uiWindow)) }
     }
 
-    #[inline]
     /// Set the window's title to the given string.
-    pub fn set_title(&self, _ctx: &UI, title: &str) {
+    pub fn set_title(&mut self, _ctx: &UI, title: &str) {
         unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
             ui_sys::uiWindowSetTitle(self.uiWindow, c_string.as_ptr())
@@ -88,24 +87,24 @@ impl Window {
     ///
     /// This is often used on the main window of an application to quit
     /// the application when the window is closed.
-    pub fn on_closing<F: FnMut(&Window)>(&self, _ctx: &UI, mut callback: F) {
+    pub fn on_closing<F: FnMut(&mut Window)>(&mut self, _ctx: &UI, mut callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(&Window) -> bool>> = Box::new(Box::new(|window| {
+            let mut data: Box<Box<FnMut(&mut Window) -> bool>> = Box::new(Box::new(|window| {
                 callback(window);
                 false
             }));
             ui_sys::uiWindowOnClosing(
                 self.uiWindow,
                 c_callback,
-                &mut *data as *mut Box<FnMut(&Window) -> bool> as *mut c_void,
+                &mut *data as *mut Box<FnMut(&mut Window) -> bool> as *mut c_void,
             );
             mem::forget(data);
         }
 
         extern "C" fn c_callback(window: *mut uiWindow, data: *mut c_void) -> i32 {
             unsafe {
-                let window = Window { uiWindow: window };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(&Window) -> bool>>>(data)(&window)
+                let mut window = Window { uiWindow: window };
+                mem::transmute::<*mut c_void, Box<Box<FnMut(&mut Window) -> bool>>>(data)(&mut window)
                     as i32
             }
         }
@@ -117,12 +116,12 @@ impl Window {
     }
 
     /// Set whether or not the window has margins around the edges.
-    pub fn set_margined(&self, _ctx: &UI, margined: bool) {
+    pub fn set_margined(&mut self, _ctx: &UI, margined: bool) {
         unsafe { ui_sys::uiWindowSetMargined(self.uiWindow, margined as c_int) }
     }
 
     /// Sets the window's child widget. The window can only have one child widget at a time.
-    pub fn set_child<T: Into<Control>>(&self, _ctx: &UI, child: T) {
+    pub fn set_child<T: Into<Control>>(&mut self, _ctx: &UI, child: T) {
         unsafe { ui_sys::uiWindowSetChild(self.uiWindow, child.into().as_ui_control()) }
     }
 

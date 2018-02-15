@@ -25,11 +25,11 @@ fn main() {
     // While it's not necessary to create a block for this, it makes the code a lot easier
     // to read; the indentation presents a visual cue informing the reader that these
     // statements are related.
-    let (input_group, slider, spinner, entry, multi) = {
+    let (input_group, mut slider, mut spinner, mut entry, mut multi) = {
         // The group will hold all the inputs
-        let input_group = Group::new(&ui, "Inputs");
+        let mut input_group = Group::new(&ui, "Inputs");
         // The vertical box arranges the inputs within the groups
-        let input_vbox = VerticalBox::new(&ui);
+        let mut input_vbox = VerticalBox::new(&ui);
         input_vbox.set_padded(&ui, true);
         // Numerical inputs
         let slider = Slider::new(&ui, 1, 100);
@@ -53,8 +53,8 @@ fn main() {
     // Set up the outputs for the application. Organization is very similar to the
     // previous setup.
     let (output_group, add_label, sub_label, text_label, bigtext_label) = {
-        let output_group = Group::new(&ui, "Outputs");
-        let output_vbox = VerticalBox::new(&ui);
+        let mut output_group = Group::new(&ui, "Outputs");
+        let mut output_vbox = VerticalBox::new(&ui);
         let add_label = Label::new(&ui, "");
         let sub_label = Label::new(&ui, "");
         let text_label = Label::new(&ui, "");
@@ -68,12 +68,12 @@ fn main() {
     };
 
     // This horizontal box will arrange the two groups of controls.
-    let hbox = HorizontalBox::new(&ui);
+    let mut hbox = HorizontalBox::new(&ui);
     hbox.append(&ui, input_group, LayoutStrategy::Stretchy);
     hbox.append(&ui, output_group, LayoutStrategy::Stretchy);
 
     // The window allows all constituent components to be displayed.
-    let window = Window::new(&ui, "Input Output Test", 300, 150, WindowType::NoMenubar);
+    let mut window = Window::new(&ui, "Input Output Test", 300, 150, WindowType::NoMenubar);
     window.set_child(&ui, hbox);
     window.show(&ui);
 
@@ -101,13 +101,16 @@ fn main() {
     });
 
 
-    // This update_view function is defined inline so that it can capture the environment, rather than
-    // needing to be passed ui, the labels, and the state each time it is invoked.
-    // It is defined last so that it can operate with the minimum number of `.clone()` calls (since
-    // the code won't need to access the controls after this).
-    // It is wrapped in a refcounted pointer so it can be shared with several other closures.
-    let update_view = Rc::new({
+    // Rather than just invoking ui.run(), using EventLoop gives a lot more control
+    // over the user interface event loop.
+    // Here, the on_tick() callback is used to update the view against the state.
+    let mut event_loop = ui.event_loop();
+    event_loop.on_tick(&ui, {
         let ui = ui.clone();
+        let mut add_label = add_label.clone();
+        let mut sub_label = sub_label.clone();
+        let mut text_label = text_label.clone();
+        let mut bigtext_label = bigtext_label.clone();
         move || {
             let state = state.borrow();
 
@@ -118,11 +121,5 @@ fn main() {
             bigtext_label.set_text(&ui, &format!("Multiline Text: {}", state.multi_val));
         }
     });
-
-    // Rather than just invoking ui.run(), using EventLoop gives a lot more control
-    // over the user interface event loop.
-    // Here, the on_tick() callback is used to update the view against the state.
-    let mut event_loop = ui.event_loop();
-    event_loop.on_tick(&ui, move || { update_view(); });
     event_loop.run(&ui);
 }

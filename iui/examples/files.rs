@@ -14,11 +14,11 @@ fn main() {
 
     // Create the input controls
     let entry = MultilineEntry::new(&ui);
-    let button = Button::new(&ui, "Save Buffer");
+    let mut button = Button::new(&ui, "Save Buffer");
 
     // Set up the application's layout
-    let window = Window::new(&ui, "Save Buffer to File", 640, 480, WindowType::NoMenubar);
-    let vbox = VerticalBox::new(&ui);
+    let mut window = Window::new(&ui, "Save Buffer to File", 640, 480, WindowType::NoMenubar);
+    let mut vbox = VerticalBox::new(&ui);
     vbox.append(&ui, entry.clone(), LayoutStrategy::Stretchy);
     vbox.append(&ui, button.clone(), LayoutStrategy::Compact);
     window.set_child(&ui, vbox);

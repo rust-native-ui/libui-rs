@@ -6,18 +6,31 @@ fn main() {
     // Initialize the UI library
     let ui = UI::init().expect("Couldn't initialize UI library");
     // Create a window into which controls can be placed
-    let win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
+    let mut win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
     
     // Create a vertical layout to hold the controls
-    let vbox = VerticalBox::new(&ui);
+    let mut vbox = VerticalBox::new(&ui);
     vbox.set_padded(&ui, true);
 
-    let group_vbox = VerticalBox::new(&ui);
-    let group = Group::new(&ui, "Group");
+    let mut group_vbox = VerticalBox::new(&ui);
+    let mut group = Group::new(&ui, "Group");
 
     // Create two buttons to place in the window
-    let button = Button::new(&ui, "Button");
-    let quit_button = Button::new(&ui, "Quit");
+    let mut button = Button::new(&ui, "Button");
+    button.on_clicked(&ui, {
+        let ui = ui.clone();
+        move |btn| {
+            btn.set_text(&ui, "Clicked!");
+        }
+    });
+
+    let mut quit_button = Button::new(&ui, "Quit");
+    quit_button.on_clicked(&ui, {
+        let ui = ui.clone();
+        move |_| {
+            ui.quit();
+        }
+    });
 
     // Create a new label. Note that labels don't auto-wrap!
     let mut label_text = String::new();

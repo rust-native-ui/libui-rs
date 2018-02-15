@@ -2,12 +2,6 @@
 //! - Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere. This library exposes a Rusty procedural interface to the
 //! "Least Common Denominator" of GUI widgets. They are all available on all supported platforms.
 //!
-//! To use this library, import it in your `Cargo.toml`:
-//!
-//! ```toml
-//! iui = "0.1.0"
-//! ```
-//!
 //! Most of the functionality of the crate is exposed via the [UI](struct.UI.html) RAII guard, which handles all initialization and cleanup for the
 //! underlying library.
 //! 

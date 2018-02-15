@@ -78,7 +78,7 @@ impl UI {
     /// Set the parent control of this control, "moving" it to a new place in
     /// the UI tree or, if passed `None`, removing it from the tree.
     // TODO: Does this actually need to be unsafe? I don't really see why it is.
-    pub unsafe fn set_parent_of<T: Into<Control>>(&self, control: T, parent: Option<T>) {
+    pub unsafe fn set_parent_of<T: Into<Control>>(&mut self, control: T, parent: Option<T>) {
         ui_sys::uiControlSetParent(
             control.into().ui_control,
             match parent {
@@ -100,7 +100,7 @@ impl UI {
     }
 
     /// Sets whether or not the control should be displayed.
-    pub fn set_shown<T: Into<Control>>(&self, control: T, show: bool) {
+    pub fn set_shown<T: Into<Control>>(&mut self, control: T, show: bool) {
         if show {
             unsafe { ui_sys::uiControlShow(control.into().ui_control) }
         } else {
@@ -116,7 +116,7 @@ impl UI {
     /// Sets the enable/disable state of the control. If disabled, a control
     /// cannot be interacted with, and visual cues to that effect are presented
     /// to the user.
-    pub fn set_enabled<T: Into<Control>>(&self, control: T, enabled: bool) {
+    pub fn set_enabled<T: Into<Control>>(&mut self, control: T, enabled: bool) {
         if enabled {
             unsafe { ui_sys::uiControlEnable(control.into().ui_control) }
         } else {
