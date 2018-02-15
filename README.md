@@ -1,62 +1,17 @@
-# The Improved User Interface Crate
+# Improved User Interface
 [![libui-rs build status](https://api.travis-ci.org/LeoTindall/libui-rs.svg?branch=master)](https://travis-ci.org/LeoTindall/libui-rs/)
+[![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](https://crates.io/crates/iui/)
+[![issue resolution badge](https://isitmaintained.com/badge/resolution/LeoTindall/libui-rs.svg)](https://isitmaintained.com/project/LeoTindall/libui-rs)
+[![open issues badge](https://isitmaintained.com/badge/open/LeoTindall/libui-rs.svg)](https://isitmaintained.com/project/LeoTindall/libui-rs)
+![actively developed badge](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
 `iui` is a simple, small, easy to distribute GUI library, a Rusty user interface library that binds to platform native APIs.
-These are work-in-progress bindings to the minimalistic native UI library [libui][libui].
+These are work-in-progress bindings to the minimalistic native UI library [libui][libui] via the `ui-sys` bindings crate.
 
-Add this to your crate with:
+Add `iui` to your project with:
 
-```
-iui = "0.1.0"
-```
-
-## Example
-
-```
-extern crate iui;
-use iui::prelude::*;
-use iui::controls::{VerticalBox, MultilineEntry, Button};
-use std::io::prelude::*;
-use std::error::Error;
-use std::fs::File;
-
-fn main() {
-    // Initialize the UI
-    let ui = UI::init().unwrap();
-
-    // Create the input controls
-    let entry = MultilineEntry::new(&ui);
-    let button = Button::new(&ui, "Save Buffer");
-
-    // Set up the application's layout
-    let window = Window::new(&ui, "Save Buffer to File", 640, 480, WindowType::NoMenubar);
-    let vbox = VerticalBox::new(&ui);
-    vbox.append(&ui, entry.clone(), LayoutStrategy::Stretchy);
-    vbox.append(&ui, button.clone(), LayoutStrategy::Compact);
-    window.set_child(&ui, vbox);
-    window.show(&ui);
-
-    // When the button is clicked, get the name of a file and then write the entry's contents to it.
-    // Note the in real code you should spin off a thread to do the actual writing, do it between UI events,
-    // or use Tokio. Even with minmal content, this method shows noticable lag.
-    button.on_clicked(&ui, {
-        let ui = ui.clone();
-        move |_| {
-            if let Some(path) = window.save_file(&ui) {
-                let mut file = match File::create(&path) {
-                    Err(why) => { window.modal_err(&ui, "I/O Error", &format!("Could not open file {}: {}", path.display(), why.description())); return; }
-                    Ok(f) => f
-                };
-                match file.write_all(entry.value(&ui).as_bytes()) {
-                    Err(why) => { window.modal_err(&ui, "I/O Error", &format!("Could not write to file {}: {}", path.display(), why.description())); return; }
-                    Ok(_) => ()
-                };
-            }    
-        }
-    });
-
-    ui.main();
-}
+```toml
+iui = "0.2"
 ```
 
 ## Organization
@@ -64,11 +19,68 @@ fn main() {
 `iui` is the safe Rust wrapper, to be used by most users.
 `ui` is the old version of the safe wrapper. Don't use this.
 `ui-sys` is the raw unsafe bindings to the `libui` C code. Requires `cmake` so it can build `libui`.
-
-## Building
 `libui` is included as a submodule. You will need CMake to build `libui` itself.
 
-Based on work by @pcwalton. Licensed MIT.
+Based on work by [@pcwalton](https://github.com/pcwalton/). Licensed MIT.
+
+## Example
+
+```
+extern crate iui;
+use iui::prelude::*;
+use iui::controls::{Label, Button, VerticalBox, Group};
+
+fn main() {
+    // Initialize the UI library
+    let ui = UI::init().expect("Couldn't initialize UI library");
+    // Create a window into which controls can be placed
+    let mut win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
+    
+    // Create a vertical layout to hold the controls
+    let mut vbox = VerticalBox::new(&ui);
+    vbox.set_padded(&ui, true);
+
+    let mut group_vbox = VerticalBox::new(&ui);
+    let mut group = Group::new(&ui, "Group");
+
+    // Create two buttons to place in the window
+    let mut button = Button::new(&ui, "Button");
+    button.on_clicked(&ui, {
+        let ui = ui.clone();
+        move |btn| {
+            btn.set_text(&ui, "Clicked!");
+        }
+    });
+
+    let mut quit_button = Button::new(&ui, "Quit");
+    quit_button.on_clicked(&ui, {
+        let ui = ui.clone();
+        move |_| {
+            ui.quit();
+        }
+    });
+
+    // Create a new label. Note that labels don't auto-wrap!
+    let mut label_text = String::new();
+    label_text.push_str("There is a ton of text in this label.\n");
+    label_text.push_str("Pretty much every unicode character is supported.\n");
+    label_text.push_str("🎉 用户界面 사용자 인터페이스");
+    let label = Label::new(&ui, &label_text);
+
+    vbox.append(&ui, label, LayoutStrategy::Stretchy);
+    group_vbox.append(&ui, button, LayoutStrategy::Compact);
+    group_vbox.append(&ui, quit_button, LayoutStrategy::Compact);
+    group.set_child(&ui, group_vbox);
+    vbox.append(&ui, group, LayoutStrategy::Compact);
+
+    // Actually put the button in the window
+    win.set_child(&ui, vbox);
+    // Show the window
+    win.show(&ui);
+    // Run the application
+    ui.main();
+}
+```
 
 ## Testing Note
 Travis does not connect video devices to their testing environments, so the tests cannot be run. Therefore, the "tests" only check compilation.
