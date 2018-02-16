@@ -25,7 +25,7 @@ Based on work by [@pcwalton](https://github.com/pcwalton/). Licensed MIT.
 
 ## Example
 
-```
+```rust
 extern crate iui;
 use iui::prelude::*;
 use iui::controls::{Label, Button, VerticalBox, Group};
