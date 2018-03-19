@@ -25,6 +25,8 @@ Based on work by [@pcwalton](https://github.com/pcwalton/). Licensed MIT.
 
 ## Example
 
+![Three example GUI applications running on Linux](themed.png)
+
 ```rust
 extern crate iui;
 use iui::prelude::*;
