@@ -1,9 +1,14 @@
 # Improved User Interface
+## A cross-platform UI toolkit for Rust based on libui
 [![libui-rs build status](https://api.travis-ci.org/LeoTindall/libui-rs.svg?branch=master)](https://travis-ci.org/LeoTindall/libui-rs/)
-[![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](https://crates.io/crates/iui/)
 [![issue resolution badge](https://isitmaintained.com/badge/resolution/LeoTindall/libui-rs.svg)](https://isitmaintained.com/project/LeoTindall/libui-rs)
 [![open issues badge](https://isitmaintained.com/badge/open/LeoTindall/libui-rs.svg)](https://isitmaintained.com/project/LeoTindall/libui-rs)
 ![actively developed badge](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
+
+iui: [![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](https://crates.io/crates/iui/)
+[![docs.rs for iui](https://docs.rs/iui/badge.svg)](https://docs.rs/iui)
+ui-sys: [![ui-sys crates.io version badge](https://img.shields.io/crates/v/ui-sys.svg)](https://crates.io/crates/ui-sys/)
+[![docs.rs for ui-sys](https://docs.rs/ui-sys/badge.svg)](https://docs.rs/ui)
 
 `iui` is a simple, small, easy to distribute GUI library, a Rusty user interface library that binds to platform native APIs.
 These are work-in-progress bindings to the minimalistic native UI library [libui][libui] via the `ui-sys` bindings crate.
