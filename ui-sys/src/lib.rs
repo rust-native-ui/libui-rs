@@ -23,8 +23,6 @@ extern {
     pub fn uiUninit();
     pub fn uiFreeInitError(err: *const c_char);
 
-    pub fn uiMainSteps();
-    pub fn uiMainStep(wait: c_int) -> c_int;
     pub fn uiMain();
     pub fn uiMainStep(wait: c_int) -> c_int;
     pub fn uiMainSteps();

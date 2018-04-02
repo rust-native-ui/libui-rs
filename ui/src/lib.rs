@@ -86,14 +86,9 @@ extern crate bitflags;
 extern crate libc;
 extern crate ui_sys;
 
-pub use controls::{Area, AreaDrawParams, AreaKeyEvent, AreaHandler, ExtKey, BoxControl, Button, Checkbox, ColorButton};
-pub use controls::{Combobox, Control, DateTimePicker, Entry, FontButton, Group, Label};
-pub use controls::{MultilineEntry, ProgressBar, RadioButtons, Separator, Slider, Spinbox, Tab};
 pub use ffi_utils::Text;
-pub use menus::{Menu, MenuItem};
-pub use ui::{InitError, InitOptions, init, main_steps, main_step, main, msg_box, msg_box_error, on_should_quit};
-pub use ui::{open_file, queue_main, quit, save_file, uninit};
-pub use windows::Window;
+pub use ui::{InitError, UI};
+pub use window::Window;
 pub use image::Image;
 
 #[macro_use]
@@ -103,6 +98,5 @@ pub mod ffi_utils;
 pub mod menus;
 pub mod prelude;
 mod ui;
-mod windows;
+pub mod window;
 mod image;
-

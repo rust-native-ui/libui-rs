@@ -17,7 +17,6 @@ pub use ui_sys::uiDrawLineJoin as LineJoin;
 pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 pub use ui_sys::uiDrawFillMode as FillMode;
 
-use image;
 
 pub struct Context {
     ui_draw_context: *mut uiDrawContext,
@@ -88,21 +87,6 @@ impl Context {
     pub fn draw_text(&self, x: f64, y: f64, layout: &text::Layout) {
         ffi_utils::ensure_initialized();
         unsafe { ui_sys::uiDrawText(self.ui_draw_context, x, y, layout.as_ui_draw_text_layout()) }
-    }
-
-    #[inline]
-    pub fn draw_image(&self, x: f64, y: f64, width: f64, height: f64, image: &mut image::Image) {
-        ffi_utils::ensure_initialized();
-        unsafe {
-            ui_sys::uiImageAppend(
-                image.ui_image,
-                image.data.as_mut_ptr() as *mut c_void,
-                image.width as i32,
-                image.height as i32,
-                image.width as i32 * 4,
-            );
-            ui_sys::uiDrawImage(self.ui_draw_context, x, y, width, height, image.ui_image);
-        }
     }
 
     pub fn draw_image(&self, x: f64, y: f64, img: &image::Image) {
