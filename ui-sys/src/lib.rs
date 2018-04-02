@@ -26,6 +26,8 @@ extern {
     pub fn uiMainSteps();
     pub fn uiMainStep(wait: c_int) -> c_int;
     pub fn uiMain();
+    pub fn uiMainStep(wait: c_int) -> c_int;
+    pub fn uiMainSteps();
     pub fn uiQuit();
 
     pub fn uiQueueMain(f: extern "C" fn(data: *mut c_void), data: *mut c_void);
@@ -216,7 +218,14 @@ extern {
                                 f: extern "C" fn(c: *mut uiCombobox, data: *mut c_void),
                                 data: *mut c_void);
     pub fn uiNewCombobox() -> *mut uiCombobox;
-    pub fn uiNewEditableCombobox() -> *mut uiCombobox;
+}
+
+pub enum uiEditableCombobox {}
+
+#[link(name = "ui")]
+extern {
+    pub fn uiNewEditableCombobox() -> *mut uiEditableCombobox;
+    pub fn uiEditableComboboxAppend(c: *mut uiEditableCombobox, text: *const c_char);
 }
 
 pub enum uiRadioButtons {}
@@ -620,10 +629,10 @@ pub struct uiAreaMouseEvent {
     pub AreaWidth: c_double,
     pub AreaHeight: c_double,
 
-    pub Down: uintmax_t,
-    pub Up: uintmax_t,
+    pub Down: c_int,
+    pub Up: c_int,
 
-    pub Count: uintmax_t,
+    pub Count: c_int,
 
     pub Modifiers: uiModifiers,
 
@@ -637,45 +646,45 @@ pub enum uiExtKey {
     /// Equivalent to "Help" on Apple keyboards.
     Insert = 2,
     Delete = 3,
-	Home = 4,
-	End = 5,
-	PageUp = 6,
-	PageDown = 7,
-	Up = 8,
-	Down = 9,
-	Left = 10,
-	Right = 11,
+    Home = 4,
+    End = 5,
+    PageUp = 6,
+    PageDown = 7,
+    Up = 8,
+    Down = 9,
+    Left = 10,
+    Right = 11,
     // F1..F12 are guaranteed to be consecutive.
-	F1 = 12,
-	F2 = 13,
-	F3 = 14,
-	F4 = 15,
-	F5 = 16,
-	F6 = 17,
-	F7 = 18,
-	F8 = 19,
-	F9 = 20,
-	F10 = 21,
-	F11 = 22,
-	F12 = 23,
+    F1 = 12,
+    F2 = 13,
+    F3 = 14,
+    F4 = 15,
+    F5 = 16,
+    F6 = 17,
+    F7 = 18,
+    F8 = 19,
+    F9 = 20,
+    F10 = 21,
+    F11 = 22,
+    F12 = 23,
     // Numpad keys; independent of Num Lock state.
     // N0..N9 are guaranteed to be consecutive.
-	N0 = 24,
-	N1 = 25,
-	N2 = 26,
-	N3 = 27,
-	N4 = 28,
-	N5 = 29,
-	N6 = 30,
-	N7 = 31,
-	N8 = 32,
-	N9 = 33,
-	NDot = 34,
-	NEnter = 35,
-	NAdd = 36,
-	NSubtract = 37,
-	NMultiply = 38,
-	NDivide = 39,
+    N0 = 24,
+    N1 = 25,
+    N2 = 26,
+    N3 = 27,
+    N4 = 28,
+    N5 = 29,
+    N6 = 30,
+    N7 = 31,
+    N8 = 32,
+    N9 = 33,
+    NDot = 34,
+    NEnter = 35,
+    NAdd = 36,
+    NSubtract = 37,
+    NMultiply = 38,
+    NDivide = 39,
 }
 
 #[repr(C)]

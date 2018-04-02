@@ -2,14 +2,16 @@
 
 extern crate ui;
 
-use ui::{BoxControl, Button, Checkbox, ColorButton, Combobox, DateTimePicker, Entry};
-use ui::{FontButton, Group, InitOptions, Label, Menu, MenuItem, ProgressBar, RadioButtons};
-use ui::{Separator, Slider, Spinbox, Tab, Window};
+use ui::prelude::*;
+use ui::controls::*;
+use ui::menus::{Menu, MenuItem};
 
-fn run() {
+fn run(ui: Rc<UI>) {
     let menu = Menu::new("File");
     menu.append_item("Open").on_clicked(Box::new(open_clicked));
     menu.append_item("Save").on_clicked(Box::new(save_clicked));
+    menu.append_separator();
+    menu.append_quit_item();
 
     let menu = Menu::new("Edit");
     menu.append_check_item("Checkable Item");
@@ -24,10 +26,13 @@ fn run() {
 
     let mainwin = Window::new("ui Control Gallery", 640, 480, true);
     mainwin.set_margined(true);
-    mainwin.on_closing(Box::new(|_| {
-        ui::quit();
-        false
-    }));
+    {
+        let ui = ui.clone();
+        mainwin.on_closing(Box::new(move |_| {
+            ui.quit();
+            false
+        }));
+    }
 
     let vbox = BoxControl::new_vertical();
     vbox.set_padded(true);
@@ -97,13 +102,12 @@ fn run() {
     cbox.append("Combobox Item 3");
     inner.append(cbox.into(), false);
 
-    // FIXME(jamesmunns) Editable comboboxes are a nogo
+    let cbox = EditableCombobox::new();
+    cbox.append("Editable Item 1");
+    cbox.append("Editable Item 2");
+    cbox.append("Editable Item 3");
+    inner.append(cbox.into(), false);
 
-    // let cbox = Combobox::new_editable();
-    // cbox.append("Editable Item 1");
-    // cbox.append("Editable Item 2");
-    // cbox.append("Editable Item 3");
-    // inner.append(cbox.into(), false);
 
     let rb = RadioButtons::new();
     rb.append("Radio Button 1");
@@ -118,32 +122,33 @@ fn run() {
     inner2.append(tab.into(), true);
 
     mainwin.show();
-    ui::main();
+    ui.main();
 }
 
 pub fn main() {
-    ui::init(InitOptions).unwrap();
-    run();
-    ui::uninit();
+    let ui = Rc::new(UI::init().unwrap());
+    run(ui.clone());
 }
 
 fn open_clicked(_: &MenuItem, mainwin: &Window) {
-    match ui::open_file(mainwin) {
-        Some(filename) => ui::msg_box(mainwin, "File selected", &*filename),
-        None => ui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
+    match mainwin.open_file() {
+        Some(filename) => mainwin.msg_box("File selected", &*filename),
+        None => mainwin.msg_box_error("No file selected", "Don't be alarmed!"),
     }
 }
 
 fn save_clicked(_: &MenuItem, mainwin: &Window) {
-    match ui::open_file(mainwin) {
+    match mainwin.open_file() {
         Some(filename) => {
-            ui::msg_box(mainwin, "File selected (don't worry, it's still there)", &*filename)
+            mainwin.msg_box(
+                "File selected (don't worry, it's still there)",
+                &*filename,
+            )
         }
-        None => ui::msg_box_error(mainwin, "No file selected", "Don't be alarmed!"),
+        None => mainwin.msg_box_error("No file selected", "Don't be alarmed!"),
     }
 }
 
 fn update(_: i64) {
     // TODO(pcwalton)
 }
-

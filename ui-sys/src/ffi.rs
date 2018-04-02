@@ -16,6 +16,8 @@ extern {
     pub fn uiFreeInitError(err: *const c_char);
 
     pub fn uiMain();
+    pub fn uiMainStep(wait: c_int) -> c_int;
+    pub fn uiMainSteps();
     pub fn uiQuit();
 
     pub fn uiQueueMain(f: extern "C" fn(data: *mut c_void), data: *mut c_void);
@@ -205,7 +207,14 @@ extern {
                                 f: extern "C" fn(c: *mut uiCombobox, data: *mut c_void),
                                 data: *mut c_void);
     pub fn uiNewCombobox() -> *mut uiCombobox;
-    pub fn uiNewEditableCombobox() -> *mut uiCombobox;
+}
+
+pub enum uiEditableCombobox {}
+
+#[link(name = "ui")]
+extern {
+    pub fn uiNewEditableCombobox() -> *mut uiEditableCombobox;
+    pub fn uiEditableComboboxAppend(c: *mut uiEditableCombobox, text: *const c_char);
 }
 
 pub enum uiRadioButtons {}
@@ -708,3 +717,20 @@ extern {
     pub fn uiNewColorButton() -> *mut uiColorButton;
 }
 
+#[repr(C)]
+#[derive(Clone)]
+pub struct uiImage {
+}
+
+//pub enum Pixels {}
+//#[link(name = "ui")]
+//extern {
+//    pub fn uiNewImage(width: c_double, height c_double) -> *mut uiImage;
+//    pub fn uiFreeImage(i: *mut uiImage);
+//    pub fn uiImageAppend(i: *mut uiImage,
+//			 pixels: *mut Pixels,
+//			 pixelWidth: c_int,
+//			 pixelHeight: c_int,
+//			 pixelStride: c_int);
+//
+//}

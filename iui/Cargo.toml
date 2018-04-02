@@ -1,16 +1,16 @@
 [package]
-name = "ui-sys"
-version = "0.1.1"
-authors = ["Leo Tindall <lfstindall@gmail.com>", "Patrick Walton <pcwalton@mimiga.net>"]
-build = "build.rs"
-license = "MIT"
-description = "Native bindings to the minimalist, cross-platform, widget set `libui`"
+name = "iui"
+version = "0.2.0"
+authors = ["Leo Tindall <lfstindall@gmail.com>"]
 
+# A short blurb about the package. This is not rendered in any format when
+# uploaded to crates.io (aka this is not markdown).
+description = "Simple, small, easy to distribute GUI bindings."
 
 # These URLs point to more information about the package. These are
 # intended to be webviews of the relevant data, not necessarily compatible
 # with VCS tools and the like.
-documentation = "https://docs.rs/ui-sys/"
+documentation = "https://docs.rs/iui/"
 repository = "https://github.com/LeoTindall/libui-rs"
 
 # This points to a file under the package root (relative to this `Cargo.toml`).
@@ -27,6 +27,7 @@ keywords = ["windows", "gtk", "gui", "user_interface", "macos"]
 # Categories are a fixed list available at crates.io/category_slugs, and
 # they must match exactly.
 categories = ["gui", "os::macos-apis", "os::unix-apis", "os::windows-apis"]
+license = "MIT"
 
 [badges]
 # Travis CI: `repository` in format "<user>/<project>" is required.
@@ -42,7 +43,7 @@ is-it-maintained-open-issues = { repository = "LeoTindall/libui-rs" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
+bitflags = "0.7"
 libc = "0.2"
-
-[build-dependencies]
-cmake = "0.1"
+failure = "0.1.1"
+ui-sys = "0.1.1"

@@ -1,6 +1,6 @@
-ui-sys/target
-ui-sys/Cargo.lock
+Cargo.lock
+*.swp
 ui/target
-ui/Cargo.lock
-.DS_Store
-*.bk
+ui-sys/target
+iui/target
+target

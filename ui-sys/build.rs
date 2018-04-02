@@ -6,6 +6,7 @@ use std::path::Path;
 use std::process::Command;
 
 fn main() {
+    // Update the submodule with libui if needed
     if !Path::new("libui/.git").exists() {
         Command::new("git").args(&["submodule", "update", "--init"]).status().unwrap();
     }
