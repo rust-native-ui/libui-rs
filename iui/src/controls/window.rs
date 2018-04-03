@@ -125,6 +125,15 @@ impl Window {
         unsafe { ui_sys::uiWindowSetChild(self.uiWindow, child.into().as_ui_control()) }
     }
 
+    /// Save window position for next application start
+    /// Only available on Darwin at the moment
+    pub fn set_autosave(&self, _ctx: &UI, name: &str) {
+        unsafe {
+            let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
+            ui_sys::uiWindowSetAutosave(self.uiWindow, c_string.as_ptr())
+        }
+    }
+
     /// Allow the user to select an existing file.
     pub fn open_file(&self, _ctx: &UI) -> Option<PathBuf> {
         let ptr = unsafe { ui_sys::uiOpenFile(self.uiWindow) };
@@ -141,7 +150,7 @@ impl Window {
         Some(path_string.into())
     }
 
-    
+
     /// Open a generic message box to show a message to the user.
     /// Returns when the user acknowledges the message.
     pub fn modal_msg(&self, _ctx: &UI, title: &str, description: &str) {
