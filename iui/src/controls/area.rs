@@ -164,7 +164,7 @@ impl Area {
 }
 
 pub struct AreaDrawParams {
-    pub context: draw::Context,
+    pub context: draw::DrawContext,
 
     pub area_width: f64,
     pub area_height: f64,
@@ -179,7 +179,7 @@ impl AreaDrawParams {
     // TODO: check if UI is initialized?
     unsafe fn from_ui_area_draw_params(ui_area_draw_params: &uiAreaDrawParams) -> AreaDrawParams {
         AreaDrawParams {
-            context: draw::Context::from_ui_draw_context(ui_area_draw_params.Context),
+            context: draw::DrawContext::from_ui_draw_context(ui_area_draw_params.Context),
             area_width: ui_area_draw_params.AreaWidth,
             area_height: ui_area_draw_params.AreaHeight,
             clip_x: ui_area_draw_params.ClipX,

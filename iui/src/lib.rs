@@ -1,6 +1,7 @@
 //! `iui`, the `i`mproved `u`ser `i`nterface crate, provides Rust bindings to `libui`, a wrapper library for native(ish) GUI libraries
 //! - Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere. This library exposes a Rusty procedural interface to the
-//! "Least Common Denominator" of GUI widgets. They are all available on all supported platforms.
+//! "Least Common Denominator" of GUI widgets. They are all available on all supported platforms, though some functionality may not
+//! perform precisely the same on all platforms. These inconsistencies are marked.
 //!
 //! To use the library, add the following to your `Cargo.toml`:
 //!
