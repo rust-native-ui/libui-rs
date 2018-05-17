@@ -1,17 +1,17 @@
+use draw::{Brush, Path, StrokeParams, Transform};
 use ui::UI;
-use draw::{Path, Brush, StrokeParams, Matrix};
-use ui_sys::{self, uiDrawContext, uiDrawMatrix};
+use ui_sys::{self, uiDrawContext};
 
 use image;
 
-/// Drawing context, used to 
+/// Drawing context, used to draw custom content on the screen.
 pub struct DrawContext {
     ui_draw_context: *mut uiDrawContext,
 }
 
 impl DrawContext {
-    /// Create a Context from a ui_draw_context pointer. 
-    /// 
+    /// Create a Context from a ui_draw_context pointer.
+    ///
     /// # Unsafety
     /// If the pointer is invalid, this is memory-unsafe.
     /// If libui is not initialized, behavior will be inconsistent.
@@ -39,22 +39,18 @@ impl DrawContext {
     pub fn fill(&self, ctx: &UI, path: &Path, brush: &Brush) {
         unsafe {
             let brush = brush.as_ui_draw_brush_ref(ctx);
-            ui_sys::uiDrawFill(
-                self.ui_draw_context,
-                path.ptr(),
-                brush.ptr(),
-            )
+            ui_sys::uiDrawFill(self.ui_draw_context, path.ptr(), brush.ptr())
         }
     }
 
-    /// Transform this DrawContext by the given Matrix.
-    pub fn transform(&self, _ctx: &UI, matrix: &Matrix) {
-        unsafe {
-            ui_sys::uiDrawTransform(
-                self.ui_draw_context,
-                &matrix.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix,
-            )
-        }
+    /// Transform this DrawContext by the given Transform.
+    pub fn transform(&self, _ctx: &UI, txform: &Transform) {
+        unsafe { ui_sys::uiDrawTransform(self.ui_draw_context, txform.ptr()) }
+    }
+
+    /// Scale the contents of the DrawContext by the given X and Y ratios.
+    pub fn scale(&self, x_scale: f64, y_scale: f64) {
+        unsafe { ui_sys::uiScalePixmapImage(self.ui_draw_context, x_scale, y_scale) }
     }
 
     /// Open a modal allowing the user to save the contents of this DrawContext.
@@ -69,14 +65,6 @@ impl DrawContext {
 
     /// Draw the pixels from the given Image onto this DrawContext at the given position.
     pub fn draw_image(&self, x: f64, y: f64, img: &image::Image) {
-        unsafe {
-            ui_sys::uiDrawPixmapImage(self.ui_draw_context, x, y, img.as_ui_draw_image())
-        }
-    }
-
-    pub fn scale_image(&self, x_scale: f64, y_scale: f64) {
-        unsafe {
-            ui_sys::uiScalePixmapImage(self.ui_draw_context, x_scale, y_scale)
-        }
+        unsafe { ui_sys::uiDrawPixmapImage(self.ui_draw_context, x, y, img.as_ui_draw_image()) }
     }
 }

@@ -1,5 +1,5 @@
-use ui::UI;
 use libc::c_int;
+use ui::UI;
 use ui_sys::{self, uiDrawPath};
 
 pub use ui_sys::uiDrawFillMode as FillMode;
@@ -77,7 +77,16 @@ impl Path {
         }
     }
 
-    pub fn bezier_to(&self, _ctx: &UI, c1x: f64, c1y: f64, c2x: f64, c2y: f64, end_x: f64, end_y: f64) {
+    pub fn bezier_to(
+        &self,
+        _ctx: &UI,
+        c1x: f64,
+        c1y: f64,
+        c2x: f64,
+        c2y: f64,
+        end_x: f64,
+        end_y: f64,
+    ) {
         unsafe { ui_sys::uiDrawPathBezierTo(self.ui_draw_path, c1x, c1y, c2x, c2y, end_x, end_y) }
     }
 

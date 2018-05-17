@@ -1,13 +1,14 @@
 //! User input mechanisms: numbers, colors, and text in various forms.
 
-use std::mem;
+use super::Control;
+use libc::c_void;
 use std::ffi::{CStr, CString};
 use std::i64;
-use libc::c_void;
-use ui_sys::{self, uiControl, uiSpinbox, uiSlider, uiEntry, uiMultilineEntry, uiCombobox,
-    uiCheckbox};
-use super::Control;
+use std::mem;
 use ui::UI;
+use ui_sys::{
+    self, uiCheckbox, uiCombobox, uiControl, uiEntry, uiMultilineEntry, uiSlider, uiSpinbox,
+};
 
 pub trait NumericEntry {
     fn value(&self, ctx: &UI) -> i64;
@@ -136,7 +137,11 @@ impl MultilineEntry {
 
 impl TextEntry for Entry {
     fn value(&self, _ctx: &UI) -> String {
-        unsafe { CStr::from_ptr(ui_sys::uiEntryText(self.uiEntry)).to_string_lossy().into_owned() }
+        unsafe {
+            CStr::from_ptr(ui_sys::uiEntryText(self.uiEntry))
+                .to_string_lossy()
+                .into_owned()
+        }
     }
     fn set_value(&mut self, _ctx: &UI, value: &str) {
         let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
@@ -156,7 +161,9 @@ impl TextEntry for Entry {
 
         extern "C" fn c_callback(entry: *mut uiEntry, data: *mut c_void) {
             unsafe {
-                let string = CStr::from_ptr(ui_sys::uiEntryText(entry)).to_string_lossy().into_owned();
+                let string = CStr::from_ptr(ui_sys::uiEntryText(entry))
+                    .to_string_lossy()
+                    .into_owned();
                 mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
                 mem::forget(entry);
             }
@@ -166,7 +173,11 @@ impl TextEntry for Entry {
 
 impl TextEntry for MultilineEntry {
     fn value(&self, _ctx: &UI) -> String {
-        unsafe { CStr::from_ptr(ui_sys::uiMultilineEntryText(self.uiMultilineEntry)).to_string_lossy().into_owned() }
+        unsafe {
+            CStr::from_ptr(ui_sys::uiMultilineEntryText(self.uiMultilineEntry))
+                .to_string_lossy()
+                .into_owned()
+        }
     }
     fn set_value(&mut self, _ctx: &UI, value: &str) {
         let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
@@ -186,7 +197,9 @@ impl TextEntry for MultilineEntry {
 
         extern "C" fn c_callback(entry: *mut uiMultilineEntry, data: *mut c_void) {
             unsafe {
-                let string = CStr::from_ptr(ui_sys::uiMultilineEntryText(entry)).to_string_lossy().into_owned();
+                let string = CStr::from_ptr(ui_sys::uiMultilineEntryText(entry))
+                    .to_string_lossy()
+                    .into_owned();
                 mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
                 mem::forget(entry);
             }

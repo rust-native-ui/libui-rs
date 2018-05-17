@@ -2,51 +2,55 @@ use std::mem;
 use std::ops::Mul;
 use ui_sys::{self, uiDrawMatrix};
 
+/// A transformation which can be applied to the contents of a DrawContext.
 #[derive(Copy, Clone, PartialEq, Debug)]
-pub struct Matrix {
-    pub ui_matrix: uiDrawMatrix,
+pub struct Transform {
+    ui_matrix: uiDrawMatrix,
 }
 
-impl Matrix {
-    pub fn from_ui_matrix(ui_matrix: &uiDrawMatrix) -> Matrix {
-        Matrix {
+impl Transform {
+    /// Create a Transform from an existing raw uiDrawMatrix.
+    pub fn from_ui_matrix(ui_matrix: &uiDrawMatrix) -> Transform {
+        Transform {
             ui_matrix: *ui_matrix,
         }
     }
 
-    pub fn identity() -> Matrix {
+    /// Create a new Transform that does nothing.
+    pub fn identity() -> Transform {
         unsafe {
             let mut matrix = mem::uninitialized();
             ui_sys::uiDrawMatrixSetIdentity(&mut matrix);
-            Matrix::from_ui_matrix(&matrix)
+            Transform::from_ui_matrix(&matrix)
         }
     }
 
+    /// Modify this Transform to translate by the given amounts.
     pub fn translate(&mut self, x: f64, y: f64) {
         unsafe { ui_sys::uiDrawMatrixTranslate(&mut self.ui_matrix, x, y) }
     }
 
+    /// Modify this Transform to scale by the given amounts from the given center.
     pub fn scale(&mut self, x_center: f64, y_center: f64, x: f64, y: f64) {
         unsafe { ui_sys::uiDrawMatrixScale(&mut self.ui_matrix, x_center, y_center, x, y) }
     }
 
+    /// Modify this Transform to rotate around the given center by the given angle.
     pub fn rotate(&mut self, x: f64, y: f64, angle: f64) {
         unsafe { ui_sys::uiDrawMatrixRotate(&mut self.ui_matrix, x, y, angle) }
     }
 
+    /// Modify this Transform to skew from the given point by the given amount.
     pub fn skew(&mut self, x: f64, y: f64, xamount: f64, yamount: f64) {
         unsafe { ui_sys::uiDrawMatrixSkew(&mut self.ui_matrix, x, y, xamount, yamount) }
     }
 
-    pub fn multiply(&mut self, src: &Matrix) {
-        unsafe {
-            ui_sys::uiDrawMatrixMultiply(
-                &mut self.ui_matrix,
-                &src.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix,
-            )
-        }
+    /// Compose this Transform with another, creating a Transform which represents both operations.
+    pub fn compose(&mut self, src: &Transform) {
+        unsafe { ui_sys::uiDrawMatrixMultiply(&mut self.ui_matrix, src.ptr()) }
     }
 
+    /// Returns true if inverting this Transform is possible.
     pub fn invertible(&self) -> bool {
         unsafe {
             ui_sys::uiDrawMatrixInvertible(
@@ -55,6 +59,7 @@ impl Matrix {
         }
     }
 
+    /// Attempts to invert the Transform, returning true if it succeeded and false if it failed.
     pub fn invert(&mut self) -> bool {
         unsafe { ui_sys::uiDrawMatrixInvert(&mut self.ui_matrix) != 0 }
     }
@@ -80,13 +85,17 @@ impl Matrix {
             size
         }
     }
+
+    pub fn ptr(&self) -> *mut uiDrawMatrix {
+        &self.ui_matrix as *const uiDrawMatrix as *mut uiDrawMatrix
+    }
 }
 
-impl Mul<Matrix> for Matrix {
-    type Output = Matrix;
+impl Mul<Transform> for Transform {
+    type Output = Transform;
 
-    fn mul(mut self, other: Matrix) -> Matrix {
-        self.multiply(&other);
+    fn mul(mut self, other: Transform) -> Transform {
+        self.compose(&other);
         self
     }
 }

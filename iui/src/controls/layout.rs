@@ -1,10 +1,10 @@
-use std::mem;
-use std::ffi::{CStr, CString};
-use libc::c_int;
-use ui_sys::{self, uiBox, uiControl, uiTab, uiGroup, uiSeparator};
 use super::Control;
-use ui::UI;
 use error::UIError;
+use libc::c_int;
+use std::ffi::{CStr, CString};
+use std::mem;
+use ui::UI;
+use ui_sys::{self, uiBox, uiControl, uiGroup, uiSeparator, uiTab};
 
 /// Defines the ways in which the children of boxes can be layed out.
 pub enum LayoutStrategy {
@@ -164,9 +164,9 @@ impl TabGroup {
     pub fn new(_ctx: &UI) -> TabGroup {
         unsafe { TabGroup::from_raw(ui_sys::uiNewTab()) }
     }
-    
+
     /// Add the given control as a new tab in the tab group with the given name.
-    /// 
+    ///
     /// Returns the number of tabs in the group after adding the new tab.
     pub fn append<T: Into<Control>>(&mut self, _ctx: &UI, name: &str, control: T) -> u64 {
         let control = control.into();
@@ -178,20 +178,31 @@ impl TabGroup {
     }
 
     /// Add the given control before the given index in the tab group, as a new tab with a given name.
-    /// 
+    ///
     /// Returns the number of tabs in the group after adding the new tab.
-    pub fn insert_at<T: Into<Control>>(&mut self, _ctx: &UI, name: &str, before: u64, control: T) -> u64 {
+    pub fn insert_at<T: Into<Control>>(
+        &mut self,
+        _ctx: &UI,
+        name: &str,
+        before: u64,
+        control: T,
+    ) -> u64 {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
-            ui_sys::uiTabInsertAt(self.uiTab, c_string.as_ptr(), before, control.into().ui_control);
+            ui_sys::uiTabInsertAt(
+                self.uiTab,
+                c_string.as_ptr(),
+                before,
+                control.into().ui_control,
+            );
             ui_sys::uiTabNumPages(self.uiTab) as u64
         }
     }
 
     /// Remove the control at the given index in the tab group.
-    /// 
+    ///
     /// Returns the number of tabs in the group after removing the tab, or an error if that index was out of bounds.
-    /// 
+    ///
     /// NOTE: This will leak the deleted control! We have no way of actually getting it
     /// to decrement its reference count per `libui`'s UI as of today, unless we maintain a
     /// separate list of children ourselves…
@@ -201,7 +212,7 @@ impl TabGroup {
             unsafe { ui_sys::uiTabDelete(self.uiTab, index) };
             Ok(n)
         } else {
-            Err(UIError::TabGroupIndexOutOfBounds { index: index, n: n } )
+            Err(UIError::TabGroupIndexOutOfBounds { index: index, n: n })
         }
     }
 
@@ -218,7 +229,7 @@ impl TabGroup {
 
 define_control!{
     /// Horizontal line, to seperate things visually.
-    rust_type: HorizontalSeparator, 
+    rust_type: HorizontalSeparator,
     sys_type: uiSeparator
 }
 

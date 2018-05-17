@@ -1,6 +1,6 @@
-use ui::UI;
 use std::marker::PhantomData;
 use std::ptr;
+use ui::UI;
 use ui_sys::{uiDrawBrush, uiDrawBrushType};
 
 pub use ui_sys::uiDrawBrushGradientStop as BrushGradientStop;
@@ -114,14 +114,20 @@ impl<'a> BrushRef<'a> {
     }
 }
 
+/// A brush that paints all pixels with the same color, respecting alpha.
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct SolidBrush {
+    /// Red component of the color
     pub r: f64,
+    /// Green component of the color
     pub g: f64,
+    /// Blue component of the color
     pub b: f64,
+    /// Alpha (α) component of the color (that is, opacity).
     pub a: f64,
 }
 
+/// A brush that paints a linear gradient.
 #[derive(Clone, Debug)]
 pub struct LinearGradientBrush {
     pub start_x: f64,
@@ -131,6 +137,7 @@ pub struct LinearGradientBrush {
     pub stops: Vec<BrushGradientStop>,
 }
 
+/// A brush that paints a radial gradient.
 #[derive(Clone, Debug)]
 pub struct RadialGradientBrush {
     pub start_x: f64,

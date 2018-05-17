@@ -1,12 +1,12 @@
-use ui_sys;
 use error::UIError;
 use ffi_tools;
-use libc::{c_void, c_int};
+use libc::{c_int, c_void};
+use ui_sys;
 
-use std::rc::Rc;
-use std::marker::PhantomData;
 use std::ffi::CStr;
+use std::marker::PhantomData;
 use std::mem;
+use std::rc::Rc;
 use std::thread::sleep;
 use std::time::Duration;
 
@@ -103,7 +103,10 @@ impl UI {
     /// Returns an `EventLoop`, a struct that allows you to step over iterations or events in the UI.
     pub fn event_loop(&self) -> EventLoop {
         unsafe { ui_sys::uiMainSteps() };
-        return EventLoop { _pd: PhantomData, callback: None }
+        return EventLoop {
+            _pd: PhantomData,
+            callback: None,
+        };
     }
 
     /// Running this function causes the UI to quit, exiting from [main](struct.UI.html#method.main) and no longer showing any widgets.
@@ -159,7 +162,7 @@ pub struct EventLoop {
     // This PhantomData prevents UIToken from being Send and Sync
     _pd: PhantomData<*mut ()>,
     // This callback gets run during "run_delay" loops.
-    callback: Option<Box<FnMut()>>
+    callback: Option<Box<FnMut()>>,
 }
 
 impl EventLoop {
@@ -200,7 +203,9 @@ impl EventLoop {
     /// running the callback given with `on_tick` after each UI event.
     pub fn run(&mut self, ctx: &UI) {
         loop {
-            if !self.next_event_tick(ctx) { break; }
+            if !self.next_event_tick(ctx) {
+                break;
+            }
         }
     }
 
@@ -209,7 +214,9 @@ impl EventLoop {
     /// `delay` milliseconds.
     pub fn run_delay(&mut self, ctx: &UI, delay_ms: u32) {
         loop {
-            if !self.next_tick(ctx) { break; }
+            if !self.next_tick(ctx) {
+                break;
+            }
         }
         sleep(Duration::new(0, delay_ms * 1000000))
     }

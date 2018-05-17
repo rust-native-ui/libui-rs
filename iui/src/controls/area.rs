@@ -1,13 +1,14 @@
 //! Provides a way to allocate an area in the window for custom drawing.
 
 use controls::Control;
-use ui::UI;
 use draw;
 use libc::c_int;
 use std::mem;
-use ui_sys::{self, uiArea, uiAreaDrawParams, uiAreaHandler, uiAreaKeyEvent, uiAreaMouseEvent,
-             uiControl};
+use ui::UI;
 pub use ui_sys::uiExtKey as ExtKey;
+use ui_sys::{
+    self, uiArea, uiAreaDrawParams, uiAreaHandler, uiAreaKeyEvent, uiAreaMouseEvent, uiControl,
+};
 
 pub trait AreaHandler {
     fn draw(&mut self, _area: &Area, _area_draw_params: &AreaDrawParams) {}
@@ -133,7 +134,12 @@ impl Area {
         }
     }
 
-    pub fn new_scrolling(ctx: &UI, area_handler: Box<AreaHandler>, width: i64, height: i64) -> Area {
+    pub fn new_scrolling(
+        ctx: &UI,
+        area_handler: Box<AreaHandler>,
+        width: i64,
+        height: i64,
+    ) -> Area {
         unsafe {
             let mut rust_area_handler = RustAreaHandler::new(ctx, area_handler);
             let area = Area::from_raw(ui_sys::uiNewScrollingArea(

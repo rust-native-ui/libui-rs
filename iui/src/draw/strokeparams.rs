@@ -1,6 +1,6 @@
-use ui::UI;
 use libc::c_double;
 use std::marker::PhantomData;
+use ui::UI;
 use ui_sys::uiDrawStrokeParams;
 
 pub use ui_sys::uiDrawLineCap as LineCap;

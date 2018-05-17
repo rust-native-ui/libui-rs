@@ -1,5 +1,10 @@
-//! `iui`, the `i`mproved `u`ser `i`nterface crate, provides Rust bindings to `libui`, a wrapper library for native(ish) GUI libraries
-//! - Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere. This library exposes a Rusty procedural interface to the
+//! `iui`, the `i`mproved `u`ser `i`nterface crate, provides Rust bindings to `libui`, a wrapper library for native(ish) GUI libraries:
+//!
+//! - Win32API on Windows
+//! - Cocoa on Mac OS X
+//! - GTK+ on Linux and elsewhere
+//!
+//! This library exposes a Rusty procedural interface to the
 //! "Least Common Denominator" of GUI widgets. They are all available on all supported platforms, though some functionality may not
 //! perform precisely the same on all platforms. These inconsistencies are marked.
 //!
@@ -27,21 +32,21 @@ extern crate failure;
 extern crate libc;
 extern crate ui_sys;
 
-mod ui;
-mod error;
-mod ffi_tools;
-pub mod menus;
 pub mod controls;
 pub mod draw;
+mod error;
+mod ffi_tools;
 pub mod image;
+pub mod menus;
+mod ui;
 
-pub use ui::{UI, EventLoop};
 pub use error::UIError;
+pub use ui::{EventLoop, UI};
 
 /// Common imports are packaged into this module. It's meant to be glob-imported: `use iui::prelude::*`.
 pub mod prelude {
-    pub use ui::UI;
-    pub use controls::{Window, WindowType};
-    pub use controls::{LayoutStrategy};
+    pub use controls::LayoutStrategy;
     pub use controls::{NumericEntry, TextEntry};
+    pub use controls::{Window, WindowType};
+    pub use ui::UI;
 }

@@ -1,22 +1,26 @@
-use libc::c_void;
-use ui_sys::{uiPixmapImage, uiImageData, uiNewPixmapImage,
-             uiFreePixmapImage, uiPixmapImageGetData,
-             uiImageLoadPixmap32Raw};
+//! Pixel-mapped images and methods for manipulating them.
 
+use libc::c_void;
+use ui_sys::{
+    uiFreePixmapImage, uiImageData, uiImageLoadPixmap32Raw, uiNewPixmapImage, uiPixmapImage,
+    uiPixmapImageGetData,
+};
+
+/// A pixel-mapped imaged, usable with the DrawContext [`draw_image`](../draw/struct.DrawContext.html#method.draw_image) functionality.
 pub struct Image {
-    ui_image: *mut uiPixmapImage
+    ui_image: *mut uiPixmapImage,
 }
 
 // #define uiPixmap32FormatOffsets(a,r,g,b)    ((a) << 0 | (r) << 2 | (g) << 4 | (b) << 6)
-const _UI_PIXMAP32_FORMAT_OFFSET_MASK: u32         = 0x0ff;
-const _UI_PIXMAP32_FORMAT_HAS_ALPHA: u32           = 0x100;
+const _UI_PIXMAP32_FORMAT_OFFSET_MASK: u32 = 0x0ff;
+const _UI_PIXMAP32_FORMAT_HAS_ALPHA: u32 = 0x100;
 const _UI_PIXMAP32_FORMAT_ALPHA_PREMULTIPLIED: u32 = 0x200;
-const _UI_PIXMAP32_FORMAT_ZERO_ROW_BOTTOM: u32     = 0x400;
+const _UI_PIXMAP32_FORMAT_ZERO_ROW_BOTTOM: u32 = 0x400;
 
 impl Image {
     pub fn new(w: i32, h: i32) -> Image {
         Image {
-            ui_image: unsafe { uiNewPixmapImage(w, h) }
+            ui_image: unsafe { uiNewPixmapImage(w, h) },
         }
     }
 
@@ -35,9 +39,9 @@ impl Image {
                 offset_y,
                 w,
                 h,
-                w*4,
+                w * 4,
                 img_data.fmt,
-                data.as_ptr() as *const c_void
+                data.as_ptr() as *const c_void,
             );
         }
     }

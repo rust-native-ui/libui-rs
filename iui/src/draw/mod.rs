@@ -1,16 +1,16 @@
 //! Functions and types related to 2D vector graphics.
 
-mod context;
 mod brush;
-mod matrix;
+mod context;
 mod path;
 mod strokeparams;
+mod transform;
 
-pub use self::context::*;
 pub use self::brush::*;
-pub use self::matrix::*;
+pub use self::context::*;
 pub use self::path::*;
 pub use self::strokeparams::*;
+pub use self::transform::*;
 
 pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 
@@ -105,7 +105,6 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //             }
 //         }
 
-
 //         pub fn family(&self) -> &str {
 //             self.family.to_str().unwrap()
 //         }
@@ -130,11 +129,9 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //             }
 //         }
 
-
 //         pub fn handle(&self, _ctx: &UI) -> usize {
 //             unsafe { ui_sys::uiDrawTextFontHandle(self.ui_draw_text_font) }
 //         }
-
 
 //         pub fn describe(&self, _ctx: &UI) -> FontDescriptor {
 //             unsafe {
@@ -157,7 +154,6 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //                 font_descriptor
 //             }
 //         }
-
 
 //         pub fn metrics(&self, _ctx: &UI) -> FontMetrics {
 //             unsafe {
@@ -194,16 +190,13 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //             }
 //         }
 
-
 //         pub fn as_ui_draw_text_layout(&self) -> *mut uiDrawTextLayout {
 //             self.ui_draw_text_layout
 //         }
 
-
 //         pub fn set_width(&self, _ctx: &UI, width: f64) {
 //             unsafe { ui_sys::uiDrawTextLayoutSetWidth(self.ui_draw_text_layout, width) }
 //         }
-
 
 //         pub fn extents(&self, _ctx: &UI) -> (f64, f64) {
 //             unsafe {
@@ -216,7 +209,6 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //                 extents
 //             }
 //         }
-
 
 //         pub fn set_color(&self, _ctx: &UI, start_char: i64, end_char: i64, r: f64, g: f64, b: f64, a: f64) {
 //             unsafe {
