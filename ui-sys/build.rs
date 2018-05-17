@@ -8,7 +8,10 @@ use std::process::Command;
 fn main() {
     // Update the submodule with libui if needed
     if !Path::new("libui/.git").exists() {
-        Command::new("git").args(&["submodule", "update", "--init"]).status().unwrap();
+        Command::new("git").args(&["version"]).status().expect("Git does not appear to be installed. Git is required to build ui-sys; install Git or build ui-sys independently. Error");
+        Command::new("git").args(&["submodule", "update", "--init"]).status().expect("Unable to update Git submodules. Error");
+    } else {
+        Command::new("git").args(&["submodule", "update", "--recursive"]).status().expect("Unable to update Git submodules. Error");
     }
 
     let target = env::var("TARGET").unwrap();
