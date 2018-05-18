@@ -6,31 +6,52 @@ use std::path::Path;
 use std::process::Command;
 
 fn main() {
-    // Update the submodule with libui if needed
-    if !Path::new("libui/.git").exists() {
-        Command::new("git").args(&["version"]).status().expect("Git does not appear to be installed. Git is required to build ui-sys; install Git or build ui-sys independently. Error");
-        Command::new("git").args(&["submodule", "update", "--init"]).status().expect("Unable to update Git submodules. Error");
-    } else {
-        Command::new("git").args(&["submodule", "update", "--recursive"]).status().expect("Unable to update Git submodules. Error");
+    // Fetch the submodule if needed
+    if cfg!(feature = "fetch") {
+        // Init or update the submodule with libui if needed
+        if !Path::new("libui/.git").exists() {
+            Command::new("git")
+                .args(&["version"])
+                .status()
+                .expect("Git does not appear to be installed. Error");
+            Command::new("git")
+                .args(&["submodule", "update", "--init"])
+                .status()
+                .expect("Unable to init libui submodule. Error");
+        } else {
+            Command::new("git")
+                .args(&["submodule", "update", "--recursive"])
+                .status()
+                .expect("Unable to update libui submodule. Error");
+        }
     }
 
-    let target = env::var("TARGET").unwrap();
-    let msvc = target.contains("msvc");
+    // Build libui if needed. Otherwise, assume it's in lib/
+    let mut dst;
+    let mut msvc = false;
+    if cfg!(feature = "build") {
+        dst = Config::new("libui").build_target("").build();
+        // Deterimine if we're building for MSVC
+        let target = env::var("TARGET").unwrap();
+        msvc = target.contains("msvc");
 
-    let dst = Config::new("libui")
-        .build_target("")
-        .build();
+        let mut postfix = Path::new("build").join("out");
+        if msvc {
+            postfix = postfix.join("Release");
+        }
+        dst = dst.join(&postfix);
+    } else {
+        dst = env::current_dir()
+            .expect("Unable to retrieve current directory location.");
+        dst.push("lib");
+    }
+    println!("cargo:rustc-link-search=native={}", dst.display());
 
-    let mut postfix = Path::new("build").join("out");
     let libname;
-    if msvc {
-        postfix = postfix.join("Release");
+     if msvc {
         libname = "libui";
     } else {
         libname = "ui";
     }
-    let dst = dst.join(&postfix);
-
     println!("cargo:rustc-link-lib={}", libname);
-    println!("cargo:rustc-link-search=native={}", dst.display());
 }
