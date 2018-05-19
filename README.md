@@ -88,8 +88,3 @@ fn main() {
     ui.main();
 }
 ```
-
-## Testing Note
-Travis does not connect video devices to their testing environments, so the tests cannot be run. Therefore, the "tests" only check compilation.
-
-[libui]: https://github.com/andlabs/libui
