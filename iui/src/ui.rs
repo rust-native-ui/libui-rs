@@ -45,6 +45,9 @@ impl UI {
     ///
     /// Only one libUI binding can be active at once; if multiple instances are detected,
     /// this function will return a [`MultipleInitError`](enum.UIError.html#variant.MultipleInitError).
+    /// Be aware the Cocoa (GUI toolkit on Mac OS) requires that the _first thread spawned_ controls
+    /// the UI, so do _not_ spin off your UI interactions into an alternative thread. You're likely to
+    /// have problems on Mac OS.
     ///
     /// ```
     /// # use iui::UI;
@@ -116,8 +119,8 @@ impl UI {
         unsafe { ui_sys::uiQuit() }
     }
 
-    /// Add a callback to the UI queue. These callbacks are run when the UI main() method is called,
-    /// in the order in which they were queued.
+    /// Queues a function to be executed on the GUI threa when next possible. Returns
+    /// immediately, not waiting for the function to be executed.
     ///
     /// # Example
     ///
@@ -126,11 +129,9 @@ impl UI {
     ///
     /// let ui = UI::init().unwrap();
     ///
-    /// // Let the UI exit immediately
-    /// ui.quit();
-    ///
     /// ui.queue_main(|| { println!("Runs first") } );
     /// ui.queue_main(|| { println!("Runs second") } );
+    /// ui.quit();
     /// ```
     pub fn queue_main<F: FnMut()>(&self, callback: F) {
         unsafe {
@@ -158,6 +159,10 @@ impl UI {
 
 /// Provides fine-grained control over the user interface event loop, exposing the `on_tick` event
 /// which allows integration with other event loops, custom logic on event ticks, etc.
+/// Be aware the Cocoa (GUI toolkit on Mac OS) requires that the _first thread spawned_ controls
+/// the UI, so do _not_ spin off your UI interactions into an alternative thread. You're likely to
+/// have problems on Mac OS.
+
 pub struct EventLoop {
     // This PhantomData prevents UIToken from being Send and Sync
     _pd: PhantomData<*mut ()>,

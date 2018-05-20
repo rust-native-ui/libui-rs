@@ -117,12 +117,37 @@ impl RustAreaHandler {
 }
 
 define_control!{
-    /// A control which takes up space on which the application can draw custom content.
+    /// A space on which the application can draw custom content.
+    /// Area is a Control that represents a blank canvas that a program can draw on as
+    /// it wishes. Areas also receive keyboard and mouse events, and programs can react
+    /// to those as they see fit. Drawing and event handling are handled through an
+    /// instance of a type that implements `AreaHandler` that every `Area` has; see
+    /// `AreaHandler` for details.
+    ///
+    /// There are two types of areas. Non-scrolling areas are rectangular and have no
+    /// scrollbars. Programs can draw on and get mouse events from any point in the
+    /// `Area`, and the size of the Area is decided by package ui itself, according to
+    /// the layout of controls in the Window the Area is located in and the size of said
+    /// Window. There is no way to query the Area's size or be notified when its size
+    /// changes; instead, you are given the area size as part of the draw and mouse event
+    /// handlers, for use solely within those handlers.
+    ///
+    /// Scrolling areas have horziontal and vertical scrollbars. The amount that can be
+    /// scrolled is determined by the area's size, which is decided by the programmer
+    /// (both when creating the Area and by a call to SetSize). Only a portion of the
+    /// Area is visible at any time; drawing and mouse events are automatically adjusted
+    /// to match what portion is visible, so you do not have to worry about scrolling in
+    /// your event handlers. AreaHandler has more information.
+    ///
+    /// The internal coordinate system of an Area is points, which are floating-point and
+    /// device-independent. For more details, see `AreaHandler`. The size of a scrolling
+    /// Area must be an exact integer number of points
     rust_type: Area,
     sys_type: uiArea
 }
 
 impl Area {
+    /// Creates a new non-scrolling area.
     pub fn new(ctx: &UI, area_handler: Box<AreaHandler>) -> Area {
         unsafe {
             let mut rust_area_handler = RustAreaHandler::new(ctx, area_handler);
@@ -134,6 +159,7 @@ impl Area {
         }
     }
 
+    /// Creates a new scrolling area.
     pub fn new_scrolling(
         ctx: &UI,
         area_handler: Box<AreaHandler>,
@@ -156,28 +182,58 @@ impl Area {
         Area { uiArea: ui_area }
     }
 
-    pub fn set_size(&self, _ctx: &UI, width: i64, height: i64) {
+    /// Sets the size of the area in points.
+    ///
+    /// # Unsafety
+    /// If called on a non-scrolling `Area`, this function's behavior is undefined.
+    pub unsafe fn set_size(&self, _ctx: &UI, width: u64, height: u64) {
+        // TODO: Check if the area is scrolling?
         unsafe { ui_sys::uiAreaSetSize(self.uiArea, width, height) }
     }
 
+    /// Queues the entire `Area` to be redrawn. This function returns immediately;
+    /// the `Area` is redrawn when the UI thread is next non-busy.
     pub fn queue_redraw_all(&self, _ctx: &UI) {
         unsafe { ui_sys::uiAreaQueueRedrawAll(self.uiArea) }
     }
 
-    pub fn scroll_to(&self, _ctx: &UI, x: f64, y: f64, width: f64, height: f64) {
+    /// Scrolls the Area to show the given rectangle. This behavior is somewhat
+    /// implementation defined, but you can assume that as much of the given rectangle
+    /// as possible will be visible after this call.
+    ///
+    /// # Unsafety
+    /// If called on a non-scrolling `Area`, this function's behavior is undefined.
+    pub unsafe fn scroll_to(&self, _ctx: &UI, x: f64, y: f64, width: f64, height: f64) {
+        // TODO: Make some way to check whether the given area is scrolling or not.
         unsafe { ui_sys::uiAreaScrollTo(self.uiArea, x, y, width, height) }
     }
 }
 
+/// Provides a drawing context that can be used to draw on an Area, and tells you
+/// where to draw. See `AreaHandler` for introductory information.
+///
+/// Height and width values can change at any time, without generating an event,
+/// so do not save them elsewhere.
+///
+/// The clipping rectangle parameters specify the only area in which drawing is allowed.
+/// The system will ensure nothing is drawn outside that area, but drawing is far faster
+/// if the program does not attempt to put things out of bounds.
 pub struct AreaDrawParams {
+    /// The `DrawContext` on which to draw. See `DrawContext` for how to draw.
     pub context: draw::DrawContext,
 
+    /// The width of the `Area`, for non-scrolling `Area`s.
     pub area_width: f64,
+    /// The height of the `Area`, for non-scrolling `Area`s.
     pub area_height: f64,
 
+    /// Leftmost position of the clipping rectangle.
     pub clip_x: f64,
+    /// Topmost position of the clipping rectangle.
     pub clip_y: f64,
+    /// Width of the clipping rectangle.
     pub clip_width: f64,
+    /// Height of the clipping rectangle.
     pub clip_height: f64,
 }
 
@@ -206,6 +262,7 @@ bitflags! {
 }
 
 #[derive(Copy, Clone, Debug)]
+/// Represents a mouse event in an `Area`.
 pub struct AreaMouseEvent {
     pub x: f64,
     pub y: f64,
@@ -224,7 +281,6 @@ pub struct AreaMouseEvent {
 }
 
 impl AreaMouseEvent {
-    // TODO: check if UI is initialized?
     pub fn from_ui_area_mouse_event(ui_area_mouse_event: &uiAreaMouseEvent) -> AreaMouseEvent {
         AreaMouseEvent {
             x: ui_area_mouse_event.X,
@@ -234,13 +290,15 @@ impl AreaMouseEvent {
             down: ui_area_mouse_event.Down,
             up: ui_area_mouse_event.Up,
             count: ui_area_mouse_event.Count,
-            modifiers: Modifiers::from_bits(ui_area_mouse_event.Modifiers as u8).unwrap(),
+            modifiers: Modifiers::from_bits(ui_area_mouse_event.Modifiers as u8)
+                .unwrap_or(Modifiers::empty()),
             held_1_to_64: ui_area_mouse_event.Held1To64,
         }
     }
 }
 
 #[derive(Copy, Clone, Debug)]
+/// A keypress or key release event for an `Area`.
 pub struct AreaKeyEvent {
     pub key: u8,
     pub ext_key: ExtKey,
@@ -250,13 +308,14 @@ pub struct AreaKeyEvent {
 }
 
 impl AreaKeyEvent {
-    // TODO: check if UI is initialized?
     pub fn from_ui_area_key_event(ui_area_key_event: &uiAreaKeyEvent) -> AreaKeyEvent {
         AreaKeyEvent {
             key: ui_area_key_event.Key as u8,
             ext_key: ui_area_key_event.ExtKey,
-            modifier: Modifiers::from_bits(ui_area_key_event.Modifier as u8).unwrap(),
-            modifiers: Modifiers::from_bits(ui_area_key_event.Modifiers as u8).unwrap(),
+            modifier: Modifiers::from_bits(ui_area_key_event.Modifier as u8)
+                .unwrap_or(Modifiers::empty()),
+            modifiers: Modifiers::from_bits(ui_area_key_event.Modifiers as u8)
+                .unwrap_or(Modifiers::empty()),
             up: ui_area_key_event.Up != 0,
         }
     }

@@ -20,6 +20,9 @@
 //! After initialization, all the functionality used for creating actual UIs is in the [`controls`](controls/index.html) module.
 //!
 //! Fine-grained control of the event loop is avilable via the [`EventLoop`](struct.EventLoop.html) struct.
+//! Be aware the Cocoa (GUI toolkit on Mac OS) requires that the _first thread spawned_ controls
+//! the UI, so do _not_ spin off your UI interactions into an alternative thread. You're likely to
+//! have problems on Mac OS.
 //!
 //! For code examples, see the [basic](https://github.com/LeoTindall/libui-rs/blob/master/iui/examples/basic.rs) and
 //! [advanced](https://github.com/LeoTindall/libui-rs/blob/master/iui/examples/inputs.rs) examples or the
