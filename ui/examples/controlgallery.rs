@@ -28,98 +28,99 @@ fn run(ui: Rc<UI>) {
     mainwin.set_margined(true);
     {
         let ui = ui.clone();
-        mainwin.on_closing(Box::new(move |_| {
+        mainwin.on_closing(move |_| {
             ui.quit();
             false
-        }));
+        });
     }
 
     let vbox = BoxControl::new_vertical();
     vbox.set_padded(true);
-    mainwin.set_child(vbox.clone().into());
+    mainwin.set_child(vbox.deref().clone());
 
     let hbox = BoxControl::new_horizontal();
     hbox.set_padded(true);
-    vbox.append(hbox.clone().into(), true);
+    use std::ops::Deref;
+    vbox.append(hbox.deref().clone());
 
     let group = Group::new("Basic Controls");
     group.set_margined(true);
-    hbox.append(group.clone().into(), false);
+    hbox.append(group.deref().clone());
 
     let inner = BoxControl::new_vertical();
     inner.set_padded(true);
-    group.set_child(inner.clone().into());
+    group.set_child(inner.deref().clone());
 
-    inner.append(Button::new("Button").into(), false);
-    inner.append(Checkbox::new("Checkbox").into(), false);
+    inner.append(Button::new("Button"));
+    inner.append(Checkbox::new("Checkbox"));
     let entry = Entry::new();
     entry.set_text("Entry");
-    inner.append(entry.into(), false);
-    inner.append(Label::new("Label").into(), false);
-    inner.append(Separator::new_horizontal().into(), false);
+    inner.append(entry);
+    inner.append(Label::new("Label"));
+    inner.append(Separator::new_horizontal());
 
-    inner.append(DateTimePicker::new_date_picker().into(), false);
-    inner.append(DateTimePicker::new_time_picker().into(), false);
-    inner.append(DateTimePicker::new_date_time_picker().into(), false);
+    inner.append(DateTimePicker::new_date_picker());
+    inner.append(DateTimePicker::new_time_picker());
+    inner.append(DateTimePicker::new_date_time_picker());
 
-    inner.append(FontButton::new().into(), false);
-    inner.append(ColorButton::new().into(), false);
+    inner.append(FontButton::new());
+    inner.append(ColorButton::new());
 
     let inner2 = BoxControl::new_vertical();
     inner2.set_padded(true);
-    hbox.append(inner2.clone().into(), true);
+    hbox.append(inner2.deref().clone());
 
     let group = Group::new("Numbers");
     group.set_margined(true);
-    inner2.append(group.clone().into(), false);
+    inner2.append(group.deref().clone());
 
     let inner = BoxControl::new_vertical();
     inner.set_padded(true);
-    group.set_child(inner.clone().into());
+    group.set_child(inner.deref().clone());
 
     let spinbox = Spinbox::new(0, 100);
-    spinbox.on_changed(Box::new(|spinbox| update(spinbox.value())));
-    inner.append(spinbox.into(), false);
+    spinbox.on_changed(|spinbox| update(spinbox.value()));
+    inner.append(spinbox);
 
     let slider = Slider::new(0, 100);
-    slider.on_changed(Box::new(|slider| update(slider.value())));
-    inner.append(slider.into(), false);
+    slider.on_changed(|slider| update(slider.value()));
+    inner.append(slider);
 
     let progress_bar = ProgressBar::new();
-    inner.append(progress_bar.into(), false);
+    inner.append(progress_bar);
 
     let group = Group::new("Lists");
     group.set_margined(true);
-    inner2.append(group.clone().into(), false);
+    inner2.append(group.deref().clone());
 
     let inner = BoxControl::new_vertical();
     inner.set_padded(true);
-    group.set_child(inner.clone().into());
+    group.set_child(inner.deref().clone());
 
     let cbox = Combobox::new();
     cbox.append("Combobox Item 1");
     cbox.append("Combobox Item 2");
     cbox.append("Combobox Item 3");
-    inner.append(cbox.into(), false);
+    inner.append(cbox);
 
     let cbox = EditableCombobox::new();
     cbox.append("Editable Item 1");
     cbox.append("Editable Item 2");
     cbox.append("Editable Item 3");
-    inner.append(cbox.into(), false);
+    inner.append(cbox);
 
 
     let rb = RadioButtons::new();
     rb.append("Radio Button 1");
     rb.append("Radio Button 2");
     rb.append("Radio Button 3");
-    inner.append(rb.into(), true);
+    inner.append(rb);
 
     let tab = Tab::new();
-    tab.append("Page 1", BoxControl::new_horizontal().into());
-    tab.append("Page 2", BoxControl::new_horizontal().into());
-    tab.append("Page 3", BoxControl::new_horizontal().into());
-    inner2.append(tab.into(), true);
+    tab.append("Page 1", BoxControl::new_horizontal());
+    tab.append("Page 2", BoxControl::new_horizontal());
+    tab.append("Page 3", BoxControl::new_horizontal());
+    inner2.append(tab);
 
     mainwin.show();
     ui.main();

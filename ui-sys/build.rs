@@ -1,5 +1,5 @@
-extern crate make_cmd;
 extern crate cmake;
+use cmake::Config;
 
 use std::env;
 use std::path::Path;
@@ -11,22 +11,23 @@ fn main() {
         Command::new("git").args(&["submodule", "update", "--init"]).status().unwrap();
     }
 
-    // Run cmake to build the project's makefiles
-    let dst = cmake::Config::new("libui")
-                             .build_target("")
-                             .build();
-    let dst = format!("{}/build", dst.display());
+    let target = env::var("TARGET").unwrap();
+    let msvc = target.contains("msvc");
 
-    // Run make to build the actual library
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let outdir_argument = format!("OUTDIR={}", out_dir);
-    let objdir_argument = format!("OBJDIR={}/obj", out_dir);
-    make_cmd::gnu_make().args(&["-C", &dst, &*outdir_argument, &*objdir_argument])
-                        .status()
-                        .unwrap();
-    //Command::new("cp").args(&["-r", "libui/out/", &*out_dir]).status().unwrap();
+    let dst = Config::new("libui")
+        .build_target("")
+        .build();
 
-    println!("cargo:rustc-link-search=native={}/out/", dst);
-    println!("cargo:rustc-link-lib=dylib=ui");
+    let mut postfix = Path::new("build").join("out");
+    let libname;
+    if msvc {
+        postfix = postfix.join("Release");
+        libname = "libui";
+    } else {
+        libname = "ui";
+    }
+    let dst = dst.join(&postfix);
+
+    println!("cargo:rustc-link-lib={}", libname);
+    println!("cargo:rustc-link-search=native={}", dst.display());
 }
-

@@ -45,6 +45,4 @@ maintenance = { status = "actively-developed" }
 libc = "0.2"
 
 [build-dependencies]
-make-cmd = "0.1"
 cmake = "0.1"
-

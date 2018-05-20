@@ -19,7 +19,6 @@ pub struct uiWindowsControl {
     pub AssignControlIDZOrder: extern "C" fn(*mut uiWindowsControl, *mut LONG_PTR, *mut HWND),
 }
 
-#[link(name = "ui")]
 extern {
     pub fn uiWindowsControlSyncEnableState(control: *mut uiWindowsControl, state: c_int);
     pub fn uiWindowsControlSetParentHWND(control: *mut uiWindowsControl, parent: HWND);
@@ -105,7 +104,6 @@ pub struct uiWindowsSizing {
     pub InternalLeading: LONG,
 }
 
-#[link(name = "ui")]
 extern {
     pub fn uiWindowsGetSizing(hwnd: HWND, sizing: *mut uiWindowsSizing);
     pub fn uiWindowsSizingDlgUnitsToPixels(sizing: *mut uiWindowsSizing,

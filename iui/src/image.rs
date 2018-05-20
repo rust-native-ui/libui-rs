@@ -20,7 +20,6 @@ impl Image {
         }
     }
 
-    #[inline]
     pub fn as_ui_draw_image(&self) -> *const uiPixmapImage {
         self.ui_image
     }

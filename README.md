@@ -42,7 +42,7 @@ fn main() {
     let ui = UI::init().expect("Couldn't initialize UI library");
     // Create a window into which controls can be placed
     let mut win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
-    
+
     // Create a vertical layout to hold the controls
     let mut vbox = VerticalBox::new(&ui);
     vbox.set_padded(&ui, true);

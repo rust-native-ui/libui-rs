@@ -4,7 +4,8 @@ use std::mem;
 use std::ffi::{CStr, CString};
 use std::i64;
 use libc::c_void;
-use ui_sys::{self, uiControl, uiSpinbox, uiSlider, uiEntry, uiMultilineEntry};
+use ui_sys::{self, uiControl, uiSpinbox, uiSlider, uiEntry, uiMultilineEntry, uiCombobox,
+    uiCheckbox};
 use super::Control;
 use ui::UI;
 
@@ -22,13 +23,13 @@ pub trait TextEntry {
 
 define_control!{
     /// Numerical entry control which allows users to set any value in a range by typing or incrementing/decrementing.
-    rust_type: Spinbox, 
+    rust_type: Spinbox,
     sys_type: uiSpinbox
 }
 
-define_control!{ 
+define_control!{
     /// Numerical entry which allows users to select a value by picking a location along a line.
-    rust_type: Slider, 
+    rust_type: Slider,
     sys_type: uiSlider
 }
 
@@ -188,6 +189,93 @@ impl TextEntry for MultilineEntry {
                 let string = CStr::from_ptr(ui_sys::uiMultilineEntryText(entry)).to_string_lossy().into_owned();
                 mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
                 mem::forget(entry);
+            }
+        }
+    }
+}
+
+define_control! {
+    /// A control which allows the user to select any one of its options, from a list shown only when selected.
+    rust_type: Combobox,
+    sys_type: uiCombobox
+}
+
+impl Combobox {
+    /// Create a new Combobox
+    pub fn new(_ctx: &UI) -> Self {
+        unsafe { Combobox::from_raw(ui_sys::uiNewCombobox()) }
+    }
+
+    /// Adds a new option to the combination box.
+    pub fn append(&self, _ctx: &UI, name: &str) {
+        unsafe {
+            let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
+            ui_sys::uiComboboxAppend(self.uiCombobox, c_string.as_ptr())
+        }
+    }
+
+    pub fn set_selected(&mut self, _ctx: &UI, value: i64) {
+        unsafe { ui_sys::uiComboboxSetSelected(self.uiCombobox, value) }
+    }
+
+    pub fn on_selected<F: FnMut(i64)>(&mut self, _ctx: &UI, callback: F) {
+        unsafe {
+            let mut data: Box<Box<FnMut(i64)>> = Box::new(Box::new(callback));
+            ui_sys::uiComboboxOnSelected(
+                self.uiCombobox,
+                c_callback,
+                &mut *data as *mut Box<FnMut(i64)> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(combobox: *mut uiCombobox, data: *mut c_void) {
+            unsafe {
+                let val = ui_sys::uiComboboxSelected(combobox);
+                // let combobox = Combobox::from_ui_control(combobox);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(i64)>>(data)(val);
+                // mem::forget(combobox);
+            }
+        }
+    }
+}
+
+define_control! {
+    /// A control which allows the user to select any one of its options, from a list shown only when selected.
+    rust_type: Checkbox,
+    sys_type: uiCheckbox
+}
+
+impl Checkbox {
+    // Create a new Checkbox which can produce values from `min` to `max`.
+    pub fn new(_ctx: &UI, text: &str) -> Self {
+        let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
+        unsafe { Checkbox::from_raw(ui_sys::uiNewCheckbox(c_string.as_ptr())) }
+    }
+
+    pub fn checked(&self, _ctx: &UI) -> bool {
+        unsafe { ui_sys::uiCheckboxChecked(self.uiCheckbox) != 0 }
+    }
+
+    pub fn set_checked(&mut self, _ctx: &UI, checked: bool) {
+        unsafe { ui_sys::uiCheckboxSetChecked(self.uiCheckbox, checked as i32) }
+    }
+
+    pub fn on_toggled<F: FnMut(bool)>(&mut self, _ctx: &UI, callback: F) {
+        unsafe {
+            let mut data: Box<Box<FnMut(bool)>> = Box::new(Box::new(callback));
+            ui_sys::uiCheckboxOnToggled(
+                self.uiCheckbox,
+                c_callback,
+                &mut *data as *mut Box<FnMut(bool)> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(checkbox: *mut uiCheckbox, data: *mut c_void) {
+            unsafe {
+                let val = ui_sys::uiCheckboxChecked(checkbox) != 0;
+                mem::transmute::<*mut c_void, &mut Box<FnMut(bool)>>(data)(val);
             }
         }
     }
