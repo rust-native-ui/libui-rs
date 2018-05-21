@@ -188,7 +188,7 @@ impl Area {
     /// If called on a non-scrolling `Area`, this function's behavior is undefined.
     pub unsafe fn set_size(&self, _ctx: &UI, width: u64, height: u64) {
         // TODO: Check if the area is scrolling?
-        unsafe { ui_sys::uiAreaSetSize(self.uiArea, width, height) }
+        unsafe { ui_sys::uiAreaSetSize(self.uiArea, width as i64, height as i64) }
     }
 
     /// Queues the entire `Area` to be redrawn. This function returns immediately;
