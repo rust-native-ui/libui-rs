@@ -1,32 +1,57 @@
-extern crate make_cmd;
 extern crate cmake;
+use cmake::Config;
 
 use std::env;
 use std::path::Path;
 use std::process::Command;
 
 fn main() {
-    // Update the submodule with libui if needed
-    if !Path::new("libui/.git").exists() {
-        Command::new("git").args(&["submodule", "update", "--init"]).status().unwrap();
+    // Fetch the submodule if needed
+    if cfg!(feature = "fetch") {
+        // Init or update the submodule with libui if needed
+        if !Path::new("libui/.git").exists() {
+            Command::new("git")
+                .args(&["version"])
+                .status()
+                .expect("Git does not appear to be installed. Error");
+            Command::new("git")
+                .args(&["submodule", "update", "--init"])
+                .status()
+                .expect("Unable to init libui submodule. Error");
+        } else {
+            Command::new("git")
+                .args(&["submodule", "update", "--recursive"])
+                .status()
+                .expect("Unable to update libui submodule. Error");
+        }
     }
 
-    // Run cmake to build the project's makefiles
-    let dst = cmake::Config::new("libui")
-                             .build_target("")
-                             .build();
-    let dst = format!("{}/build", dst.display());
+    // Build libui if needed. Otherwise, assume it's in lib/
+    let mut dst;
+    let mut msvc = false;
+    if cfg!(feature = "build") {
+        dst = Config::new("libui").build_target("").build();
+        // Deterimine if we're building for MSVC
+        let target = env::var("TARGET").unwrap();
+        msvc = target.contains("msvc");
 
-    // Run make to build the actual library
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let outdir_argument = format!("OUTDIR={}", out_dir);
-    let objdir_argument = format!("OBJDIR={}/obj", out_dir);
-    make_cmd::gnu_make().args(&["-C", &dst, &*outdir_argument, &*objdir_argument])
-                        .status()
-                        .unwrap();
-    //Command::new("cp").args(&["-r", "libui/out/", &*out_dir]).status().unwrap();
+        let mut postfix = Path::new("build").join("out");
+        if msvc {
+            postfix = postfix.join("Release");
+        }
+        dst = dst.join(&postfix);
+    } else {
+        dst = env::current_dir()
+            .expect("Unable to retrieve current directory location.");
+        dst.push("lib");
+    }
+    println!("cargo:rustc-link-search=native={}", dst.display());
 
-    println!("cargo:rustc-link-search=native={}/out/", dst);
-    println!("cargo:rustc-link-lib=dylib=ui");
+    let libname;
+     if msvc {
+        libname = "libui";
+    } else {
+        libname = "ui";
+    }
+    println!("cargo:rustc-link-lib={}", libname);
 }
-

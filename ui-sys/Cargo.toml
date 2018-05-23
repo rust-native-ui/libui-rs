@@ -1,8 +1,7 @@
 [package]
 name = "ui-sys"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Leo Tindall <lfstindall@gmail.com>", "Patrick Walton <pcwalton@mimiga.net>"]
-build = "build.rs"
 license = "MIT"
 description = "Native bindings to the minimalist, cross-platform, widget set `libui`"
 
@@ -28,6 +27,9 @@ keywords = ["windows", "gtk", "gui", "user_interface", "macos"]
 # they must match exactly.
 categories = ["gui", "os::macos-apis", "os::unix-apis", "os::windows-apis"]
 
+links = "ui"
+build = "build.rs"
+
 [badges]
 # Travis CI: `repository` in format "<user>/<project>" is required.
 # `branch` is optional; default is `master`
@@ -41,10 +43,14 @@ is-it-maintained-open-issues = { repository = "LeoTindall/libui-rs" }
 
 maintenance = { status = "actively-developed" }
 
+[features]
+default = ["fetch", "build"]
+
+fetch = []
+build = []
+
 [dependencies]
 libc = "0.2"
 
 [build-dependencies]
-make-cmd = "0.1"
 cmake = "0.1"
-

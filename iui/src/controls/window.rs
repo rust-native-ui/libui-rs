@@ -1,12 +1,12 @@
 //! Functionality related to creating, managing, and destroying GUI windows.
 
 use controls::Control;
-use ui::UI;
 use libc::{c_int, c_void};
 use std::cell::RefCell;
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::path::PathBuf;
+use ui::UI;
 use ui_sys::{self, uiControl, uiWindow};
 
 thread_local! {
@@ -104,8 +104,9 @@ impl Window {
         extern "C" fn c_callback(window: *mut uiWindow, data: *mut c_void) -> i32 {
             unsafe {
                 let mut window = Window { uiWindow: window };
-                mem::transmute::<*mut c_void, Box<Box<FnMut(&mut Window) -> bool>>>(data)(&mut window)
-                    as i32
+                mem::transmute::<*mut c_void, Box<Box<FnMut(&mut Window) -> bool>>>(data)(
+                    &mut window,
+                ) as i32
             }
         }
     }
@@ -128,7 +129,9 @@ impl Window {
     /// Allow the user to select an existing file.
     pub fn open_file(&self, _ctx: &UI) -> Option<PathBuf> {
         let ptr = unsafe { ui_sys::uiOpenFile(self.uiWindow) };
-        if ptr.is_null() { return None };
+        if ptr.is_null() {
+            return None;
+        };
         let path_string: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
         Some(path_string.into())
     }
@@ -136,23 +139,20 @@ impl Window {
     /// Allow the user to select a new or existing file.
     pub fn save_file(&self, _ctx: &UI) -> Option<PathBuf> {
         let ptr = unsafe { ui_sys::uiSaveFile(self.uiWindow) };
-        if ptr.is_null() { return None };
+        if ptr.is_null() {
+            return None;
+        };
         let path_string: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
         Some(path_string.into())
     }
 
-    
     /// Open a generic message box to show a message to the user.
     /// Returns when the user acknowledges the message.
     pub fn modal_msg(&self, _ctx: &UI, title: &str, description: &str) {
         unsafe {
             let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
             let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
-            ui_sys::uiMsgBox(
-                self.uiWindow,
-                c_title.as_ptr(),
-                c_description.as_ptr(),
-            )
+            ui_sys::uiMsgBox(self.uiWindow, c_title.as_ptr(), c_description.as_ptr())
         }
     }
 
@@ -162,11 +162,7 @@ impl Window {
         unsafe {
             let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
             let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
-            ui_sys::uiMsgBoxError(
-                self.uiWindow,
-                c_title.as_ptr(),
-                c_description.as_ptr(),
-            )
+            ui_sys::uiMsgBoxError(self.uiWindow, c_title.as_ptr(), c_description.as_ptr())
         }
     }
 

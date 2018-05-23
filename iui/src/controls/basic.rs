@@ -1,9 +1,9 @@
-use std::mem;
-use std::ffi::{CStr, CString};
-use libc::c_void;
-use ui_sys::{self, uiButton, uiControl, uiLabel};
 use super::Control;
+use libc::c_void;
+use std::ffi::{CStr, CString};
+use std::mem;
 use ui::UI;
+use ui_sys::{self, uiButton, uiControl, uiLabel};
 
 define_control!{
     /// A non-interactable piece of text.

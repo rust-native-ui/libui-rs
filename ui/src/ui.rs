@@ -112,6 +112,30 @@ impl UI {
     }
 }
 
+/// start manual control over event loop
+#[inline]
+pub fn main_steps() {
+    unsafe {
+        ui_sys::uiMainSteps()
+    }
+}
+
+/// advance event loop
+#[inline]
+pub fn main_step(wait: bool) -> bool {
+    unsafe {
+        ui_sys::uiMainStep(if wait { 1 } else { 0 }) > 0
+    }
+}
+
+/// call to start event loop handled by libui
+#[inline]
+pub fn main() {
+    unsafe {
+        ui_sys::uiMain()
+    }
+}
+
 impl Drop for UI {
     fn drop(&mut self) {
         IS_INIT.with(|isinit| {

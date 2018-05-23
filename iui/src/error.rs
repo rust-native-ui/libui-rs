@@ -11,6 +11,10 @@ pub enum UIError {
     #[fail(display = "cannot initialize multiple instances of the libui toolkit")]
     MultipleInitError(),
     /// Signifies that an attempt was made to remove a tab from a tab group that was out of bounds.
-    #[fail(display = "cannot remove index {} from tab group: there are only {} tabs in the group", index, n)]
+    #[fail(
+        display = "cannot remove index {} from tab group: there are only {} tabs in the group",
+        index,
+        n
+    )]
     TabGroupIndexOutOfBounds { index: u64, n: u64 },
 }

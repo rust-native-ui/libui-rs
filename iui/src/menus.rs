@@ -1,10 +1,10 @@
 //! Menus that appear at the top of windows, and the items that go in them.
 
+use controls::Window;
 use libc::{c_int, c_void};
 use std::ffi::CString;
 use std::mem;
 use ui_sys::{self, uiMenu, uiMenuItem, uiWindow};
-use controls::Window;
 use UI;
 
 /// A `MenuItem` represents an item that is shown in a `Menu`. Note that, unlike many controls,
@@ -68,8 +68,7 @@ impl MenuItem {
                 };
                 let window = Window::from_raw(window);
                 mem::transmute::<*mut c_void, &mut Box<FnMut(&MenuItem, &Window)>>(data)(
-                    &menu_item,
-                    &window,
+                    &menu_item, &window,
                 );
                 mem::forget(window);
             }
@@ -78,7 +77,7 @@ impl MenuItem {
 
     // Creates a `MenuItem` from a raw pointer
     pub unsafe fn from_raw(raw: *mut uiMenuItem) -> Self {
-        MenuItem { ui_menu_item: raw}
+        MenuItem { ui_menu_item: raw }
     }
 }
 
