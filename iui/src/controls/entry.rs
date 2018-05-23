@@ -24,13 +24,13 @@ pub trait TextEntry {
 
 define_control!{
     /// Numerical entry control which allows users to set any value in a range by typing or incrementing/decrementing.
-    rust_type: Spinbox,
+    rust_type: Spinbox, 
     sys_type: uiSpinbox
 }
 
-define_control!{
+define_control!{ 
     /// Numerical entry which allows users to select a value by picking a location along a line.
-    rust_type: Slider,
+    rust_type: Slider, 
     sys_type: uiSlider
 }
 

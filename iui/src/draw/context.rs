@@ -2,8 +2,6 @@ use draw::{Brush, Path, StrokeParams, Transform};
 use ui::UI;
 use ui_sys::{self, uiDrawContext};
 
-use image;
-
 /// Drawing context, used to draw custom content on the screen.
 pub struct DrawContext {
     ui_draw_context: *mut uiDrawContext,
@@ -48,11 +46,6 @@ impl DrawContext {
         unsafe { ui_sys::uiDrawTransform(self.ui_draw_context, txform.ptr()) }
     }
 
-    /// Scale the contents of the DrawContext by the given X and Y ratios.
-    pub fn scale(&self, x_scale: f64, y_scale: f64) {
-        unsafe { ui_sys::uiScalePixmapImage(self.ui_draw_context, x_scale, y_scale) }
-    }
-
     /// Open a modal allowing the user to save the contents of this DrawContext.
     pub fn save(&self, _ctx: &UI) {
         unsafe { ui_sys::uiDrawSave(self.ui_draw_context) }
@@ -61,10 +54,5 @@ impl DrawContext {
     /// Open a modal allowing the user to load the contents of a DrawContext onto this one.
     pub fn restore(&self, _ctx: &UI) {
         unsafe { ui_sys::uiDrawRestore(self.ui_draw_context) }
-    }
-
-    /// Draw the pixels from the given Image onto this DrawContext at the given position.
-    pub fn draw_image(&self, x: f64, y: f64, img: &image::Image) {
-        unsafe { ui_sys::uiDrawPixmapImage(self.ui_draw_context, x, y, img.as_ui_draw_image()) }
     }
 }

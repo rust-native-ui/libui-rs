@@ -9,16 +9,16 @@
 //! perform precisely the same on all platforms. These inconsistencies are marked.
 //!
 //! To use the library, add the following to your `Cargo.toml`:
-//!
+//! 
 //! ```toml
 //! "iui" = "0.2"
 //! ```
 //!
 //! Most of the functionality of the crate is exposed via the [UI](struct.UI.html) RAII guard, which handles all initialization and cleanup for the
 //! underlying library.
-//!
-//! After initialization, all the functionality used for creating actual UIs is in the [`controls`](controls/index.html) module.
-//!
+//! 
+//! After initialization, all the functionality used for creating actual UIs is in the [`controls`](controls/index.html) module. 
+//! 
 //! Fine-grained control of the event loop is avilable via the [`EventLoop`](struct.EventLoop.html) struct.
 //! Be aware the Cocoa (GUI toolkit on Mac OS) requires that the _first thread spawned_ controls
 //! the UI, so do _not_ spin off your UI interactions into an alternative thread. You're likely to
@@ -39,7 +39,6 @@ pub mod controls;
 pub mod draw;
 mod error;
 mod ffi_tools;
-pub mod image;
 pub mod menus;
 mod ui;
 
