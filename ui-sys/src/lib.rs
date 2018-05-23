@@ -761,3 +761,32 @@ extern {
                              xScale: c_double,
                              yScale: c_double);
 }
+
+#[repr(C)]
+#[derive(Clone, Copy, PartialEq)]
+pub enum uiAlign {
+    uiAlignFill,
+    uiAlignStart,
+    uiAlignCenter,
+    uiAlignEnd,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, PartialEq)]
+pub enum uiAt {
+    uiAtLeading,
+    uiAtTop,
+    uiAtTrailing,
+    uiAtBottom,
+}
+
+pub enum uiGrid {}
+
+extern {
+    pub fn uiGridAppend(g: *mut uiGrid, c: *mut uiControl, left: c_int, height: c_int, xspan: c_int, yspan: c_int, hexpand: c_int, halign: uiAlign, vexpand: c_int, valign: uiAlign);
+    pub fn uiGridInsertAt(g: *mut uiGrid, c: *mut uiControl, existing: *mut uiControl, at: uiAt, left: c_int, height: c_int, xspan: c_int, yspan: c_int, hexpand: c_int, halign: uiAlign, vexpand: c_int, valign: uiAlign);
+    pub fn uiGridPadded(g: *mut uiGrid) -> c_int;
+    pub fn uiGridSetPadded(g: *mut uiGrid, padded: c_int);
+    pub fn uiNewGrid() -> *mut uiGrid;
+}
+
