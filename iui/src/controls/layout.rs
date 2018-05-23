@@ -4,7 +4,7 @@ use libc::c_int;
 use std::ffi::{CStr, CString};
 use std::mem;
 use ui::UI;
-use ui_sys::{self, uiBox, uiControl, uiGroup, uiSeparator, uiTab};
+use ui_sys::{self, uiBox, uiControl, uiGroup, uiSeparator, uiTab, uiGrid, uiAlign, uiAt};
 
 /// Defines the ways in which the children of boxes can be layed out.
 pub enum LayoutStrategy {
@@ -250,3 +250,100 @@ impl Spacer {
         unsafe { Spacer::from_raw(ui_sys::uiNewHorizontalBox()) }
     }
 }
+
+/// Informs a `LayoutGrid` how to align a control.
+#[derive(Clone, Copy, PartialEq)]
+pub enum GridAlignment {
+    /// Expand to use all available space.
+    Fill,
+    /// Collapse toward the start of the available space.
+    Start,
+    /// Collapse equally on both sides of the available space.
+    Center,
+    /// Collapse toward the end of the available space.
+    End
+}
+
+impl GridAlignment {
+    fn into_ui_align(self) -> uiAlign {
+        use self::GridAlignment::*;
+        use self::uiAlign::*;
+        match self {
+            Fill => uiAlignFill,
+            Start => uiAlignStart,
+            Center => uiAlignCenter,
+            End => uiAlignEnd 
+        }
+    }
+}
+
+/// Informs a `LayoutGrid` as to position a control.
+#[derive(Clone, Copy, PartialEq)]
+pub enum GridInsertionStrategy {
+    Leading,
+    Top,
+    Trailing,
+    Bottom
+}
+
+impl GridInsertionStrategy {
+    fn into_ui_at(self) -> uiAt {
+        use self::GridInsertionStrategy::*;
+        use self::uiAt::*;
+        match self {
+            Leading => uiAtLeading,
+            Top => uiAtTop,
+            Trailing => uiAtTrailing,
+            Bottom => uiAtBottom 
+        }
+    }
+}
+
+define_control!{
+    /// Lays out its children in a grid according to insertion instructions.
+    rust_type: LayoutGrid,
+    sys_type: uiGrid
+}
+
+
+impl LayoutGrid {
+    /// Creates a new `LayoutGrid`.
+    pub fn new(_ctx: &UI) -> Self {
+        unsafe { LayoutGrid::from_raw(ui_sys::uiNewGrid()) }
+    }
+    
+    /// Returns `true` if the `LayoutGrid` is padded and `false` if not.
+    pub fn padded(&self, _ctx: &UI) -> bool {
+        if unsafe { ui_sys::uiGridPadded(self.uiGrid) } == 0 {
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Sets the padding state of the `LayoutGrid`
+    pub fn set_padded(&mut self, _ctx: &UI, padded: bool) {
+       let v = if padded { 1 } else { 0 };
+
+       unsafe {
+           ui_sys::uiGridSetPadded(self.uiGrid, v);
+       }
+    }
+
+    /// Adds a control to the `LayoutGrid`.
+    pub fn append<T: Into<Control>>(&mut self, _ctx: &UI, control: T,
+                                    left: i32, height: i32,
+                                    xspan: i32, yspan: i32,
+                                    hexpand: bool, vexpand: bool,
+                                    halign: GridAlignment, valign: GridAlignment) {
+        let hexpand = if hexpand { 1 } else { 0 }; 
+        let vexpand = if vexpand { 1 } else { 0 };
+        unsafe { 
+            ui_sys::uiGridAppend(
+                self.uiGrid, control.into().ui_control, left, height, xspan, yspan,
+                hexpand, halign.into_ui_align(), vexpand, valign.into_ui_align()
+            );
+        }    
+    }
+}
+
