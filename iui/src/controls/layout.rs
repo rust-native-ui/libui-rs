@@ -37,8 +37,8 @@ impl VerticalBox {
 
 impl HorizontalBox {
     /// Create a new horizontal box layout.
-    pub fn new(_ctx: &UI) -> VerticalBox {
-        VerticalBox {
+    pub fn new(_ctx: &UI) -> HorizontalBox {
+        HorizontalBox {
             uiBox: unsafe { ui_sys::uiNewHorizontalBox() },
         }
     }

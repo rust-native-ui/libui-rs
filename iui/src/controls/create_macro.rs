@@ -67,8 +67,9 @@ macro_rules! define_control {
                 }
             }
 
+            /// Return the underlying pointer for this control.
             #[allow(non_snake_case)]
-            pub unsafe fn ptr(&self) -> *mut $sys_type {
+            pub fn ptr(&self) -> *mut $sys_type {
                 self.$sys_type
             }
         }

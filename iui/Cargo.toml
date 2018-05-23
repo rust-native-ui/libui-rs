@@ -43,7 +43,7 @@ is-it-maintained-open-issues = { repository = "LeoTindall/libui-rs" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-bitflags = "0.7"
+bitflags = "1.0"
 libc = "0.2"
 failure = "0.1.1"
 ui-sys = "0.1.1"

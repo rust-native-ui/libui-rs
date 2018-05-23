@@ -13,8 +13,10 @@ before_install:
 script:
     - cd ui-sys
     - cargo build --verbose --tests --examples
+    - xvfb-run cargo test
     - cd ../iui
     - cargo build --verbose --tests --examples
+    - xvfb-run cargo test
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
