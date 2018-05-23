@@ -37,7 +37,9 @@ fn main() {
 
         let mut postfix = Path::new("build").join("out");
         if msvc {
-            postfix = postfix.join("Release");
+            postfix = postfix.join(
+                if cfg!(debug_assertions) { "Debug" } else {"Release"}
+            );
         }
         dst = dst.join(&postfix);
     } else {
