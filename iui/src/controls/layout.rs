@@ -251,6 +251,19 @@ impl Spacer {
     }
 }
 
+/// Informs a `LayoutGrid` about how a control should use available space
+/// in one or both dimensions.
+pub enum GridExpand {
+    /// This control should not use extra space
+    Neither,
+    /// This control should use extra space horizontally
+    Horizontal,
+    /// This control should use extra space vertically
+    Vertical,
+    /// This control should use all available space in both dimensions
+    Both
+}
+
 /// Informs a `LayoutGrid` how to align a control.
 #[derive(Clone, Copy, PartialEq)]
 pub enum GridAlignment {
@@ -334,10 +347,14 @@ impl LayoutGrid {
     pub fn append<T: Into<Control>>(&mut self, _ctx: &UI, control: T,
                                     left: i32, height: i32,
                                     xspan: i32, yspan: i32,
-                                    hexpand: bool, vexpand: bool,
+                                    expand: GridExpand,
                                     halign: GridAlignment, valign: GridAlignment) {
-        let hexpand = if hexpand { 1 } else { 0 }; 
-        let vexpand = if vexpand { 1 } else { 0 };
+        let (hexpand, vexpand) = match expand {
+            GridExpand::Neither => (0, 0),
+            GridExpand::Horizontal => (1, 0),
+            GridExpand::Vertical => (0, 1),
+            GridExpand::Both => (1, 1),
+        };
         unsafe { 
             ui_sys::uiGridAppend(
                 self.uiGrid, control.into().ui_control, left, height, xspan, yspan,
