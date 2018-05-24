@@ -4,7 +4,7 @@
 extern crate iui;
 use iui::prelude::*;
 use iui::controls::{Label, Spinbox, Slider, Entry, MultilineEntry, LayoutGrid, 
-    GridAlignment, HorizontalSeparator};
+    GridAlignment, GridExpand, HorizontalSeparator};
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -43,17 +43,17 @@ fn main() {
             // This is position (by slot) and size, expansion, and alignment.
             // In this case, row 0, col 0, 1 by 1, compress as much as possible,
             // and align to the fill.
-            0, 0, 1, 1, false, false, GridAlignment::Fill, GridAlignment::Fill);
+            0, 0, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, spinner.clone(),
             // This one is at column zero, row 1.
-            0, 1, 1, 1, false, false, GridAlignment::Fill, GridAlignment::Fill);
+            0, 1, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, HorizontalSeparator::new(&ui),
-            0, 3, 1, 1, false, false, GridAlignment::Fill, GridAlignment::Fill);
+            0, 3, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, entry.clone(),
-            0, 4, 1, 1, false, false, GridAlignment::Fill, GridAlignment::Fill);
+            0, 4, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, multi.clone(),
             // The multiline entry is at column 0, row 1, and expands vertically.
-            0, 5, 1, 1, false, true, GridAlignment::Fill, GridAlignment::Fill);
+            0, 5, 1, 1, GridExpand::Vertical, GridAlignment::Fill, GridAlignment::Fill);
         (slider, spinner, entry, multi)
     };
 
@@ -65,13 +65,15 @@ fn main() {
         let text_label = Label::new(&ui, "");
         let bigtext_label = Label::new(&ui, "");
         grid.append(&ui, add_label.clone(), 
-            1, 0, 1, 1, false, false, GridAlignment::Fill, GridAlignment::Fill);
+            1, 0, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, sub_label.clone(),
-            1, 1, 1, 1, false, false, GridAlignment::Fill, GridAlignment::Fill);
+            1, 1, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
+        // We skip the #2 & 3 slots so that the text labels will align with their inputs.
+        // This is important because the big text label can expand vertically.
         grid.append(&ui, text_label.clone(),
-            1, 2, 1, 1, false, false, GridAlignment::Fill, GridAlignment::Fill);
+            1, 4, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, bigtext_label.clone(),
-            1, 3, 1, 1, false, false, GridAlignment::Fill, GridAlignment::Fill);
+            1, 5, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         (add_label, sub_label, text_label, bigtext_label)
     };
 
