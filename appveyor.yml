@@ -16,7 +16,8 @@ environment:
 branches:
   # only:
   #   - master
-    - auto
+    # - auto
+    - ci-appvoyer
 
 install:
   # If this is a PR and we're not allowed to test PRs, skip the whole build.
