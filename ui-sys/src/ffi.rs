@@ -211,7 +211,7 @@ extern {
 
 pub enum uiEditableCombobox {}
 
-#[link(name = "ui")]
+// #[link(name = "ui")]
 extern {
     pub fn uiNewEditableCombobox() -> *mut uiEditableCombobox;
     pub fn uiEditableComboboxAppend(c: *mut uiEditableCombobox, text: *const c_char);
