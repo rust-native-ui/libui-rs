@@ -14,7 +14,7 @@ environment:
   access_token:
     secure: q8Wqx0brgfpOYFQqWauvucE2h0o1WYb41a3gKaCKV9QiE4eTz6qLNlqyC3mdsp4Q
 branches:
-  # only:
+  only:
   #   - master
     # - auto
     - ci-appvoyer
