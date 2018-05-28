@@ -26,29 +26,32 @@ fn main() {
         }
     }
 
+    // Deterimine if we're building for MSVC
+    let target = env::var("TARGET").unwrap();
+    let msvc = target.contains("msvc");
     // Build libui if needed. Otherwise, assume it's in lib/
     let mut dst;
     if cfg!(feature = "build") {
         dst = Config::new("libui").build_target("").profile("release").build();
 
-        let postfix = Path::new("build").join("out");
+        let mut postfix = Path::new("build").join("out");
+        if msvc {
+            postfix = postfix.join("Release");
+        }
         dst = dst.join(&postfix);
     } else {
         dst = env::current_dir()
             .expect("Unable to retrieve current directory location.");
         dst.push("lib");
     }
-    println!("cargo:rustc-link-search=native={}", dst.display());
 
-    // Deterimine if we're building for MSVC
-    let target = env::var("TARGET").unwrap();
-    let msvc = target.contains("msvc");
-    
     let libname;
      if msvc {
         libname = "libui";
     } else {
         libname = "ui";
     }
+
+    println!("cargo:rustc-link-search=native={}", dst.display());
     println!("cargo:rustc-link-lib={}", libname);
 }
