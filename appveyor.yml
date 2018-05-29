@@ -70,4 +70,4 @@ install:
 build: false
 
 test_script:
-  - cargo build --release --target %TARGET% %FEATURES%
+  - cargo build --tests --examples  # make sure all examples can be build.
