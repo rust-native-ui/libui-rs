@@ -5,12 +5,14 @@ environment:
   - TARGET: x86_64-pc-windows-msvc
     ALLOW_PR: 1
   - TARGET: i686-pc-windows-msvc
-  - TARGET: i686-pc-windows-msvc
     BUILD_MSI: 1
+    ALLOW_PR: 1
   - TARGET: i686-pc-windows-gnu
     MINGW_DIR: mingw32
+    ALLOW_PR: 1
   - TARGET: x86_64-pc-windows-gnu
     MINGW_DIR: mingw64
+    ALLOW_PR: 1
   access_token:
     secure: q8Wqx0brgfpOYFQqWauvucE2h0o1WYb41a3gKaCKV9QiE4eTz6qLNlqyC3mdsp4Q
 branches:
