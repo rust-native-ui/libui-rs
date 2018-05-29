@@ -70,4 +70,7 @@ install:
 build: false
 
 test_script:
-  - cargo build --tests --examples  # make sure all examples can be build.
+  - cd ui-sys
+  - cargo build --verbose --tests --examples
+  - cd ../iui
+  - cargo build --verbose --tests --examples  # make sure all examples can be build.
