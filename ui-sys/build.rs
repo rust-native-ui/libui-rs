@@ -44,8 +44,7 @@ fn main() {
             .expect("Unable to retrieve current directory location.");
         dst.push("lib");
     }
-    
-    
+
     let libname;
      if msvc {
         libname = "libui";
