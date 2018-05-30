@@ -11,7 +11,7 @@
 //! To use the library, add the following to your `Cargo.toml`:
 //! 
 //! ```toml
-//! "iui" = "0.2"
+//! "iui" = "0.3"
 //! ```
 //!
 //! Most of the functionality of the crate is exposed via the [UI](struct.UI.html) RAII guard, which handles all initialization and cleanup for the
@@ -24,9 +24,8 @@
 //! the UI, so do _not_ spin off your UI interactions into an alternative thread. You're likely to
 //! have problems on Mac OS.
 //!
-//! For code examples, see the [basic](https://github.com/LeoTindall/libui-rs/blob/master/iui/examples/basic.rs) and
-//! [advanced](https://github.com/LeoTindall/libui-rs/blob/master/iui/examples/inputs.rs) examples or the
-//! [file editing](https://github.com/LeoTindall/libui-rs/blob/master/iui/examples/files.rs) example.
+//! For code examples, see the [examples](https://github.com/LeoTindall/libui-rs/blob/master/iui/examples/) 
+//! directory.
 
 #[macro_use]
 extern crate bitflags;

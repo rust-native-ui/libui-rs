@@ -2,8 +2,6 @@
 ## A cross-platform UI toolkit for Rust based on libui
 [![libui-rs travis build status](https://api.travis-ci.org/LeoTindall/libui-rs.svg?branch=master)](https://travis-ci.org/LeoTindall/libui-rs/)
 [![libui-rs appveyor build status badge](https://ci.appveyor.com/api/projects/status/github/leotindall/libui-rs)](https://ci.appveyor.com/project/LeoTindall/libui-rs)
-[![issue resolution badge](https://isitmaintained.com/badge/resolution/LeoTindall/libui-rs.svg)](https://isitmaintained.com/project/LeoTindall/libui-rs)
-[![open issues badge](https://isitmaintained.com/badge/open/LeoTindall/libui-rs.svg)](https://isitmaintained.com/project/LeoTindall/libui-rs)
 ![actively developed badge](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
 iui: [![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](https://crates.io/crates/iui/)
@@ -17,15 +15,14 @@ These are work-in-progress bindings to the minimalistic native UI library [libui
 Add `iui` to your project with:
 
 ```toml
-iui = "0.2"
+iui = "0.3"
 ```
 
 ## Organization
 
-`iui` is the safe Rust wrapper, to be used by most users.
-`ui` is the old version of the safe wrapper. Don't use this.
-`ui-sys` is the raw unsafe bindings to the `libui` C code. Requires `cmake` so it can build `libui`.
-`libui` is included as a submodule. You will need CMake to build `libui` itself.
+* `iui` is the safe Rust wrapper, to be used by most users.
+* `ui-sys` is the raw unsafe bindings to the `libui` C code. Requires `cmake` so it can build `libui`.
+* `libui` is included as a submodule. 
 
 Based on work by [@pcwalton](https://github.com/pcwalton/). Licensed MIT.
 

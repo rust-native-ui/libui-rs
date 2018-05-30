@@ -1,6 +1,6 @@
 [package]
 name = "iui"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Leo Tindall <lfstindall@gmail.com>"]
 
 # A short blurb about the package. This is not rendered in any format when
@@ -33,12 +33,7 @@ license = "MIT"
 # Travis CI: `repository` in format "<user>/<project>" is required.
 # `branch` is optional; default is `master`
 travis-ci = { repository = "LeoTindall/libui-rs", branch = "master" }
-
-# Is it maintained resolution time: `repository` is required.
-is-it-maintained-issue-resolution = { repository = "LeoTindall/libui-rs" }
-
-# Is it maintained percentage of open issues: `repository` is required.
-is-it-maintained-open-issues = { repository = "LeoTindall/libui-rs" }
+appveyor = { repository = "LeoTindall/libui-rs", branch = "master" }
 
 maintenance = { status = "actively-developed" }
 
@@ -46,4 +41,5 @@ maintenance = { status = "actively-developed" }
 bitflags = "1.0"
 libc = "0.2"
 failure = "0.1.1"
-ui-sys = { path = "../ui-sys" }
+ui-sys =  { path = "../ui-sys" }
+
