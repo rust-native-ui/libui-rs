@@ -1,6 +1,6 @@
 [package]
 name = "ui-sys"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Leo Tindall <lfstindall@gmail.com>", "Patrick Walton <pcwalton@mimiga.net>"]
 license = "MIT"
 description = "Native bindings to the minimalist, cross-platform, widget set `libui`"
@@ -34,12 +34,7 @@ build = "build.rs"
 # Travis CI: `repository` in format "<user>/<project>" is required.
 # `branch` is optional; default is `master`
 travis-ci = { repository = "LeoTindall/libui-rs", branch = "master" }
-
-# Is it maintained resolution time: `repository` is required.
-is-it-maintained-issue-resolution = { repository = "LeoTindall/libui-rs" }
-
-# Is it maintained percentage of open issues: `repository` is required.
-is-it-maintained-open-issues = { repository = "LeoTindall/libui-rs" }
+appveyor = { repository = "LeoTindall/libui-rs", branch = "master" }
 
 maintenance = { status = "actively-developed" }
 
