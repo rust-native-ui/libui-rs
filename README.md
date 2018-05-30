@@ -1,6 +1,7 @@
 # Improved User Interface
 ## A cross-platform UI toolkit for Rust based on libui
-[![libui-rs build status](https://api.travis-ci.org/LeoTindall/libui-rs.svg?branch=master)](https://travis-ci.org/LeoTindall/libui-rs/)
+[![libui-rs travis build status](https://api.travis-ci.org/LeoTindall/libui-rs.svg?branch=master)](https://travis-ci.org/LeoTindall/libui-rs/)
+[![libui-rs appveyor build status badge](https://ci.appveyor.com/api/projects/status/github/leotindall/libui-rs)](https://ci.appveyor.com/project/LeoTindall/libui-rs)
 [![issue resolution badge](https://isitmaintained.com/badge/resolution/LeoTindall/libui-rs.svg)](https://isitmaintained.com/project/LeoTindall/libui-rs)
 [![open issues badge](https://isitmaintained.com/badge/open/LeoTindall/libui-rs.svg)](https://isitmaintained.com/project/LeoTindall/libui-rs)
 ![actively developed badge](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
