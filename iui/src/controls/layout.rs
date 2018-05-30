@@ -293,9 +293,13 @@ impl GridAlignment {
 /// Informs a `LayoutGrid` as to position a control.
 #[derive(Clone, Copy, PartialEq)]
 pub enum GridInsertionStrategy {
+    /// Place control to left of existing control, align tops
     Leading,
+    /// Place control above existing control, align left edges
     Top,
+    /// Place control to right of existing control, align tops
     Trailing,
+    /// Place control below existing control, align left edges
     Bottom
 }
 
@@ -362,5 +366,27 @@ impl LayoutGrid {
             );
         }    
     }
-}
 
+    /// Inserts a control in to the `LayoutGrid` relative to an existing control.
+    pub fn insert_at<T: Into<Control>, U: Into<Control>>(&mut self, _ctx: &UI, 
+                                    control: T, existing:U, at: GridInsertionStrategy,
+                                    left: i32, height: i32,
+                                    xspan: i32, yspan: i32,
+                                    expand: GridExpand,
+                                    halign: GridAlignment, valign: GridAlignment){
+        
+        let (hexpand, vexpand) = match expand {
+            GridExpand::Neither => (0, 0),
+            GridExpand::Horizontal => (1, 0),
+            GridExpand::Vertical => (0, 1),
+            GridExpand::Both => (1, 1),
+        };
+        unsafe {
+            ui_sys::uiGridInsertAt(
+                self.uiGrid, control.into().ui_control, existing.into().ui_control,
+                at.into_ui_at(), left, height, xspan, yspan,
+                hexpand, halign.into_ui_align(), vexpand, valign.into_ui_align()
+            );
+        }
+    } 
+}
