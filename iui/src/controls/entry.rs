@@ -208,7 +208,7 @@ impl TextEntry for MultilineEntry {
 }
 
 define_control! {
-    /// A control which allows the user to select any one of its options, from a list shown only when selected.
+    /// Allows the user to select any one of its options, from a list shown only when selected.
     rust_type: Combobox,
     sys_type: uiCombobox
 }
@@ -254,7 +254,7 @@ impl Combobox {
 }
 
 define_control! {
-    /// A control which allows the user to select any one of its options, from a list shown only when selected.
+    /// Boolean selection control which can be checked or unchecked.
     rust_type: Checkbox,
     sys_type: uiCheckbox
 }
