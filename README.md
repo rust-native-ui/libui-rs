@@ -20,6 +20,8 @@ iui = "0.3"
 
 ## Organization
 
+This repository contains multiple Rust crates. Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING.md).
+
 * `iui` is the safe Rust wrapper, to be used by most users.
 * `ui-sys` is the raw unsafe bindings to the `libui` C code. Requires `cmake` so it can build `libui`.
 * `libui` is included as a submodule. 
