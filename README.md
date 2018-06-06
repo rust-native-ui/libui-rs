@@ -10,7 +10,17 @@ ui-sys: [![ui-sys crates.io version badge](https://img.shields.io/crates/v/ui-sy
 [![docs.rs for ui-sys](https://docs.rs/ui-sys/badge.svg)](https://docs.rs/ui)
 
 `iui` is a simple, small, easy to distribute GUI library, a Rusty user interface library that binds to platform native APIs.
-These are work-in-progress bindings to the minimalistic native UI library [libui][libui] via the `ui-sys` bindings crate.
+These are work-in-progress bindings to the minimalistic native UI library [libui](https://github.com/andlabs/libui) via the `ui-sys` bindings crate.
+
+`libui` is a wrapper library for native(ish) GUI libraries:
+
+* Win32API on Windows
+* Cocoa on Mac OS X
+* GTK+ on Linux and elsewhere
+
+This library exposes a Rusty procedural interface to the "Least Common Denominator" of GUI widgets.
+
+## Using
 
 Add `iui` to your project with:
 
@@ -18,15 +28,9 @@ Add `iui` to your project with:
 iui = "0.3"
 ```
 
-## Organization
+We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://leotindall.github.io/libui-rs/iui/index.html) for master.
 
-This repository contains multiple Rust crates. Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING.md).
 
-* `iui` is the safe Rust wrapper, to be used by most users.
-* `ui-sys` is the raw unsafe bindings to the `libui` C code. Requires `cmake` so it can build `libui`.
-* `libui` is included as a submodule. 
-
-Based on work by [@pcwalton](https://github.com/pcwalton/). Licensed MIT.
 
 ## Example
 
@@ -89,7 +93,17 @@ fn main() {
 }
 ```
 
-## Building ui-sys
+## Organization
+
+This repository contains multiple Rust crates: 
+
+* `iui` is the safe Rust wrapper, to be used by most users.
+* `ui-sys` is the raw unsafe bindings to the `libui` C code. Requires `cmake` so it can build `libui`. `libui` is included as a submodule. 
+
+Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING.md).
+
+
+### Building ui-sys
 
 `ui-sys` includes `libui` as a sub-module and allows it to be built on-the-fly with the
 default features `fetch` and `build. With `fetch disabled, it will simply build the
@@ -98,3 +112,7 @@ assuming either a system or local (in `./lib/`) version of `libui` is available.
 
 Note that _most of the time_, building `libui` on the fly is what you want. It does however
 require a copy of cmake, essential build tools, et cetera.
+
+## Acknowledgments
+
+Based on work by [@pcwalton](https://github.com/pcwalton/).
