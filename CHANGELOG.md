@@ -12,7 +12,7 @@ No additional API surface.
 
 ### Changed
 
-No API changes.
+* README.md now links to libui, and is more explanatory
 
 ### Deprecated
 
