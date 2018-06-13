@@ -15,13 +15,13 @@ pub enum LayoutStrategy {
 }
 
 define_control! {
-    /// Lays out its children vertically; see [`BoxExt`](trait.BoxExt.html) for functionality.
+    /// Lays out its children vertically.
     rust_type: VerticalBox,
     sys_type: uiBox
 }
 
 define_control! {
-    /// Lays out its children horizontally; see [`BoxExt`](trait.BoxExt.html) for functionality.
+    /// Lays out its children horizontally.
     rust_type: HorizontalBox,
     sys_type: uiBox
 }
