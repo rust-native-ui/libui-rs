@@ -24,7 +24,7 @@ Nothing was removed.
 
 ### Fixed
 
-No fixes.
+* `VerticalBox` and `HorizontalBox` no longer link to the removed `BoxExt` trait.
 
 ### Security
 
