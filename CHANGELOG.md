@@ -8,15 +8,16 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-No additional API surface.
+* Added usage examples/doctests to many layouts.
 
 ### Changed
 
 * README.md now links to libui, and is more explanatory
+* Layouts which don't permit `insert_at` now use `add` instead of `append` nomenclature.
 
 ### Deprecated
 
-No deprecations.
+* Method `append` is deprecated on `VerticalBox` and `HorizontalBox` in favor of `add` and `add_stretchy`.
 
 ### Removed
 

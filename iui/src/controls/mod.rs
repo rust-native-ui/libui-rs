@@ -1,5 +1,5 @@
 //! Available user interface controls and related functionality.
-//! 
+//!
 //! Note that `Control` and all specific control types are references to memory which is owned by the UI library.
 
 use ui::UI;
@@ -19,7 +19,7 @@ mod entry;
 pub use self::entry::*;
 
 /// A generic UI control. Any UI control can be turned into this type.
-/// 
+///
 /// Note that `Control` and all specific control types are references
 /// whose memory is owned by the UI library.
 pub struct Control {

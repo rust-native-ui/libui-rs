@@ -2,10 +2,9 @@
 
 Thank you for considering contributing to this project!
 
-
 When contributing to this repository, please first discuss the change you wish to 
 make via issue, email, or any other method with the owners of this repository 
-before making a change. 
+before making a change.
 
 Please note we have a code of conduct, please follow it in all your interactions 
 with the project.
@@ -27,15 +26,45 @@ a corresponding implemention in `ui`.
 Thank you for submitting code! We will work to get your changes merged as fast as
 possible. To facilitate this, consider the following steps:
 
-* Run `rustfmt` or `cargo fmt` on your code. This will prevent style nitpicks
-from slowing down your PR.
-* Mark unsafe functions as `unsafe`. This includes _anything_ with potential
-undefined behavior, not just memory unsafety.
-* Document your code! This is the number one holdup for pull requests, especially
-large ones. Don't forget to insert appropriate entries into the changelog.
-* If implementing a new feature from `ui`, please mention the stability of that
-feature in your pull request. We are fine with implementing unstable APIs from
-`ui`, but it's important to mark such APIs as unstable.
+* Run `rustfmt` or `cargo fmt` on your code. This will prevent style nitpicks from slowing down your PR.
+* Mark unsafe functions as `unsafe`. This includes _anything_ with potential undefined behavior, not just memory unsafety.
+* Document your code! This is the number one holdup for pull requests, especially large ones. Don't forget to insert appropriate entries into the changelog.
+* If implementing a new feature from `ui`, please mention the stability of that feature in your pull request. We are fine with implementing unstable APIs from `ui`, but it's important to mark such APIs as unstable.
+
+## Documentation
+
+It is extremely important to document any features you add. While text docs
+are great, if possible please try to add doctestable code as well.
+
+Unfortunately this can be difficult, as `ui-sys` is somewhat paranoid
+about dangling and leaking memory. Use the following template to add a scaffold to your doctests:
+
+```rust
+    /// Foo bars a baz.
+    ///
+    /// # Example
+    /// ```
+    /// # use iui::prelude::*;
+    /// # let ui = UI::init().expect("Couldn't initialize UI library");
+    /// # let mut win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
+    ///
+    /// // Bar a baz.
+    /// foo();
+    ///
+    /// # ui.quit();
+    /// # ui.main();
+    /// ```
+    fn foo() { bar(); }
+```
+
+This ends up looking like:
+
+```rust
+// Bar a baz.
+foo();
+```
+
+while also correctly executing as a doctest. The crucial thing is to **add all of your controls to the window**.
 
 ## Changelog and Versioning
 

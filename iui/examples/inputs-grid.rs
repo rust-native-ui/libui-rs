@@ -2,11 +2,13 @@
 //! Using the UIGrid function for a prettier interface.
 
 extern crate iui;
+use iui::controls::{
+    Entry, GridAlignment, GridExpand, HorizontalSeparator, Label, LayoutGrid, MultilineEntry,
+    Slider, Spinbox,
+};
 use iui::prelude::*;
-use iui::controls::{Label, Spinbox, Slider, Entry, MultilineEntry, LayoutGrid, 
-    GridAlignment, GridExpand, HorizontalSeparator};
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 /// This struct will hold the values that multiple callbacks will need to access.
 struct State {
@@ -21,7 +23,12 @@ fn main() {
     let ui = UI::init().unwrap();
 
     // Initialize the state of the application.
-    let state = Rc::new(RefCell::new(State { slider_val: 0, spinner_val: 0, entry_val: "".into(), multi_val: "".into() }));
+    let state = Rc::new(RefCell::new(State {
+        slider_val: 0,
+        spinner_val: 0,
+        entry_val: "".into(),
+        multi_val: "".into(),
+    }));
 
     // Create the grid which we'll use to lay out controls
     let mut grid = LayoutGrid::new(&ui);
@@ -39,21 +46,66 @@ fn main() {
         let entry = Entry::new(&ui);
         let multi = MultilineEntry::new(&ui);
         // Add everything into the grid
-        grid.append(&ui, slider.clone(),
+        grid.append(
+            &ui,
+            slider.clone(),
             // This is position (by slot) and size, expansion, and alignment.
             // In this case, row 0, col 0, 1 by 1, compress as much as possible,
             // and align to the fill.
-            0, 0, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        grid.append(&ui, spinner.clone(),
+            0,
+            0,
+            1,
+            1,
+            GridExpand::Neither,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
+        grid.append(
+            &ui,
+            spinner.clone(),
             // This one is at column zero, row 1.
-            0, 1, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        grid.append(&ui, HorizontalSeparator::new(&ui),
-            0, 3, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        grid.append(&ui, entry.clone(),
-            0, 4, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        grid.append(&ui, multi.clone(),
+            0,
+            1,
+            1,
+            1,
+            GridExpand::Neither,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
+        grid.append(
+            &ui,
+            HorizontalSeparator::new(&ui),
+            0,
+            3,
+            1,
+            1,
+            GridExpand::Neither,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
+        grid.append(
+            &ui,
+            entry.clone(),
+            0,
+            4,
+            1,
+            1,
+            GridExpand::Neither,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
+        grid.append(
+            &ui,
+            multi.clone(),
             // The multiline entry is at column 0, row 1, and expands vertically.
-            0, 5, 1, 1, GridExpand::Vertical, GridAlignment::Fill, GridAlignment::Fill);
+            0,
+            5,
+            1,
+            1,
+            GridExpand::Vertical,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
         (slider, spinner, entry, multi)
     };
 
@@ -64,16 +116,52 @@ fn main() {
         let sub_label = Label::new(&ui, "");
         let text_label = Label::new(&ui, "");
         let bigtext_label = Label::new(&ui, "");
-        grid.append(&ui, add_label.clone(), 
-            1, 0, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        grid.append(&ui, sub_label.clone(),
-            1, 1, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
+        grid.append(
+            &ui,
+            add_label.clone(),
+            1,
+            0,
+            1,
+            1,
+            GridExpand::Neither,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
+        grid.append(
+            &ui,
+            sub_label.clone(),
+            1,
+            1,
+            1,
+            1,
+            GridExpand::Neither,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
         // We skip the #2 & 3 slots so that the text labels will align with their inputs.
         // This is important because the big text label can expand vertically.
-        grid.append(&ui, text_label.clone(),
-            1, 4, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        grid.append(&ui, bigtext_label.clone(),
-            1, 5, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
+        grid.append(
+            &ui,
+            text_label.clone(),
+            1,
+            4,
+            1,
+            1,
+            GridExpand::Neither,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
+        grid.append(
+            &ui,
+            bigtext_label.clone(),
+            1,
+            5,
+            1,
+            1,
+            GridExpand::Neither,
+            GridAlignment::Fill,
+            GridAlignment::Fill,
+        );
         (add_label, sub_label, text_label, bigtext_label)
     };
 
@@ -87,24 +175,31 @@ fn main() {
 
     slider.on_changed(&ui, {
         let state = state.clone();
-        move |val| { state.borrow_mut().slider_val = val; }
+        move |val| {
+            state.borrow_mut().slider_val = val;
+        }
     });
 
     spinner.on_changed(&ui, {
         let state = state.clone();
-        move |val| { state.borrow_mut().spinner_val = val; }
+        move |val| {
+            state.borrow_mut().spinner_val = val;
+        }
     });
 
     entry.on_changed(&ui, {
         let state = state.clone();
-        move |val| { state.borrow_mut().entry_val = val; }
+        move |val| {
+            state.borrow_mut().entry_val = val;
+        }
     });
 
     multi.on_changed(&ui, {
         let state = state.clone();
-        move |val| { state.borrow_mut().multi_val = val; }
+        move |val| {
+            state.borrow_mut().multi_val = val;
+        }
     });
-
 
     // Rather than just invoking ui.run(), using EventLoop gives a lot more control
     // over the user interface event loop.
@@ -120,8 +215,14 @@ fn main() {
             let state = state.borrow();
 
             // Update all the labels
-            add_label.set_text(&ui, &format!("Added: {}", state.slider_val + state.spinner_val));
-            sub_label.set_text(&ui, &format!("Subtracted: {}", state.slider_val - state.spinner_val));
+            add_label.set_text(
+                &ui,
+                &format!("Added: {}", state.slider_val + state.spinner_val),
+            );
+            sub_label.set_text(
+                &ui,
+                &format!("Subtracted: {}", state.slider_val - state.spinner_val),
+            );
             text_label.set_text(&ui, &format!("Text: {}", state.entry_val));
             bigtext_label.set_text(&ui, &format!("Multiline Text: {}", state.multi_val));
         }
