@@ -1,6 +1,6 @@
 use error::UIError;
 use ffi_tools;
-use libc::{c_int, c_void};
+use std::os::raw::{c_int, c_void};
 use ui_sys;
 
 use std::ffi::CStr;
@@ -137,7 +137,7 @@ impl UI {
         unsafe {
             let mut data: Box<Box<FnMut()>> = Box::new(Box::new(callback));
             ui_sys::uiQueueMain(
-                ffi_tools::void_void_callback,
+                None,
                 &mut *data as *mut Box<FnMut()> as *mut c_void,
             );
             mem::forget(data);
@@ -149,7 +149,7 @@ impl UI {
         unsafe {
             let mut data: Box<Box<FnMut()>> = Box::new(Box::new(callback));
             ui_sys::uiOnShouldQuit(
-                ffi_tools::void_void_callback,
+                None,
                 &mut *data as *mut Box<FnMut()> as *mut c_void,
             );
             mem::forget(data);

@@ -1,4 +1,4 @@
-use libc::c_double;
+use std::os::raw::c_double;
 use std::marker::PhantomData;
 use ui::UI;
 use ui_sys::uiDrawStrokeParams;

@@ -10,8 +10,8 @@ use std::cell::RefCell;
 
 /// This struct will hold the values that multiple callbacks will need to access.
 struct State {
-    slider_val: i64,
-    spinner_val: i64,
+    slider_val: i32,
+    spinner_val: i32,
     entry_val: String,
     multi_val: String,
 }

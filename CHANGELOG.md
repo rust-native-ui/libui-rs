@@ -12,7 +12,10 @@ No additional API surface.
 
 ### Changed
 
+* `ui-sys` is now built with Bindgen. This means it can track libui more closely.
 * README.md now links to libui, and is more explanatory
+* `LayoutGrid::insert_at` no longer takes `left` and `height` arguments
+* Many APIs which took `u64` or `i64` arguments now take `i32` for wider compatibility
 
 ### Deprecated
 
@@ -20,7 +23,7 @@ No deprecations.
 
 ### Removed
 
-Nothing was removed.
+* `Transform` no longer implements `PartialEq` as the existing implementation was broken.
 
 ### Fixed
 

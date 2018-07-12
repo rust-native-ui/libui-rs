@@ -2,7 +2,7 @@
 
 use controls::Control;
 use draw;
-use libc::c_int;
+use std::os::raw::c_int;
 use std::mem;
 use ui::UI;
 pub use ui_sys::uiExtKey as ExtKey;

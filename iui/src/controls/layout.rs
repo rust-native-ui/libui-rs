@@ -1,6 +1,6 @@
 use super::Control;
 use error::UIError;
-use libc::c_int;
+use std::os::raw::c_int;
 use std::ffi::{CStr, CString};
 use std::mem;
 use ui::UI;
@@ -168,12 +168,12 @@ impl TabGroup {
     /// Add the given control as a new tab in the tab group with the given name.
     ///
     /// Returns the number of tabs in the group after adding the new tab.
-    pub fn append<T: Into<Control>>(&mut self, _ctx: &UI, name: &str, control: T) -> u64 {
+    pub fn append<T: Into<Control>>(&mut self, _ctx: &UI, name: &str, control: T) -> i32 {
         let control = control.into();
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ui_sys::uiTabAppend(self.uiTab, c_string.as_ptr(), control.ui_control);
-            ui_sys::uiTabNumPages(self.uiTab) as u64
+            ui_sys::uiTabNumPages(self.uiTab) as i32
         }
     }
 
@@ -184,9 +184,9 @@ impl TabGroup {
         &mut self,
         _ctx: &UI,
         name: &str,
-        before: u64,
+        before: i32,
         control: T,
-    ) -> u64 {
+    ) -> i32 {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             ui_sys::uiTabInsertAt(
@@ -195,7 +195,7 @@ impl TabGroup {
                 before,
                 control.into().ui_control,
             );
-            ui_sys::uiTabNumPages(self.uiTab) as u64
+            ui_sys::uiTabNumPages(self.uiTab) as i32
         }
     }
 
@@ -206,8 +206,8 @@ impl TabGroup {
     /// NOTE: This will leak the deleted control! We have no way of actually getting it
     /// to decrement its reference count per `libui`'s UI as of today, unless we maintain a
     /// separate list of children ourselves…
-    pub fn delete(&mut self, _ctx: &UI, index: u64) -> Result<u64, UIError> {
-        let n = unsafe { ui_sys::uiTabNumPages(self.uiTab) as u64 };
+    pub fn delete(&mut self, _ctx: &UI, index: i32) -> Result<i32, UIError> {
+        let n = unsafe { ui_sys::uiTabNumPages(self.uiTab) as i32};
         if index < n {
             unsafe { ui_sys::uiTabDelete(self.uiTab, index) };
             Ok(n)
@@ -217,12 +217,12 @@ impl TabGroup {
     }
 
     /// Determine whether or not the tab group provides margins around its children.
-    pub fn margined(&self, _ctx: &UI, page: u64) -> bool {
+    pub fn margined(&self, _ctx: &UI, page: i32) -> bool {
         unsafe { ui_sys::uiTabMargined(self.uiTab, page) != 0 }
     }
 
     /// Set whether or not the tab group provides margins around its children.
-    pub fn set_margined(&mut self, _ctx: &UI, page: u64, margined: bool) {
+    pub fn set_margined(&mut self, _ctx: &UI, page: i32, margined: bool) {
         unsafe { ui_sys::uiTabSetMargined(self.uiTab, page, margined as c_int) }
     }
 }
@@ -280,12 +280,11 @@ pub enum GridAlignment {
 impl GridAlignment {
     fn into_ui_align(self) -> uiAlign {
         use self::GridAlignment::*;
-        use self::uiAlign::*;
         match self {
-            Fill => uiAlignFill,
-            Start => uiAlignStart,
-            Center => uiAlignCenter,
-            End => uiAlignEnd 
+            Fill => ui_sys::uiAlignFill,
+            Start => ui_sys::uiAlignStart,
+            Center => ui_sys::uiAlignCenter,
+            End => ui_sys::uiAlignEnd 
         }
     }
 }
@@ -306,12 +305,11 @@ pub enum GridInsertionStrategy {
 impl GridInsertionStrategy {
     fn into_ui_at(self) -> uiAt {
         use self::GridInsertionStrategy::*;
-        use self::uiAt::*;
         match self {
-            Leading => uiAtLeading,
-            Top => uiAtTop,
-            Trailing => uiAtTrailing,
-            Bottom => uiAtBottom 
+            Leading => ui_sys::uiAtLeading,
+            Top => ui_sys::uiAtTop,
+            Trailing => ui_sys::uiAtTrailing,
+            Bottom => ui_sys::uiAtBottom 
         }
     }
 }
@@ -370,7 +368,6 @@ impl LayoutGrid {
     /// Inserts a control in to the `LayoutGrid` relative to an existing control.
     pub fn insert_at<T: Into<Control>, U: Into<Control>>(&mut self, _ctx: &UI, 
                                     control: T, existing:U, at: GridInsertionStrategy,
-                                    left: i32, height: i32,
                                     xspan: i32, yspan: i32,
                                     expand: GridExpand,
                                     halign: GridAlignment, valign: GridAlignment){
@@ -384,7 +381,7 @@ impl LayoutGrid {
         unsafe {
             ui_sys::uiGridInsertAt(
                 self.uiGrid, control.into().ui_control, existing.into().ui_control,
-                at.into_ui_at(), left, height, xspan, yspan,
+                at.into_ui_at(), xspan, yspan,
                 hexpand, halign.into_ui_align(), vexpand, valign.into_ui_align()
             );
         }

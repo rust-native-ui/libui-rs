@@ -1,5 +1,5 @@
 use super::Control;
-use libc::c_void;
+use std::os::raw::c_void;
 use std::ffi::{CStr, CString};
 use std::mem;
 use ui::UI;
@@ -54,7 +54,7 @@ impl Button {
             let mut data: Box<Box<FnMut(&mut Button)>> = Box::new(Box::new(callback));
             ui_sys::uiButtonOnClicked(
                 self.uiButton,
-                c_callback,
+                Some(c_callback),
                 &mut *data as *mut Box<FnMut(&mut Button)> as *mut c_void,
             );
             mem::forget(data);

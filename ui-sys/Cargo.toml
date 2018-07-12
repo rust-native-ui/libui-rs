@@ -1,7 +1,7 @@
 [package]
 name = "ui-sys"
-version = "0.1.3"
-authors = ["Leo Tindall <lfstindall@gmail.com>", "Patrick Walton <pcwalton@mimiga.net>"]
+version = "0.2.0"
+authors = ["Leo Tindall <lfstindall@gmail.com>"]
 license = "MIT"
 description = "Native bindings to the minimalist, cross-platform, widget set `libui`"
 
@@ -49,3 +49,5 @@ libc = "0.2"
 
 [build-dependencies]
 cmake = "0.1"
+bindgen = "0.31"
+

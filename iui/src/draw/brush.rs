@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 use std::ptr;
 use ui::UI;
-use ui_sys::{uiDrawBrush, uiDrawBrushType};
+use ui_sys::{self, uiDrawBrush};
 
 pub use ui_sys::uiDrawBrushGradientStop as BrushGradientStop;
 
@@ -26,7 +26,7 @@ impl Brush {
         match *self {
             Brush::Solid(ref solid_brush) => BrushRef {
                 ui_draw_brush: uiDrawBrush {
-                    Type: uiDrawBrushType::Solid,
+                    Type: ui_sys::uiDrawBrushTypeSolid,
 
                     R: solid_brush.r,
                     G: solid_brush.g,
@@ -45,7 +45,7 @@ impl Brush {
             },
             Brush::LinearGradient(ref linear_gradient_brush) => BrushRef {
                 ui_draw_brush: uiDrawBrush {
-                    Type: uiDrawBrushType::LinearGradient,
+                    Type: ui_sys::uiDrawBrushTypeLinearGradient,
 
                     R: 0.0,
                     G: 0.0,
@@ -64,7 +64,7 @@ impl Brush {
             },
             Brush::RadialGradient(ref radial_gradient_brush) => BrushRef {
                 ui_draw_brush: uiDrawBrush {
-                    Type: uiDrawBrushType::RadialGradient,
+                    Type: ui_sys::uiDrawBrushTypeRadialGradient,
 
                     R: 0.0,
                     G: 0.0,
@@ -85,7 +85,7 @@ impl Brush {
                 // These don't work yet in `libui`, but just for completeness' sake…
                 BrushRef {
                     ui_draw_brush: uiDrawBrush {
-                        Type: uiDrawBrushType::Image,
+                        Type: ui_sys::uiDrawBrushTypeImage,
 
                         R: 0.0,
                         G: 0.0,
