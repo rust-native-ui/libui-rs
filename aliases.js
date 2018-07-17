@@ -1,0 +1,16 @@
+var ALIASES = {};
+ALIASES['backtrace'] = {};
+ALIASES['backtrace_sys'] = {};
+ALIASES['bitflags'] = {};
+ALIASES['cfg_if'] = {};
+ALIASES['failure'] = {};
+ALIASES['failure_derive'] = {};
+ALIASES['iui'] = {};
+ALIASES['libc'] = {};
+ALIASES['quote'] = {};
+ALIASES['rustc_demangle'] = {};
+ALIASES['syn'] = {};
+ALIASES['synom'] = {};
+ALIASES['synstructure'] = {};
+ALIASES['ui_sys'] = {};
+ALIASES['unicode_xid'] = {};

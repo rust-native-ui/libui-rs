@@ -1,0 +1,1709 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `ui_sys` crate."><meta name="keywords" content="rust, rustlang, rust-lang, ui_sys"><title>ui_sys - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Crate ui_sys</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'ui_sys', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>ui_sys</a></span><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/ui_sys/lib.rs.html#1-791' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Low-level FFI bindings to <code>libui</code>.</p>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="platform/index.html"
+                                  title='mod ui_sys::platform'>platform</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiAreaDrawParams.html"
+                                  title='struct ui_sys::uiAreaDrawParams'>uiAreaDrawParams</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiAreaHandler.html"
+                                  title='struct ui_sys::uiAreaHandler'>uiAreaHandler</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiAreaKeyEvent.html"
+                                  title='struct ui_sys::uiAreaKeyEvent'>uiAreaKeyEvent</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiAreaMouseEvent.html"
+                                  title='struct ui_sys::uiAreaMouseEvent'>uiAreaMouseEvent</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiControl.html"
+                                  title='struct ui_sys::uiControl'>uiControl</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiDrawBrush.html"
+                                  title='struct ui_sys::uiDrawBrush'>uiDrawBrush</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiDrawBrushGradientStop.html"
+                                  title='struct ui_sys::uiDrawBrushGradientStop'>uiDrawBrushGradientStop</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiDrawMatrix.html"
+                                  title='struct ui_sys::uiDrawMatrix'>uiDrawMatrix</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiDrawStrokeParams.html"
+                                  title='struct ui_sys::uiDrawStrokeParams'>uiDrawStrokeParams</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiDrawTextFontDescriptor.html"
+                                  title='struct ui_sys::uiDrawTextFontDescriptor'>uiDrawTextFontDescriptor</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiDrawTextFontMetrics.html"
+                                  title='struct ui_sys::uiDrawTextFontMetrics'>uiDrawTextFontMetrics</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiImageData.html"
+                                  title='struct ui_sys::uiImageData'>uiImageData</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.uiInitOptions.html"
+                                  title='struct ui_sys::uiInitOptions'>uiInitOptions</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiAlign.html"
+                                  title='enum ui_sys::uiAlign'>uiAlign</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiArea.html"
+                                  title='enum ui_sys::uiArea'>uiArea</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiAt.html"
+                                  title='enum ui_sys::uiAt'>uiAt</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiBox.html"
+                                  title='enum ui_sys::uiBox'>uiBox</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiButton.html"
+                                  title='enum ui_sys::uiButton'>uiButton</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiCheckbox.html"
+                                  title='enum ui_sys::uiCheckbox'>uiCheckbox</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiColorButton.html"
+                                  title='enum ui_sys::uiColorButton'>uiColorButton</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiCombobox.html"
+                                  title='enum ui_sys::uiCombobox'>uiCombobox</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDateTimePicker.html"
+                                  title='enum ui_sys::uiDateTimePicker'>uiDateTimePicker</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawBrushType.html"
+                                  title='enum ui_sys::uiDrawBrushType'>uiDrawBrushType</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawContext.html"
+                                  title='enum ui_sys::uiDrawContext'>uiDrawContext</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawFillMode.html"
+                                  title='enum ui_sys::uiDrawFillMode'>uiDrawFillMode</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawFontFamilies.html"
+                                  title='enum ui_sys::uiDrawFontFamilies'>uiDrawFontFamilies</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawLineCap.html"
+                                  title='enum ui_sys::uiDrawLineCap'>uiDrawLineCap</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawLineJoin.html"
+                                  title='enum ui_sys::uiDrawLineJoin'>uiDrawLineJoin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawPath.html"
+                                  title='enum ui_sys::uiDrawPath'>uiDrawPath</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawTextFont.html"
+                                  title='enum ui_sys::uiDrawTextFont'>uiDrawTextFont</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawTextItalic.html"
+                                  title='enum ui_sys::uiDrawTextItalic'>uiDrawTextItalic</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawTextLayout.html"
+                                  title='enum ui_sys::uiDrawTextLayout'>uiDrawTextLayout</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawTextStretch.html"
+                                  title='enum ui_sys::uiDrawTextStretch'>uiDrawTextStretch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiDrawTextWeight.html"
+                                  title='enum ui_sys::uiDrawTextWeight'>uiDrawTextWeight</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiEditableCombobox.html"
+                                  title='enum ui_sys::uiEditableCombobox'>uiEditableCombobox</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiEntry.html"
+                                  title='enum ui_sys::uiEntry'>uiEntry</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiExtKey.html"
+                                  title='enum ui_sys::uiExtKey'>uiExtKey</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiFontButton.html"
+                                  title='enum ui_sys::uiFontButton'>uiFontButton</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiGrid.html"
+                                  title='enum ui_sys::uiGrid'>uiGrid</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiGroup.html"
+                                  title='enum ui_sys::uiGroup'>uiGroup</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiLabel.html"
+                                  title='enum ui_sys::uiLabel'>uiLabel</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiMenu.html"
+                                  title='enum ui_sys::uiMenu'>uiMenu</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiMenuItem.html"
+                                  title='enum ui_sys::uiMenuItem'>uiMenuItem</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiMultilineEntry.html"
+                                  title='enum ui_sys::uiMultilineEntry'>uiMultilineEntry</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiPixmapImage.html"
+                                  title='enum ui_sys::uiPixmapImage'>uiPixmapImage</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiProgressBar.html"
+                                  title='enum ui_sys::uiProgressBar'>uiProgressBar</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiRadioButtons.html"
+                                  title='enum ui_sys::uiRadioButtons'>uiRadioButtons</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiSeparator.html"
+                                  title='enum ui_sys::uiSeparator'>uiSeparator</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiSlider.html"
+                                  title='enum ui_sys::uiSlider'>uiSlider</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiSpinbox.html"
+                                  title='enum ui_sys::uiSpinbox'>uiSpinbox</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiTab.html"
+                                  title='enum ui_sys::uiTab'>uiTab</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.uiWindow.html"
+                                  title='enum ui_sys::uiWindow'>uiWindow</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.uiDrawDefaultMiterLimit.html"
+                                  title='constant ui_sys::uiDrawDefaultMiterLimit'>uiDrawDefaultMiterLimit</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.uiModifierAlt.html"
+                                  title='constant ui_sys::uiModifierAlt'>uiModifierAlt</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.uiModifierCtrl.html"
+                                  title='constant ui_sys::uiModifierCtrl'>uiModifierCtrl</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.uiModifierShift.html"
+                                  title='constant ui_sys::uiModifierShift'>uiModifierShift</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.uiModifierSuper.html"
+                                  title='constant ui_sys::uiModifierSuper'>uiModifierSuper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiAllocControl.html"
+                                  title='fn ui_sys::uiAllocControl'>uiAllocControl</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiAreaQueueRedrawAll.html"
+                                  title='fn ui_sys::uiAreaQueueRedrawAll'>uiAreaQueueRedrawAll</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiAreaScrollTo.html"
+                                  title='fn ui_sys::uiAreaScrollTo'>uiAreaScrollTo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiAreaSetSize.html"
+                                  title='fn ui_sys::uiAreaSetSize'>uiAreaSetSize</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiBoxAppend.html"
+                                  title='fn ui_sys::uiBoxAppend'>uiBoxAppend</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiBoxDelete.html"
+                                  title='fn ui_sys::uiBoxDelete'>uiBoxDelete</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiBoxPadded.html"
+                                  title='fn ui_sys::uiBoxPadded'>uiBoxPadded</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiBoxSetPadded.html"
+                                  title='fn ui_sys::uiBoxSetPadded'>uiBoxSetPadded</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiButtonOnClicked.html"
+                                  title='fn ui_sys::uiButtonOnClicked'>uiButtonOnClicked</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiButtonSetText.html"
+                                  title='fn ui_sys::uiButtonSetText'>uiButtonSetText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiButtonText.html"
+                                  title='fn ui_sys::uiButtonText'>uiButtonText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiCheckboxChecked.html"
+                                  title='fn ui_sys::uiCheckboxChecked'>uiCheckboxChecked</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiCheckboxOnToggled.html"
+                                  title='fn ui_sys::uiCheckboxOnToggled'>uiCheckboxOnToggled</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiCheckboxSetChecked.html"
+                                  title='fn ui_sys::uiCheckboxSetChecked'>uiCheckboxSetChecked</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiCheckboxSetText.html"
+                                  title='fn ui_sys::uiCheckboxSetText'>uiCheckboxSetText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiCheckboxText.html"
+                                  title='fn ui_sys::uiCheckboxText'>uiCheckboxText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiColorButtonColor.html"
+                                  title='fn ui_sys::uiColorButtonColor'>uiColorButtonColor</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiColorButtonOnChanged.html"
+                                  title='fn ui_sys::uiColorButtonOnChanged'>uiColorButtonOnChanged</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiColorButtonSetColor.html"
+                                  title='fn ui_sys::uiColorButtonSetColor'>uiColorButtonSetColor</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiComboboxAppend.html"
+                                  title='fn ui_sys::uiComboboxAppend'>uiComboboxAppend</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiComboboxOnSelected.html"
+                                  title='fn ui_sys::uiComboboxOnSelected'>uiComboboxOnSelected</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiComboboxSelected.html"
+                                  title='fn ui_sys::uiComboboxSelected'>uiComboboxSelected</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiComboboxSetSelected.html"
+                                  title='fn ui_sys::uiComboboxSetSelected'>uiComboboxSetSelected</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlDestroy.html"
+                                  title='fn ui_sys::uiControlDestroy'>uiControlDestroy</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlDisable.html"
+                                  title='fn ui_sys::uiControlDisable'>uiControlDisable</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlEnable.html"
+                                  title='fn ui_sys::uiControlEnable'>uiControlEnable</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlEnabled.html"
+                                  title='fn ui_sys::uiControlEnabled'>uiControlEnabled</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlEnabledToUser.html"
+                                  title='fn ui_sys::uiControlEnabledToUser'>uiControlEnabledToUser</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlHandle.html"
+                                  title='fn ui_sys::uiControlHandle'>uiControlHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlHide.html"
+                                  title='fn ui_sys::uiControlHide'>uiControlHide</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlParent.html"
+                                  title='fn ui_sys::uiControlParent'>uiControlParent</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlSetParent.html"
+                                  title='fn ui_sys::uiControlSetParent'>uiControlSetParent</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlShow.html"
+                                  title='fn ui_sys::uiControlShow'>uiControlShow</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlToplevel.html"
+                                  title='fn ui_sys::uiControlToplevel'>uiControlToplevel</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlVerifyDestroy.html"
+                                  title='fn ui_sys::uiControlVerifyDestroy'>uiControlVerifyDestroy</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlVerifySetParent.html"
+                                  title='fn ui_sys::uiControlVerifySetParent'>uiControlVerifySetParent</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiControlVisible.html"
+                                  title='fn ui_sys::uiControlVisible'>uiControlVisible</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawClip.html"
+                                  title='fn ui_sys::uiDrawClip'>uiDrawClip</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawFill.html"
+                                  title='fn ui_sys::uiDrawFill'>uiDrawFill</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawFontFamiliesFamily.html"
+                                  title='fn ui_sys::uiDrawFontFamiliesFamily'>uiDrawFontFamiliesFamily</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawFontFamiliesNumFamilies.html"
+                                  title='fn ui_sys::uiDrawFontFamiliesNumFamilies'>uiDrawFontFamiliesNumFamilies</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawFreeFontFamilies.html"
+                                  title='fn ui_sys::uiDrawFreeFontFamilies'>uiDrawFreeFontFamilies</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawFreePath.html"
+                                  title='fn ui_sys::uiDrawFreePath'>uiDrawFreePath</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawFreeTextFont.html"
+                                  title='fn ui_sys::uiDrawFreeTextFont'>uiDrawFreeTextFont</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawFreeTextLayout.html"
+                                  title='fn ui_sys::uiDrawFreeTextLayout'>uiDrawFreeTextLayout</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawListFontFamilies.html"
+                                  title='fn ui_sys::uiDrawListFontFamilies'>uiDrawListFontFamilies</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawLoadClosestFont.html"
+                                  title='fn ui_sys::uiDrawLoadClosestFont'>uiDrawLoadClosestFont</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixInvert.html"
+                                  title='fn ui_sys::uiDrawMatrixInvert'>uiDrawMatrixInvert</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixInvertible.html"
+                                  title='fn ui_sys::uiDrawMatrixInvertible'>uiDrawMatrixInvertible</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixMultiply.html"
+                                  title='fn ui_sys::uiDrawMatrixMultiply'>uiDrawMatrixMultiply</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixRotate.html"
+                                  title='fn ui_sys::uiDrawMatrixRotate'>uiDrawMatrixRotate</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixScale.html"
+                                  title='fn ui_sys::uiDrawMatrixScale'>uiDrawMatrixScale</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixSetIdentity.html"
+                                  title='fn ui_sys::uiDrawMatrixSetIdentity'>uiDrawMatrixSetIdentity</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixSkew.html"
+                                  title='fn ui_sys::uiDrawMatrixSkew'>uiDrawMatrixSkew</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixTransformPoint.html"
+                                  title='fn ui_sys::uiDrawMatrixTransformPoint'>uiDrawMatrixTransformPoint</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixTransformSize.html"
+                                  title='fn ui_sys::uiDrawMatrixTransformSize'>uiDrawMatrixTransformSize</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawMatrixTranslate.html"
+                                  title='fn ui_sys::uiDrawMatrixTranslate'>uiDrawMatrixTranslate</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawNewPath.html"
+                                  title='fn ui_sys::uiDrawNewPath'>uiDrawNewPath</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawNewTextLayout.html"
+                                  title='fn ui_sys::uiDrawNewTextLayout'>uiDrawNewTextLayout</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPathAddRectangle.html"
+                                  title='fn ui_sys::uiDrawPathAddRectangle'>uiDrawPathAddRectangle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPathArcTo.html"
+                                  title='fn ui_sys::uiDrawPathArcTo'>uiDrawPathArcTo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPathBezierTo.html"
+                                  title='fn ui_sys::uiDrawPathBezierTo'>uiDrawPathBezierTo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPathCloseFigure.html"
+                                  title='fn ui_sys::uiDrawPathCloseFigure'>uiDrawPathCloseFigure</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPathEnd.html"
+                                  title='fn ui_sys::uiDrawPathEnd'>uiDrawPathEnd</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPathLineTo.html"
+                                  title='fn ui_sys::uiDrawPathLineTo'>uiDrawPathLineTo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPathNewFigure.html"
+                                  title='fn ui_sys::uiDrawPathNewFigure'>uiDrawPathNewFigure</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPathNewFigureWithArc.html"
+                                  title='fn ui_sys::uiDrawPathNewFigureWithArc'>uiDrawPathNewFigureWithArc</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawPixmapImage.html"
+                                  title='fn ui_sys::uiDrawPixmapImage'>uiDrawPixmapImage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawRestore.html"
+                                  title='fn ui_sys::uiDrawRestore'>uiDrawRestore</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawSave.html"
+                                  title='fn ui_sys::uiDrawSave'>uiDrawSave</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawStroke.html"
+                                  title='fn ui_sys::uiDrawStroke'>uiDrawStroke</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawText.html"
+                                  title='fn ui_sys::uiDrawText'>uiDrawText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawTextFontDescribe.html"
+                                  title='fn ui_sys::uiDrawTextFontDescribe'>uiDrawTextFontDescribe</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawTextFontGetMetrics.html"
+                                  title='fn ui_sys::uiDrawTextFontGetMetrics'>uiDrawTextFontGetMetrics</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawTextFontHandle.html"
+                                  title='fn ui_sys::uiDrawTextFontHandle'>uiDrawTextFontHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawTextLayoutExtents.html"
+                                  title='fn ui_sys::uiDrawTextLayoutExtents'>uiDrawTextLayoutExtents</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawTextLayoutSetColor.html"
+                                  title='fn ui_sys::uiDrawTextLayoutSetColor'>uiDrawTextLayoutSetColor</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawTextLayoutSetWidth.html"
+                                  title='fn ui_sys::uiDrawTextLayoutSetWidth'>uiDrawTextLayoutSetWidth</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiDrawTransform.html"
+                                  title='fn ui_sys::uiDrawTransform'>uiDrawTransform</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiEditableComboboxAppend.html"
+                                  title='fn ui_sys::uiEditableComboboxAppend'>uiEditableComboboxAppend</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiEntryOnChanged.html"
+                                  title='fn ui_sys::uiEntryOnChanged'>uiEntryOnChanged</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiEntryReadOnly.html"
+                                  title='fn ui_sys::uiEntryReadOnly'>uiEntryReadOnly</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiEntrySetReadOnly.html"
+                                  title='fn ui_sys::uiEntrySetReadOnly'>uiEntrySetReadOnly</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiEntrySetText.html"
+                                  title='fn ui_sys::uiEntrySetText'>uiEntrySetText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiEntryText.html"
+                                  title='fn ui_sys::uiEntryText'>uiEntryText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiFontButtonFont.html"
+                                  title='fn ui_sys::uiFontButtonFont'>uiFontButtonFont</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiFontButtonOnChanged.html"
+                                  title='fn ui_sys::uiFontButtonOnChanged'>uiFontButtonOnChanged</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiFreeControl.html"
+                                  title='fn ui_sys::uiFreeControl'>uiFreeControl</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiFreeInitError.html"
+                                  title='fn ui_sys::uiFreeInitError'>uiFreeInitError</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiFreePixmapImage.html"
+                                  title='fn ui_sys::uiFreePixmapImage'>uiFreePixmapImage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiFreeText.html"
+                                  title='fn ui_sys::uiFreeText'>uiFreeText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGridAppend.html"
+                                  title='fn ui_sys::uiGridAppend'>uiGridAppend</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGridInsertAt.html"
+                                  title='fn ui_sys::uiGridInsertAt'>uiGridInsertAt</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGridPadded.html"
+                                  title='fn ui_sys::uiGridPadded'>uiGridPadded</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGridSetPadded.html"
+                                  title='fn ui_sys::uiGridSetPadded'>uiGridSetPadded</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGroupMargined.html"
+                                  title='fn ui_sys::uiGroupMargined'>uiGroupMargined</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGroupSetChild.html"
+                                  title='fn ui_sys::uiGroupSetChild'>uiGroupSetChild</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGroupSetMargined.html"
+                                  title='fn ui_sys::uiGroupSetMargined'>uiGroupSetMargined</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGroupSetTitle.html"
+                                  title='fn ui_sys::uiGroupSetTitle'>uiGroupSetTitle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiGroupTitle.html"
+                                  title='fn ui_sys::uiGroupTitle'>uiGroupTitle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiImageLoadPixmap32Raw.html"
+                                  title='fn ui_sys::uiImageLoadPixmap32Raw'>uiImageLoadPixmap32Raw</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiInit.html"
+                                  title='fn ui_sys::uiInit'>uiInit</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiLabelSetText.html"
+                                  title='fn ui_sys::uiLabelSetText'>uiLabelSetText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiLabelText.html"
+                                  title='fn ui_sys::uiLabelText'>uiLabelText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMain.html"
+                                  title='fn ui_sys::uiMain'>uiMain</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMainStep.html"
+                                  title='fn ui_sys::uiMainStep'>uiMainStep</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMainSteps.html"
+                                  title='fn ui_sys::uiMainSteps'>uiMainSteps</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuAppendAboutItem.html"
+                                  title='fn ui_sys::uiMenuAppendAboutItem'>uiMenuAppendAboutItem</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuAppendCheckItem.html"
+                                  title='fn ui_sys::uiMenuAppendCheckItem'>uiMenuAppendCheckItem</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuAppendItem.html"
+                                  title='fn ui_sys::uiMenuAppendItem'>uiMenuAppendItem</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuAppendPreferencesItem.html"
+                                  title='fn ui_sys::uiMenuAppendPreferencesItem'>uiMenuAppendPreferencesItem</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuAppendQuitItem.html"
+                                  title='fn ui_sys::uiMenuAppendQuitItem'>uiMenuAppendQuitItem</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuAppendSeparator.html"
+                                  title='fn ui_sys::uiMenuAppendSeparator'>uiMenuAppendSeparator</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuItemChecked.html"
+                                  title='fn ui_sys::uiMenuItemChecked'>uiMenuItemChecked</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuItemDisable.html"
+                                  title='fn ui_sys::uiMenuItemDisable'>uiMenuItemDisable</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuItemEnable.html"
+                                  title='fn ui_sys::uiMenuItemEnable'>uiMenuItemEnable</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuItemOnClicked.html"
+                                  title='fn ui_sys::uiMenuItemOnClicked'>uiMenuItemOnClicked</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMenuItemSetChecked.html"
+                                  title='fn ui_sys::uiMenuItemSetChecked'>uiMenuItemSetChecked</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMsgBox.html"
+                                  title='fn ui_sys::uiMsgBox'>uiMsgBox</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMsgBoxError.html"
+                                  title='fn ui_sys::uiMsgBoxError'>uiMsgBoxError</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMultilineEntryAppend.html"
+                                  title='fn ui_sys::uiMultilineEntryAppend'>uiMultilineEntryAppend</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMultilineEntryOnChanged.html"
+                                  title='fn ui_sys::uiMultilineEntryOnChanged'>uiMultilineEntryOnChanged</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMultilineEntryReadOnly.html"
+                                  title='fn ui_sys::uiMultilineEntryReadOnly'>uiMultilineEntryReadOnly</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMultilineEntrySetReadOnly.html"
+                                  title='fn ui_sys::uiMultilineEntrySetReadOnly'>uiMultilineEntrySetReadOnly</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMultilineEntrySetText.html"
+                                  title='fn ui_sys::uiMultilineEntrySetText'>uiMultilineEntrySetText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiMultilineEntryText.html"
+                                  title='fn ui_sys::uiMultilineEntryText'>uiMultilineEntryText</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewArea.html"
+                                  title='fn ui_sys::uiNewArea'>uiNewArea</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewButton.html"
+                                  title='fn ui_sys::uiNewButton'>uiNewButton</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewCheckbox.html"
+                                  title='fn ui_sys::uiNewCheckbox'>uiNewCheckbox</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewColorButton.html"
+                                  title='fn ui_sys::uiNewColorButton'>uiNewColorButton</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewCombobox.html"
+                                  title='fn ui_sys::uiNewCombobox'>uiNewCombobox</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewDatePicker.html"
+                                  title='fn ui_sys::uiNewDatePicker'>uiNewDatePicker</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewDateTimePicker.html"
+                                  title='fn ui_sys::uiNewDateTimePicker'>uiNewDateTimePicker</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewEditableCombobox.html"
+                                  title='fn ui_sys::uiNewEditableCombobox'>uiNewEditableCombobox</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewEntry.html"
+                                  title='fn ui_sys::uiNewEntry'>uiNewEntry</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewFontButton.html"
+                                  title='fn ui_sys::uiNewFontButton'>uiNewFontButton</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewGrid.html"
+                                  title='fn ui_sys::uiNewGrid'>uiNewGrid</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewGroup.html"
+                                  title='fn ui_sys::uiNewGroup'>uiNewGroup</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewHorizontalBox.html"
+                                  title='fn ui_sys::uiNewHorizontalBox'>uiNewHorizontalBox</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewHorizontalSeparator.html"
+                                  title='fn ui_sys::uiNewHorizontalSeparator'>uiNewHorizontalSeparator</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewLabel.html"
+                                  title='fn ui_sys::uiNewLabel'>uiNewLabel</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewMenu.html"
+                                  title='fn ui_sys::uiNewMenu'>uiNewMenu</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewMultilineEntry.html"
+                                  title='fn ui_sys::uiNewMultilineEntry'>uiNewMultilineEntry</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewPixmapImage.html"
+                                  title='fn ui_sys::uiNewPixmapImage'>uiNewPixmapImage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewProgressBar.html"
+                                  title='fn ui_sys::uiNewProgressBar'>uiNewProgressBar</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewRadioButtons.html"
+                                  title='fn ui_sys::uiNewRadioButtons'>uiNewRadioButtons</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewScrollingArea.html"
+                                  title='fn ui_sys::uiNewScrollingArea'>uiNewScrollingArea</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewSlider.html"
+                                  title='fn ui_sys::uiNewSlider'>uiNewSlider</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewSpinbox.html"
+                                  title='fn ui_sys::uiNewSpinbox'>uiNewSpinbox</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewTab.html"
+                                  title='fn ui_sys::uiNewTab'>uiNewTab</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewTimePicker.html"
+                                  title='fn ui_sys::uiNewTimePicker'>uiNewTimePicker</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewVerticalBox.html"
+                                  title='fn ui_sys::uiNewVerticalBox'>uiNewVerticalBox</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiNewWindow.html"
+                                  title='fn ui_sys::uiNewWindow'>uiNewWindow</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiOnShouldQuit.html"
+                                  title='fn ui_sys::uiOnShouldQuit'>uiOnShouldQuit</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiOpenFile.html"
+                                  title='fn ui_sys::uiOpenFile'>uiOpenFile</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiPixmapImageGetData.html"
+                                  title='fn ui_sys::uiPixmapImageGetData'>uiPixmapImageGetData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiPixmapImageGetFormat.html"
+                                  title='fn ui_sys::uiPixmapImageGetFormat'>uiPixmapImageGetFormat</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiProgressBarSetValue.html"
+                                  title='fn ui_sys::uiProgressBarSetValue'>uiProgressBarSetValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiQueueMain.html"
+                                  title='fn ui_sys::uiQueueMain'>uiQueueMain</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiQuit.html"
+                                  title='fn ui_sys::uiQuit'>uiQuit</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiRadioButtonsAppend.html"
+                                  title='fn ui_sys::uiRadioButtonsAppend'>uiRadioButtonsAppend</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiSaveFile.html"
+                                  title='fn ui_sys::uiSaveFile'>uiSaveFile</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiScalePixmapImage.html"
+                                  title='fn ui_sys::uiScalePixmapImage'>uiScalePixmapImage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiSliderOnChanged.html"
+                                  title='fn ui_sys::uiSliderOnChanged'>uiSliderOnChanged</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiSliderSetValue.html"
+                                  title='fn ui_sys::uiSliderSetValue'>uiSliderSetValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiSliderValue.html"
+                                  title='fn ui_sys::uiSliderValue'>uiSliderValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiSpinboxOnChanged.html"
+                                  title='fn ui_sys::uiSpinboxOnChanged'>uiSpinboxOnChanged</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiSpinboxSetValue.html"
+                                  title='fn ui_sys::uiSpinboxSetValue'>uiSpinboxSetValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiSpinboxValue.html"
+                                  title='fn ui_sys::uiSpinboxValue'>uiSpinboxValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiTabAppend.html"
+                                  title='fn ui_sys::uiTabAppend'>uiTabAppend</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiTabDelete.html"
+                                  title='fn ui_sys::uiTabDelete'>uiTabDelete</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiTabInsertAt.html"
+                                  title='fn ui_sys::uiTabInsertAt'>uiTabInsertAt</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiTabMargined.html"
+                                  title='fn ui_sys::uiTabMargined'>uiTabMargined</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiTabNumPages.html"
+                                  title='fn ui_sys::uiTabNumPages'>uiTabNumPages</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiTabSetMargined.html"
+                                  title='fn ui_sys::uiTabSetMargined'>uiTabSetMargined</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiUninit.html"
+                                  title='fn ui_sys::uiUninit'>uiUninit</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiWindowMargined.html"
+                                  title='fn ui_sys::uiWindowMargined'>uiWindowMargined</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiWindowOnClosing.html"
+                                  title='fn ui_sys::uiWindowOnClosing'>uiWindowOnClosing</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiWindowSetAutosave.html"
+                                  title='fn ui_sys::uiWindowSetAutosave'>uiWindowSetAutosave</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiWindowSetChild.html"
+                                  title='fn ui_sys::uiWindowSetChild'>uiWindowSetChild</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiWindowSetMargined.html"
+                                  title='fn ui_sys::uiWindowSetMargined'>uiWindowSetMargined</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiWindowSetTitle.html"
+                                  title='fn ui_sys::uiWindowSetTitle'>uiWindowSetTitle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.uiWindowTitle.html"
+                                  title='fn ui_sys::uiWindowTitle'>uiWindowTitle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.uiModifiers.html"
+                                  title='type ui_sys::uiModifiers'>uiModifiers</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.uiPixmap32Format.html"
+                                  title='type ui_sys::uiPixmap32Format'>uiPixmap32Format</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "ui_sys";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
