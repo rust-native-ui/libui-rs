@@ -1,12 +1,5 @@
-//! `iui`, the `i`mproved `u`ser `i`nterface crate, provides Rust bindings to `libui`, a wrapper library for native(ish) GUI libraries:
-//!
-//! - Win32API on Windows
-//! - Cocoa on Mac OS X
-//! - GTK+ on Linux and elsewhere
-//!
-//! This library exposes a Rusty procedural interface to the
-//! "Least Common Denominator" of GUI widgets. They are all available on all supported platforms, though some functionality may not
-//! perform precisely the same on all platforms. These inconsistencies are marked.
+//! `iui`, the `i`mproved `u`ser `i`nterface crate, is a **simple** (about 4 kLOC of Rust), **small** (about 800kb, including `libui`), **easy to distribute** (one shared library) GUI library, providing a **Rusty** user interface library that binds to **native APIs** via the [libui](https://github.com/andlabs/libui) and the `ui-sys` bindings crate.
+//! `iui` wraps native retained mode GUI libraries, like Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere. Thus all `iui` apps have a native look and feel and start from a highly performant base which is well integegrated with the native ecosystem on each platform. Because it implements only the least common subset of these platform APIs, your apps will work on all platforms and won't have significant behavioral inconsistencies, with no additional effort on your part.
 //!
 //! To use the library, add the following to your `Cargo.toml`:
 //! 
@@ -14,15 +7,12 @@
 //! "iui" = "0.3"
 //! ```
 //!
-//! Most of the functionality of the crate is exposed via the [UI](struct.UI.html) RAII guard, which handles all initialization and cleanup for the
-//! underlying library.
-//! 
-//! After initialization, all the functionality used for creating actual UIs is in the [`controls`](controls/index.html) module. 
-//! 
-//! Fine-grained control of the event loop is avilable via the [`EventLoop`](struct.EventLoop.html) struct.
-//! Be aware the Cocoa (GUI toolkit on Mac OS) requires that the _first thread spawned_ controls
-//! the UI, so do _not_ spin off your UI interactions into an alternative thread. You're likely to
-//! have problems on Mac OS.
+//! To build a GUI app with `iui`, you must:
+//! 1. create a [`UI`](https://docs.rs/iui/*/iui/struct.UI.html#method.init) handle, initializing the UI library and guarding against memory unsafety
+//! 1. make a [window](https://docs.rs/iui/*/iui/controls/struct.Window.html), or a few, with title and platform-native decorations, into which your app will be drawn
+//! 1. add all your [controls](https://docs.rs/iui/*/iui/controls/index.html), like buttons and text inputs, laid out with both axial and grid layout options
+//! 1. implement some [callbacks](https://docs.rs/iui/*/iui/controls/struct.Button.html#method.on_clicked) for user input, taking full advantage of Rust's concurrency protections
+//! 1. call [`UI::main`](https://docs.rs/iui/*/iui/struct.UI.html#method.main), or take control over the event processing with an [`EventLoop`](https://docs.rs/iui/*/iui/struct.EventLoop.html), and voíla! A GUI!
 //!
 //! For code examples, see the [examples](https://github.com/LeoTindall/libui-rs/blob/master/iui/examples/) 
 //! directory.

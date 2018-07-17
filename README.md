@@ -9,16 +9,9 @@ iui: [![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](h
 ui-sys: [![ui-sys crates.io version badge](https://img.shields.io/crates/v/ui-sys.svg)](https://crates.io/crates/ui-sys/)
 [![docs.rs for ui-sys](https://docs.rs/ui-sys/badge.svg)](https://docs.rs/ui)
 
-`iui` is a simple, small, easy to distribute GUI library, a Rusty user interface library that binds to platform native APIs.
-These are work-in-progress bindings to the minimalistic native UI library [libui](https://github.com/andlabs/libui) via the `ui-sys` bindings crate.
+`iui` is a **simple** (about 4 kLOC of Rust), **small** (about 800kb, including `libui`), **easy to distribute** (one shared library) GUI library, providing a **Rusty** user interface library that binds to **native APIs** via the [libui](https://github.com/andlabs/libui) and the `ui-sys` bindings crate.
 
-`libui` is a wrapper library for native(ish) GUI libraries:
-
-* Win32API on Windows
-* Cocoa on Mac OS X
-* GTK+ on Linux and elsewhere
-
-This library exposes a Rusty procedural interface to the "Least Common Denominator" of GUI widgets.
+`iui` wraps native retained mode GUI libraries, like Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere. Thus all `iui` apps have a native look and feel and start from a highly performant base which is well integegrated with the native ecosystem on each platform. Because it implements only the least common subset of these platform APIs, your apps will work on all platforms and won't have significant behavioral inconsistencies, with no additional effort on your part.
 
 ## Using
 
@@ -28,70 +21,27 @@ Add `iui` to your project with:
 iui = "0.3"
 ```
 
+Then, in your code, all you have to do is:
+
+1. create a [`UI`](https://docs.rs/iui/*/iui/struct.UI.html#method.init) handle, initializing the UI library and guarding against memory unsafety
+1. make a [window](https://docs.rs/iui/*/iui/controls/struct.Window.html), or a few, with title and platform-native decorations, into which your app will be drawn
+1. add all your [controls](https://docs.rs/iui/*/iui/controls/index.html), like buttons and text inputs, laid out with both axial and grid layout options
+1. implement some [callbacks](https://docs.rs/iui/*/iui/controls/struct.Button.html#method.on_clicked) for user input, taking full advantage of Rust's concurrency protections
+1. call [`UI::main`](https://docs.rs/iui/*/iui/struct.UI.html#method.main), or take control over the event processing with an [`EventLoop`](https://docs.rs/iui/*/iui/struct.EventLoop.html), and voíla! A GUI!
+
+Or, you can track the `master` branch, which may be broken and whose API often changes, with:
+
+```toml
+iui = { git = "https://github.com/leotindall/libui-rs/iui" }
+```
+
 We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://leotindall.github.io/libui-rs/iui/index.html) for master.
 
-
-
-## Example
+## Examples
 
 ![Three example GUI applications running on Linux](themed.png)
 
-```rust
-extern crate iui;
-use iui::prelude::*;
-use iui::controls::{Label, Button, VerticalBox, Group};
-
-fn main() {
-    // Initialize the UI library
-    let ui = UI::init().expect("Couldn't initialize UI library");
-    // Create a window into which controls can be placed
-    let mut win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
-
-    // Create a vertical layout to hold the controls
-    let mut vbox = VerticalBox::new(&ui);
-    vbox.set_padded(&ui, true);
-
-    let mut group_vbox = VerticalBox::new(&ui);
-    let mut group = Group::new(&ui, "Group");
-
-    // Create two buttons to place in the window
-    let mut button = Button::new(&ui, "Button");
-    button.on_clicked(&ui, {
-        let ui = ui.clone();
-        move |btn| {
-            btn.set_text(&ui, "Clicked!");
-        }
-    });
-
-    let mut quit_button = Button::new(&ui, "Quit");
-    quit_button.on_clicked(&ui, {
-        let ui = ui.clone();
-        move |_| {
-            ui.quit();
-        }
-    });
-
-    // Create a new label. Note that labels don't auto-wrap!
-    let mut label_text = String::new();
-    label_text.push_str("There is a ton of text in this label.\n");
-    label_text.push_str("Pretty much every unicode character is supported.\n");
-    label_text.push_str("🎉 用户界面 사용자 인터페이스");
-    let label = Label::new(&ui, &label_text);
-
-    vbox.append(&ui, label, LayoutStrategy::Stretchy);
-    group_vbox.append(&ui, button, LayoutStrategy::Compact);
-    group_vbox.append(&ui, quit_button, LayoutStrategy::Compact);
-    group.set_child(&ui, group_vbox);
-    vbox.append(&ui, group, LayoutStrategy::Compact);
-
-    // Actually put the button in the window
-    win.set_child(&ui, vbox);
-    // Show the window
-    win.show(&ui);
-    // Run the application
-    ui.main();
-}
-```
+Check out the [`examples/`](https://github.com/LeoTindall/libui-rs/tree/0.3.0/iui/examples) directory from the latest release for these examples and more.
 
 ## Organization
 
