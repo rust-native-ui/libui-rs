@@ -280,12 +280,12 @@ pub enum GridAlignment {
 impl GridAlignment {
     fn into_ui_align(self) -> uiAlign {
         use self::GridAlignment::*;
-        match self {
+        return match self {
             Fill => ui_sys::uiAlignFill,
             Start => ui_sys::uiAlignStart,
             Center => ui_sys::uiAlignCenter,
             End => ui_sys::uiAlignEnd 
-        }
+        } as uiAlign;
     }
 }
 
@@ -305,12 +305,12 @@ pub enum GridInsertionStrategy {
 impl GridInsertionStrategy {
     fn into_ui_at(self) -> uiAt {
         use self::GridInsertionStrategy::*;
-        match self {
+        return match self {
             Leading => ui_sys::uiAtLeading,
             Top => ui_sys::uiAtTop,
             Trailing => ui_sys::uiAtTrailing,
             Bottom => ui_sys::uiAtBottom 
-        }
+        } as uiAlign;
     }
 }
 
