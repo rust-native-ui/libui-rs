@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "iui",
+    "ui-sys",
+]
+

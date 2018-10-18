@@ -1,7 +1,7 @@
 //! Menus that appear at the top of windows, and the items that go in them.
 
 use controls::Window;
-use libc::{c_int, c_void};
+use std::os::raw::{c_int, c_void};
 use std::ffi::CString;
 use std::mem;
 use ui_sys::{self, uiMenu, uiMenuItem, uiWindow};
@@ -51,7 +51,7 @@ impl MenuItem {
             let mut data: Box<Box<FnMut(&MenuItem, &Window)>> = Box::new(Box::new(callback));
             ui_sys::uiMenuItemOnClicked(
                 self.ui_menu_item,
-                c_callback,
+                Some(c_callback),
                 &mut *data as *mut Box<FnMut(&MenuItem, &Window)> as *mut c_void,
             );
             mem::forget(data);

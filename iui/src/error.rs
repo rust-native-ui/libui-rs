@@ -16,5 +16,5 @@ pub enum UIError {
         index,
         n
     )]
-    TabGroupIndexOutOfBounds { index: u64, n: u64 },
+    TabGroupIndexOutOfBounds { index: i32, n: i32},
 }

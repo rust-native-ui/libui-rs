@@ -51,7 +51,7 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 // pub mod text {
 //     use ui::UI;
 //     // use ffi_utils;
-//     use libc::c_char;
+//     use std::os::raw::c_char;
 //     use std::ffi::{CStr, CString};
 //     use std::mem;
 //     use ui_sys::{self, uiDrawTextFont, uiDrawTextFontDescriptor, uiDrawTextLayout};

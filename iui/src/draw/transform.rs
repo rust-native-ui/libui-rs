@@ -3,7 +3,7 @@ use std::ops::Mul;
 use ui_sys::{self, uiDrawMatrix};
 
 /// A transformation which can be applied to the contents of a DrawContext.
-#[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Transform {
     ui_matrix: uiDrawMatrix,
 }

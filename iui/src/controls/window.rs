@@ -1,7 +1,7 @@
 //! Functionality related to creating, managing, and destroying GUI windows.
 
 use controls::Control;
-use libc::{c_int, c_void};
+use std::os::raw::{c_int, c_void};
 use std::cell::RefCell;
 use std::ffi::{CStr, CString};
 use std::mem;
@@ -95,7 +95,7 @@ impl Window {
             }));
             ui_sys::uiWindowOnClosing(
                 self.uiWindow,
-                c_callback,
+                Some(c_callback),
                 &mut *data as *mut Box<FnMut(&mut Window) -> bool> as *mut c_void,
             );
             mem::forget(data);
