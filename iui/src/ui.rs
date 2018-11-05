@@ -133,7 +133,7 @@ impl UI {
     /// ui.queue_main(|| { println!("Runs second") } );
     /// ui.quit();
     /// ```
-    pub fn queue_main<F: FnMut()>(&self, callback: F) {
+    pub fn queue_main<'ctx, F: FnMut() + 'ctx>(&'ctx self, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut()>> = Box::new(Box::new(callback));
             ui_sys::uiQueueMain(
@@ -145,7 +145,7 @@ impl UI {
     }
 
     /// Set a callback to be run when the application quits.
-    pub fn on_should_quit<F: FnMut()>(&self, callback: F) {
+    pub fn on_should_quit<'ctx, F: FnMut() + 'ctx>(&'ctx self, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut()>> = Box::new(Box::new(callback));
             ui_sys::uiOnShouldQuit(
@@ -163,18 +163,18 @@ impl UI {
 /// the UI, so do _not_ spin off your UI interactions into an alternative thread. You're likely to
 /// have problems on Mac OS.
 
-pub struct EventLoop {
+pub struct EventLoop<'s> {
     // This PhantomData prevents UIToken from being Send and Sync
     _pd: PhantomData<*mut ()>,
     // This callback gets run during "run_delay" loops.
-    callback: Option<Box<FnMut()>>,
+    callback: Option<Box<FnMut() + 's>>,
 }
 
-impl EventLoop {
+impl<'s> EventLoop<'s> {
     /// Set the given callback to run when the event loop is executed.
     /// Note that if integrating other event loops you should consider
     /// the potential benefits and drawbacks of the various run modes.
-    pub fn on_tick<F: FnMut() + 'static>(&mut self, _ctx: &UI, callback: F) {
+    pub fn on_tick<'ctx, F: FnMut() + 's + 'ctx>(&'ctx mut self, _ctx: &'ctx UI, callback: F) {
         self.callback = Some(Box::new(callback));
     }
 

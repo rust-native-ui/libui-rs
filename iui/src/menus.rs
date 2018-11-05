@@ -46,7 +46,7 @@ impl MenuItem {
     }
 
     /// Sets the function to be executed when the item is clicked/selected.
-    pub fn on_clicked<F: FnMut(&MenuItem, &Window)>(&self, _ctx: &UI, callback: F) {
+    pub fn on_clicked<'ctx, F: FnMut(&MenuItem, &Window) + 'ctx>(&self, _ctx: &'ctx UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(&MenuItem, &Window)>> = Box::new(Box::new(callback));
             ui_sys::uiMenuItemOnClicked(

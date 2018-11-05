@@ -13,13 +13,13 @@ use ui_sys::{
 pub trait NumericEntry {
     fn value(&self, ctx: &UI) -> i32;
     fn set_value(&mut self, ctx: &UI, value: i32);
-    fn on_changed<F: FnMut(i32)>(&mut self, ctx: &UI, callback: F);
+    fn on_changed<'ctx, F: FnMut(i32) + 'ctx>(&mut self, ctx: &'ctx UI, callback: F);
 }
 
 pub trait TextEntry {
     fn value(&self, ctx: &UI) -> String;
     fn set_value(&mut self, ctx: &UI, value: &str);
-    fn on_changed<F: FnMut(String)>(&mut self, ctx: &UI, callback: F);
+    fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, ctx: &'ctx UI, callback: F);
 }
 
 define_control!{
@@ -62,7 +62,7 @@ impl NumericEntry for Spinbox {
         unsafe { ui_sys::uiSpinboxSetValue(self.uiSpinbox, value) }
     }
 
-    fn on_changed<F: FnMut(i32)>(&mut self, _ctx: &UI, callback: F) {
+    fn on_changed<'ctx, F: FnMut(i32) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(i32)>> = Box::new(Box::new(callback));
             ui_sys::uiSpinboxOnChanged(
@@ -91,7 +91,7 @@ impl NumericEntry for Slider {
         unsafe { ui_sys::uiSliderSetValue(self.uiSlider, value) }
     }
 
-    fn on_changed<F: FnMut(i32)>(&mut self, _ctx: &UI, callback: F) {
+    fn on_changed<'ctx, F: FnMut(i32) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(i32)>> = Box::new(Box::new(callback));
             ui_sys::uiSliderOnChanged(
@@ -148,7 +148,7 @@ impl TextEntry for Entry {
         unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<F: FnMut(String)>(&mut self, _ctx: &UI, callback: F) {
+    fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
             ui_sys::uiEntryOnChanged(
@@ -184,7 +184,7 @@ impl TextEntry for MultilineEntry {
         unsafe { ui_sys::uiMultilineEntrySetText(self.uiMultilineEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<F: FnMut(String)>(&mut self, _ctx: &UI, callback: F) {
+    fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
             ui_sys::uiMultilineEntryOnChanged(
