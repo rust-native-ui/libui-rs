@@ -87,7 +87,7 @@ impl Window {
     ///
     /// This is often used on the main window of an application to quit
     /// the application when the window is closed.
-    pub fn on_closing<F: FnMut(&mut Window)>(&mut self, _ctx: &UI, mut callback: F) {
+    pub fn on_closing<'ctx, F: FnMut(&mut Window) + 'ctx>(&mut self, _ctx: &'ctx UI, mut callback: F) {
         unsafe {
             let mut data: Box<Box<FnMut(&mut Window) -> bool>> = Box::new(Box::new(|window| {
                 callback(window);
