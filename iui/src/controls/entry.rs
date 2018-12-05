@@ -1,13 +1,14 @@
 //! User input mechanisms: numbers, colors, and text in various forms.
 
 use super::Control;
-use std::os::raw::c_void;
 use std::ffi::{CStr, CString};
 use std::i32;
 use std::mem;
+use std::os::raw::c_void;
 use ui::UI;
 use ui_sys::{
-    self, uiCheckbox, uiCombobox, uiControl, uiEntry, uiMultilineEntry, uiSlider, uiSpinbox,
+    self, uiCheckbox, uiCombobox, uiControl, uiEntry, uiMultilineEntry, uiRadioButtons, uiSlider,
+    uiSpinbox,
 };
 
 pub trait NumericEntry {
@@ -22,15 +23,15 @@ pub trait TextEntry {
     fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, ctx: &'ctx UI, callback: F);
 }
 
-define_control!{
+define_control! {
     /// Numerical entry control which allows users to set any value in a range by typing or incrementing/decrementing.
-    rust_type: Spinbox, 
+    rust_type: Spinbox,
     sys_type: uiSpinbox
 }
 
-define_control!{ 
+define_control! {
     /// Numerical entry which allows users to select a value by picking a location along a line.
-    rust_type: Slider, 
+    rust_type: Slider,
     sys_type: uiSlider
 }
 
@@ -287,6 +288,49 @@ impl Checkbox {
             unsafe {
                 let val = ui_sys::uiCheckboxChecked(checkbox) != 0;
                 mem::transmute::<*mut c_void, &mut Box<FnMut(bool)>>(data)(val);
+            }
+        }
+    }
+}
+
+define_control! {
+    rust_type: RadioButtons,
+    sys_type: uiRadioButtons
+}
+
+impl RadioButtons {
+    pub fn new(_ctx: &UI) -> Self {
+        unsafe { RadioButtons::from_raw(ui_sys::uiNewRadioButtons()) }
+    }
+
+    pub fn append(&self, _ctx: &UI, name: &str) {
+        let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
+        unsafe { ui_sys::uiRadioButtonsAppend(self.uiRadioButtons, c_string.as_ptr()); }
+    }
+
+    pub fn selected(&self, _ctx: &UI) -> i32 {
+        unsafe { ui_sys::uiRadioButtonsSelected(self.uiRadioButtons) }
+    }
+
+    pub fn set_selected(&mut self, _ctx: &UI, idx: i32) {
+        unsafe { ui_sys::uiRadioButtonsSetSelected(self.uiRadioButtons, idx); }
+    }
+
+    pub fn on_selected<'ctx, F: FnMut(i32) + 'ctx>(&self, _ctx: &'ctx UI, callback: F) {
+        unsafe {
+            let mut data: Box<Box<FnMut(i32)>> = Box::new(Box::new(callback));
+            ui_sys::uiRadioButtonsOnSelected(
+                self.uiRadioButtons,
+                Some(c_callback),
+                &mut *data as *mut Box<FnMut(i32)> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(radio_buttons: *mut uiRadioButtons, data: *mut c_void) {
+            unsafe {
+                let val = ui_sys::uiRadioButtonsSelected(radio_buttons);
+                mem::transmute::<*mut c_void, &mut Box<FnMut(i32)>>(data)(val);
             }
         }
     }
