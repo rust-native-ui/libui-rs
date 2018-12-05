@@ -294,6 +294,7 @@ impl Checkbox {
 }
 
 define_control! {
+    /// A set of toggles; only one can be selected at a time.
     rust_type: RadioButtons,
     sys_type: uiRadioButtons
 }
