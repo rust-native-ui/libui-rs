@@ -8,10 +8,10 @@ pub enum ProgressBarValue {
     /// Represents a set, consistent percentage of the bar to be filled
     ///
     /// The value should be in the range 0..=100, and will be capped at 100
-    /// by ProgressBar::set_value if it is larger
+    /// by ProgressBar::set_value if it is larger.
     Determinate(u32),
     /// Represents an indeterminate value of the progress bar, useful
-    /// if you don't know how much of the task being represented is completed
+    /// if you don't know how much of the task being represented is completed.
     Indeterminate,
 }
 
