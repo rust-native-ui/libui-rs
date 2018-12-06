@@ -7,7 +7,7 @@ use ui_sys::{self, uiControl, uiProgressBar};
 pub enum ProgressBarValue {
     /// Represents a set, consistent percentage of the bar to be filled
     ///
-    /// The u32 should be in the range 0..=100
+    /// The value should be in the range 0..=100
     Determinate(u32),
     /// Represents an indeterminate value of the progress bar, useful
     /// if you don't know how much of the task being represented is completed
@@ -40,10 +40,6 @@ impl ProgressBar {
     }
 
     /// Set the value of the progress bar to a determinate value
-    ///
-    /// # Panics
-    ///
-    /// This function will panic if `value` is not in the range 0..=100
     pub fn set_determinate(&mut self, value: u32) {
         self.set_value(ProgressBarValue::Determinate(value));
     }
@@ -54,18 +50,10 @@ impl ProgressBar {
     }
 
     /// Set the value of the progress bar
-    ///
-    /// # Panics
-    ///
-    /// This function will panic if the value is `Determinate` and its value is not
-    /// in the range 0..=100
     pub fn set_value(&mut self, value: ProgressBarValue) {
         let sys_value = match value {
             ProgressBarValue::Determinate(value) => {
-                assert!(match value {
-                    0..=100 => true,
-                    _ => false,
-                });
+                let value = if value > 100 { 100 } else { value };
                 value as i32
             }
             ProgressBarValue::Indeterminate => -1,
