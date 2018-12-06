@@ -10,7 +10,7 @@ define_control! {
 }
 
 pub enum ProgressBarStyle {
-    Determinate(i32),
+    Determinate(u32),
     Indeterminate,
 }
 
@@ -27,21 +27,13 @@ impl ProgressBar {
 
     pub fn set_value(&mut self, value: ProgressBarStyle) {
         let sys_value = match value {
-            ProgressBarStyle::Determinate(value) => {
-                // use !is_negative() because 0 is a valid value, but it
-                // returns false for is_positive()
-                assert!(
-                    !value.is_negative(),
-                    "determinate value for ProgressBar must not be negative"
-                );
-                value
-            }
+            ProgressBarStyle::Determinate(value) => value as i32,
             ProgressBarStyle::Indeterminate => -1,
         };
         unsafe { ui_sys::uiProgressBarSetValue(self.uiProgressBar, sys_value) }
     }
 
-    pub fn set_determinate(&mut self, value: i32) {
+    pub fn set_determinate(&mut self, value: u32) {
         self.set_value(ProgressBarStyle::Determinate(value));
     }
 
@@ -54,7 +46,7 @@ impl ProgressBar {
             );
             ProgressBarStyle::Indeterminate
         } else {
-            ProgressBarStyle::Determinate(sys_value)
+            ProgressBarStyle::Determinate(sys_value as u32)
         }
     }
 }
