@@ -50,7 +50,7 @@ impl ProgressBar {
         if sys_value.is_negative() {
             assert!(
                 sys_value == -1,
-                "if ProgressBar value is negative it should only be -1"
+                "if ProgressBar value is negative it can only be -1"
             );
             ProgressBarStyle::Indeterminate
         } else {
