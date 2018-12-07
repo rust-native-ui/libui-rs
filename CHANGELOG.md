@@ -9,6 +9,7 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ### Added
 
 - `ProgressBar` control for tracking the completion of a task
+- `Combobox::selected()` method to retrieve the currently selected index of the combobox
 
 ### Changed
 
