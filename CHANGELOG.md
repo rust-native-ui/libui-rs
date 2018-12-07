@@ -9,6 +9,7 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ### Added
 
 - `ProgressBar` control for tracking the completion of a task
+- `enable()` and `disable()` methods on all controls
 
 ### Changed
 
