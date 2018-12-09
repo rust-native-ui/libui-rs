@@ -228,6 +228,11 @@ impl Combobox {
         }
     }
 
+    /// Returns the index of the currently selected option.
+    pub fn selected(&self, _ctx: &UI) -> i32 {
+        unsafe { ui_sys::uiComboboxSelected(self.uiCombobox) }
+    }
+
     pub fn set_selected(&mut self, _ctx: &UI, value: i32) {
         unsafe { ui_sys::uiComboboxSetSelected(self.uiCombobox, value) }
     }
