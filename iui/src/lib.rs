@@ -2,7 +2,7 @@
 //! `iui` wraps native retained mode GUI libraries, like Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere. Thus all `iui` apps have a native look and feel and start from a highly performant base which is well integegrated with the native ecosystem on each platform. Because it implements only the least common subset of these platform APIs, your apps will work on all platforms and won't have significant behavioral inconsistencies, with no additional effort on your part.
 //!
 //! To use the library, add the following to your `Cargo.toml`:
-//! 
+//!
 //! ```toml
 //! "iui" = "0.3"
 //! ```
@@ -27,6 +27,8 @@ extern crate libc;
 extern crate ui_sys;
 extern crate regex;
 
+mod callback_helpers;
+mod compile_tests;
 pub mod controls;
 pub mod draw;
 mod error;

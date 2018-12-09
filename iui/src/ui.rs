@@ -1,3 +1,4 @@
+use callback_helpers::{from_void_ptr, to_heap_ptr};
 use error::UIError;
 use ffi_tools;
 use std::os::raw::{c_int, c_void};
@@ -133,26 +134,29 @@ impl UI {
     /// ui.queue_main(|| { println!("Runs second") } );
     /// ui.quit();
     /// ```
-    pub fn queue_main<'ctx, F: FnMut() + 'ctx>(&'ctx self, callback: F) {
+    pub fn queue_main<F: FnMut() + 'static>(&self, callback: F) {
+        extern "C" fn c_callback<G: FnMut()>(data: *mut c_void) {
+            unsafe {
+                from_void_ptr::<G>(data)();
+            }
+        }
+
         unsafe {
-            let mut data: Box<Box<dyn FnMut()>> = Box::new(Box::new(callback));
-            ui_sys::uiQueueMain(
-                None,
-                &mut *data as *mut Box<dyn FnMut()> as *mut c_void,
-            );
-            mem::forget(data);
+            ui_sys::uiQueueMain(Some(c_callback::<F>), to_heap_ptr(callback));
         }
     }
 
     /// Set a callback to be run when the application quits.
-    pub fn on_should_quit<'ctx, F: FnMut() + 'ctx>(&'ctx self, callback: F) {
+    pub fn on_should_quit<F: FnMut() + 'static>(&self, callback: F) {
+        extern "C" fn c_callback<G: FnMut()>(data: *mut c_void) -> i32 {
+            unsafe {
+                from_void_ptr::<G>(data)();
+                0
+            }
+        }
+
         unsafe {
-            let mut data: Box<Box<dyn FnMut()>> = Box::new(Box::new(callback));
-            ui_sys::uiOnShouldQuit(
-                None,
-                &mut *data as *mut Box<dyn FnMut()> as *mut c_void,
-            );
-            mem::forget(data);
+            ui_sys::uiOnShouldQuit(Some(c_callback::<F>), to_heap_ptr(callback));
         }
     }
 }

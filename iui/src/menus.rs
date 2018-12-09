@@ -1,9 +1,9 @@
 //! Menus that appear at the top of windows, and the items that go in them.
 
+use callback_helpers::{from_void_ptr, to_heap_ptr};
 use controls::Window;
-use std::os::raw::{c_int, c_void};
 use std::ffi::CString;
-use std::mem;
+use std::os::raw::{c_int, c_void};
 use ui_sys::{self, uiMenu, uiMenuItem, uiWindow};
 use UI;
 
@@ -46,32 +46,27 @@ impl MenuItem {
     }
 
     /// Sets the function to be executed when the item is clicked/selected.
-    pub fn on_clicked<'ctx, F: FnMut(&MenuItem, &Window) + 'ctx>(&self, _ctx: &'ctx UI, callback: F) {
-        unsafe {
-            let mut data: Box<Box<dyn FnMut(&MenuItem, &Window)>> = Box::new(Box::new(callback));
-            ui_sys::uiMenuItemOnClicked(
-                self.ui_menu_item,
-                Some(c_callback),
-                &mut *data as *mut Box<dyn FnMut(&MenuItem, &Window)> as *mut c_void,
-            );
-            mem::forget(data);
-        }
-
-        extern "C" fn c_callback(
+    pub fn on_clicked<'ctx, F>(&self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(&MenuItem, &Window) + 'ctx,
+    {
+        extern "C" fn c_callback<G: FnMut(&MenuItem, &Window)>(
             menu_item: *mut uiMenuItem,
             window: *mut uiWindow,
             data: *mut c_void,
         ) {
+            let menu_item = unsafe { MenuItem::from_raw(menu_item) };
+            let window = unsafe { Window::from_raw(window) };
             unsafe {
-                let menu_item = MenuItem {
-                    ui_menu_item: menu_item,
-                };
-                let window = Window::from_raw(window);
-                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(&MenuItem, &Window)>>(data)(
-                    &menu_item, &window,
-                );
-                mem::forget(window);
+                from_void_ptr::<G>(data)(&menu_item, &window);
             }
+        }
+        unsafe {
+            ui_sys::uiMenuItemOnClicked(
+                self.ui_menu_item,
+                Some(c_callback::<F>),
+                to_heap_ptr(callback),
+            );
         }
     }
 

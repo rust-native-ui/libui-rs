@@ -4,7 +4,10 @@
 #[derive(Fail, Debug)]
 pub enum UIError {
     /// Signifies that the underlying library was unable to properly hook into the platform's GUI APIs.
-    #[fail(display = "unable to initialize the underlying system bindings: {}", error)]
+    #[fail(
+        display = "unable to initialize the underlying system bindings: {}",
+        error
+    )]
     FailedInitError { error: String },
     /// Signifies that an attempt was made to initialize a new instance of the underlying library while
     /// one already existed.
@@ -16,5 +19,5 @@ pub enum UIError {
         index,
         n
     )]
-    TabGroupIndexOutOfBounds { index: i32, n: i32},
+    TabGroupIndexOutOfBounds { index: i32, n: i32 },
 }

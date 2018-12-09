@@ -4,6 +4,7 @@
 //! `\r\n` for display are added and removed by the controls.
 
 use super::Control;
+use callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::ffi::{CStr, CString};
 use std::i32;
 use std::mem;
@@ -67,22 +68,26 @@ impl NumericEntry for Spinbox {
         unsafe { ui_sys::uiSpinboxSetValue(self.uiSpinbox, value) }
     }
 
-    fn on_changed<'ctx, F: FnMut(i32) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
-        unsafe {
-            let mut data: Box<Box<dyn FnMut(i32)>> = Box::new(Box::new(callback));
-            ui_sys::uiSpinboxOnChanged(
-                self.uiSpinbox,
-                Some(c_callback),
-                &mut *data as *mut Box<dyn FnMut(i32)> as *mut c_void,
-            );
-            mem::forget(data);
+    fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(i32) + 'ctx,
+    {
+        extern "C" fn c_callback<G>(spinbox: *mut uiSpinbox, data: *mut c_void)
+        where
+            G: FnMut(i32),
+        {
+            let val = unsafe { ui_sys::uiSpinboxValue(spinbox) };
+            unsafe {
+                from_void_ptr::<G>(data)(val);
+            }
         }
 
-        extern "C" fn c_callback(spinbox: *mut uiSpinbox, data: *mut c_void) {
-            unsafe {
-                let val = ui_sys::uiSpinboxValue(spinbox);
-                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(i32)>>(data)(val);
-            }
+        unsafe {
+            ui_sys::uiSpinboxOnChanged(
+                self.uiSpinbox,
+                Some(c_callback::<F>),
+                to_heap_ptr(callback),
+            );
         }
     }
 }
@@ -96,22 +101,22 @@ impl NumericEntry for Slider {
         unsafe { ui_sys::uiSliderSetValue(self.uiSlider, value) }
     }
 
-    fn on_changed<'ctx, F: FnMut(i32) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
-        unsafe {
-            let mut data: Box<Box<dyn FnMut(i32)>> = Box::new(Box::new(callback));
-            ui_sys::uiSliderOnChanged(
-                self.uiSlider,
-                Some(c_callback),
-                &mut *data as *mut Box<dyn FnMut(i32)> as *mut c_void,
-            );
-            mem::forget(data);
+    fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(i32) + 'ctx,
+    {
+        extern "C" fn c_callback<G>(slider: *mut uiSlider, data: *mut c_void)
+        where
+            G: FnMut(i32),
+        {
+            let val = unsafe { ui_sys::uiSliderValue(slider) };
+            unsafe {
+                from_void_ptr::<G>(data)(val);
+            }
         }
 
-        extern "C" fn c_callback(slider: *mut uiSlider, data: *mut c_void) {
-            unsafe {
-                let val = ui_sys::uiSliderValue(slider);
-                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(i32)>>(data)(val);
-            }
+        unsafe {
+            ui_sys::uiSliderOnChanged(self.uiSlider, Some(c_callback::<F>), to_heap_ptr(callback));
         }
     }
 }
@@ -162,28 +167,25 @@ impl TextEntry for Entry {
         unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
-        unsafe {
-            let mut data: Box<Box<dyn FnMut(String)>> = Box::new(Box::new(callback));
-            ui_sys::uiEntryOnChanged(
-                self.uiEntry,
-                Some(c_callback),
-                &mut *data as *mut Box<dyn FnMut(String)> as *mut c_void,
-            );
-            mem::forget(data);
+        fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(String) + 'ctx,
+    {
+        extern "C" fn c_callback<G>(entry: *mut uiEntry, data: *mut c_void)
+        where
+            G: FnMut(String),
+        {
+            let string = unsafe { CStr::from_ptr(ui_sys::uiEntryText(entry)) }
+                .to_string_lossy()
+                .into_owned();
+            unsafe { from_void_ptr::<G>(data)(string) }
         }
 
-        extern "C" fn c_callback(entry: *mut uiEntry, data: *mut c_void) {
-            unsafe {
-                let string = CStr::from_ptr(ui_sys::uiEntryText(entry))
-                    .to_string_lossy()
-                    .into_owned();
-                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(String)>>(data)(string);
-                mem::forget(entry);
+        unsafe {
+            ui_sys::uiEntryOnChanged(self.uiEntry, Some(c_callback::<F>), to_heap_ptr(callback)); 
             }
         }
     }
-}
 
 impl TextEntry for PasswordEntry {
     fn value(&self, _ctx: &UI) -> String {
@@ -231,23 +233,26 @@ impl TextEntry for MultilineEntry {
         unsafe { ui_sys::uiMultilineEntrySetText(self.uiMultilineEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
-        unsafe {
-            let mut data: Box<Box<dyn FnMut(String)>> = Box::new(Box::new(callback));
-            ui_sys::uiMultilineEntryOnChanged(
-                self.uiMultilineEntry,
-                Some(c_callback),
-                &mut *data as *mut Box<dyn FnMut(String)> as *mut c_void,
-            );
-            mem::forget(data);
+    fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(String) + 'ctx,
+    {
+        extern "C" fn c_callback<G>(entry: *mut uiMultilineEntry, data: *mut c_void)
+        where
+            G: FnMut(String),
+        {
+            let string = unsafe { CStr::from_ptr(ui_sys::uiMultilineEntryText(entry)) }
+                .to_string_lossy()
+                .into_owned();
+            unsafe { from_void_ptr::<G>(data)(string) }
         }
 
-        extern "C" fn c_callback(entry: *mut uiMultilineEntry, data: *mut c_void) {
-            unsafe {
-                let string = from_toolkit_string(ui_sys::uiMultilineEntryText(entry));
-                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(String)>>(data)(string);
-                mem::forget(entry);
-            }
+        unsafe {
+            ui_sys::uiMultilineEntryOnChanged(
+                self.uiMultilineEntry,
+                Some(c_callback::<F>),
+                to_heap_ptr(callback),
+            );
         }
     }
 }
@@ -281,22 +286,24 @@ impl Combobox {
         unsafe { ui_sys::uiComboboxSetSelected(self.uiCombobox, value) }
     }
 
-    pub fn on_selected<F: FnMut(i32)>(&mut self, _ctx: &UI, callback: F) {
-        unsafe {
-            let mut data: Box<Box<dyn FnMut(i32)>> = Box::new(Box::new(callback));
-            ui_sys::uiComboboxOnSelected(
-                self.uiCombobox,
-                Some(c_callback),
-                &mut *data as *mut Box<dyn FnMut(i32)> as *mut c_void,
-            );
-            mem::forget(data);
+    pub fn on_selected<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(i32) + 'ctx,
+    {
+        extern "C" fn c_callback<G>(combobox: *mut uiCombobox, data: *mut c_void)
+        where
+            G: FnMut(i32),
+        {
+            let val = unsafe { ui_sys::uiComboboxSelected(combobox) };
+            unsafe { from_void_ptr::<G>(data)(val) }
         }
 
-        extern "C" fn c_callback(combobox: *mut uiCombobox, data: *mut c_void) {
-            unsafe {
-                let val = ui_sys::uiComboboxSelected(combobox);
-                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(i32)>>(data)(val);
-            }
+        unsafe {
+            ui_sys::uiComboboxOnSelected(
+                self.uiCombobox,
+                Some(c_callback::<F>),
+                to_heap_ptr(callback),
+            );
         }
     }
 }
@@ -322,22 +329,25 @@ impl Checkbox {
         unsafe { ui_sys::uiCheckboxSetChecked(self.uiCheckbox, checked as i32) }
     }
 
-    pub fn on_toggled<F: FnMut(bool)>(&mut self, _ctx: &UI, callback: F) {
-        unsafe {
-            let mut data: Box<Box<dyn FnMut(bool)>> = Box::new(Box::new(callback));
-            ui_sys::uiCheckboxOnToggled(
-                self.uiCheckbox,
-                Some(c_callback),
-                &mut *data as *mut Box<dyn FnMut(bool)> as *mut c_void,
-            );
-            mem::forget(data);
+    pub fn on_toggled<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(bool) + 'ctx,
+    {
+        extern "C" fn c_callback<G>(checkbox: *mut uiCheckbox, data: *mut c_void)
+        where
+            G: FnMut(bool),
+        {
+            let val = unsafe { ui_sys::uiCheckboxChecked(checkbox) } != 0;
+            unsafe { from_void_ptr::<G>(data)(val) }
         }
 
-        extern "C" fn c_callback(checkbox: *mut uiCheckbox, data: *mut c_void) {
-            unsafe {
-                let val = ui_sys::uiCheckboxChecked(checkbox) != 0;
-                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(bool)>>(data)(val);
-            }
+        unsafe {
+
+            ui_sys::uiCheckboxOnToggled(
+                self.uiCheckbox,
+                Some(c_callback::<F>),
+                to_heap_ptr(callback),
+            );
         }
     }
 }

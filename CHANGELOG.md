@@ -23,6 +23,8 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 * `LayoutGrid::insert_at` no longer takes `left` and `height` arguments
 * Many APIs which took `u64` or `i64` arguments now take `i32` for wider compatibility
 * The semi-unstable `iui::draw` subsystem is again exported to downstream consumers of the `iui` crate.
+* `UI::queue_main` and `UI::on_should_quit` now require passed closures to be `'static`, for soundness
+* All callback registration functions require that their callbacks live at least as long as the `UI` token, for soundness
 
 ### Deprecated
 
