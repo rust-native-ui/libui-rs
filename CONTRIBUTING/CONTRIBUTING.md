@@ -34,7 +34,9 @@ from slowing down your PR.
 * Mark unsafe functions as `unsafe`. This includes _anything_ with potential
 undefined behavior, not just memory unsafety.
 * Document your code! This is the number one holdup for pull requests, especially
-large ones. Don't forget to insert appropriate entries into the changelog.
+large ones. This includes adding new concepts to the CONTRIBUTING directory (developer
+documentation).
+* Insert appropriate entries into the changelog.
 * If implementing a new feature from `ui`, please mention the stability of that
 feature in your pull request. We are fine with implementing unstable APIs from
 `ui`, but it's important to mark such APIs as unstable.
