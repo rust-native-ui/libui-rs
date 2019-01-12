@@ -32,7 +32,7 @@ Then, in your code, all you have to do is:
 Or, you can track the `master` branch, which may be broken and whose API often changes, with:
 
 ```toml
-iui = { git = "https://github.com/leotindall/libui-rs/iui" }
+iui = { git = "https://github.com/LeoTindall/libui-rs.git" }
 ```
 
 We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://leotindall.github.io/libui-rs/iui/index.html) for master.
