@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 use std::ptr;
-use ui::UI;
+use draw::DrawContext;
 use ui_sys::{self, uiDrawBrush};
 
 pub use ui_sys::uiDrawBrushGradientStop as BrushGradientStop;
@@ -22,7 +22,7 @@ pub struct BrushRef<'a> {
 }
 
 impl Brush {
-    pub fn as_ui_draw_brush_ref(&self, _ctx: &UI) -> BrushRef {
+    pub fn as_ui_draw_brush_ref(&self, _ctx: &DrawContext) -> BrushRef {
         match *self {
             Brush::Solid(ref solid_brush) => BrushRef {
                 ui_draw_brush: uiDrawBrush {

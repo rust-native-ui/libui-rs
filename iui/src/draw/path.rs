@@ -1,5 +1,5 @@
 use std::os::raw::c_int;
-use ui::UI;
+use draw::DrawContext;
 use ui_sys::{self, uiDrawPath};
 
 pub use ui_sys::uiDrawFillMode as FillMode;
@@ -15,7 +15,7 @@ impl Drop for Path {
 }
 
 impl Path {
-    pub fn new(_ctx: &UI, fill_mode: FillMode) -> Path {
+    pub fn new(_ctx: &DrawContext, fill_mode: FillMode) -> Path {
         unsafe {
             Path {
                 ui_draw_path: ui_sys::uiDrawNewPath(fill_mode),
@@ -23,13 +23,13 @@ impl Path {
         }
     }
 
-    pub fn new_figure(&self, _ctx: &UI, x: f64, y: f64) {
+    pub fn new_figure(&self, _ctx: &DrawContext, x: f64, y: f64) {
         unsafe { ui_sys::uiDrawPathNewFigure(self.ui_draw_path, x, y) }
     }
 
     pub fn new_figure_with_arc(
         &self,
-        _ctx: &UI,
+        _ctx: &DrawContext,
         x_center: f64,
         y_center: f64,
         radius: f64,
@@ -50,13 +50,13 @@ impl Path {
         }
     }
 
-    pub fn line_to(&self, _ctx: &UI, x: f64, y: f64) {
+    pub fn line_to(&self, _ctx: &DrawContext, x: f64, y: f64) {
         unsafe { ui_sys::uiDrawPathLineTo(self.ui_draw_path, x, y) }
     }
 
     pub fn arc_to(
         &self,
-        _ctx: &UI,
+        _ctx: &DrawContext,
         x_center: f64,
         y_center: f64,
         radius: f64,
@@ -79,7 +79,7 @@ impl Path {
 
     pub fn bezier_to(
         &self,
-        _ctx: &UI,
+        _ctx: &DrawContext,
         c1x: f64,
         c1y: f64,
         c2x: f64,
@@ -90,15 +90,15 @@ impl Path {
         unsafe { ui_sys::uiDrawPathBezierTo(self.ui_draw_path, c1x, c1y, c2x, c2y, end_x, end_y) }
     }
 
-    pub fn close_figure(&self, _ctx: &UI) {
+    pub fn close_figure(&self, _ctx: &DrawContext) {
         unsafe { ui_sys::uiDrawPathCloseFigure(self.ui_draw_path) }
     }
 
-    pub fn add_rectangle(&self, _ctx: &UI, x: f64, y: f64, width: f64, height: f64) {
+    pub fn add_rectangle(&self, _ctx: &DrawContext, x: f64, y: f64, width: f64, height: f64) {
         unsafe { ui_sys::uiDrawPathAddRectangle(self.ui_draw_path, x, y, width, height) }
     }
 
-    pub fn end(&self, _ctx: &UI) {
+    pub fn end(&self, _ctx: &DrawContext) {
         unsafe { ui_sys::uiDrawPathEnd(self.ui_draw_path) }
     }
 

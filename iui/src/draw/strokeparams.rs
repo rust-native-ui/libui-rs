@@ -1,6 +1,6 @@
-use std::os::raw::c_double;
 use std::marker::PhantomData;
-use ui::UI;
+use std::os::raw::c_double;
+use draw::DrawContext;
 use ui_sys::uiDrawStrokeParams;
 
 pub use ui_sys::uiDrawLineCap as LineCap;
@@ -23,7 +23,7 @@ pub struct StrokeParamsRef<'a> {
 }
 
 impl StrokeParams {
-    pub fn as_stroke_params_ref(&self, _ctx: &UI) -> StrokeParamsRef {
+    pub fn as_stroke_params_ref(&self, _ctx: &DrawContext) -> StrokeParamsRef {
         StrokeParamsRef {
             ui_draw_stroke_params: uiDrawStrokeParams {
                 Cap: self.cap,

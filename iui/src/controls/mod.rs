@@ -19,6 +19,8 @@ mod entry;
 pub use self::entry::*;
 mod progressbar;
 pub use self::progressbar::*;
+mod area;
+pub use self::area::*;
 
 /// A generic UI control. Any UI control can be turned into this type.
 ///
