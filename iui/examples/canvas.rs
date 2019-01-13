@@ -2,19 +2,18 @@ extern crate iui;
 extern crate ui_sys;
 
 use iui::controls::{
-    Area, AreaDrawParams, AreaHandler, AreaMouseEvent, HorizontalBox, LayoutStrategy,
+    Area, AreaDrawParams, AreaHandler, HorizontalBox, LayoutStrategy,
 };
-use iui::draw::{Brush, Path, SolidBrush};
+use iui::draw::{Brush, Path, SolidBrush, FillMode};
 use iui::prelude::*;
 use std::f64::consts::PI;
-use ui_sys::uiDrawFillModeWinding;
 
 struct HandleCanvas {}
 impl AreaHandler for HandleCanvas {
     fn draw(&mut self, _area: &Area, draw_params: &AreaDrawParams) {
         let ctx = &draw_params.context;
 
-        let path = Path::new(ctx, uiDrawFillModeWinding);
+        let path = Path::new(ctx, FillMode::Winding);
         path.add_rectangle(ctx, 0., 0., draw_params.area_width, draw_params.area_height);
         path.end(ctx);
 
@@ -27,7 +26,7 @@ impl AreaHandler for HandleCanvas {
 
         draw_params.context.fill(&path, &brush);
 
-        let path = Path::new(ctx, uiDrawFillModeWinding);
+        let path = Path::new(ctx, FillMode::Winding);
         for i in 0..100 {
             let x = i as f64 / 100.;
             let y = ((x * PI * 2.).sin() + 1.) / 2.;

@@ -1,8 +1,6 @@
-use std::os::raw::c_int;
 use draw::DrawContext;
-use ui_sys::{self, uiDrawPath};
-
-pub use ui_sys::uiDrawFillMode as FillMode;
+use std::os::raw::c_int;
+use ui_sys::{self, uiDrawFillMode, uiDrawFillModeAlternate, uiDrawFillModeWinding, uiDrawPath};
 
 pub struct Path {
     ui_draw_path: *mut uiDrawPath,
@@ -14,11 +12,26 @@ impl Drop for Path {
     }
 }
 
+#[derive(Clone, Copy, PartialEq)]
+pub enum FillMode {
+    Winding,
+    Alternate,
+}
+
+impl FillMode {
+    fn into_ui_fillmode(self) -> uiDrawFillMode {
+        match self {
+            FillMode::Winding => uiDrawFillModeWinding,
+            FillMode::Alternate => uiDrawFillModeAlternate,
+        }
+    }
+}
+
 impl Path {
     pub fn new(_ctx: &DrawContext, fill_mode: FillMode) -> Path {
         unsafe {
             Path {
-                ui_draw_path: ui_sys::uiDrawNewPath(fill_mode),
+                ui_draw_path: ui_sys::uiDrawNewPath(fill_mode.into_ui_fillmode()),
             }
         }
     }
