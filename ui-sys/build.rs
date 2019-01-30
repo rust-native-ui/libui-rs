@@ -42,13 +42,20 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings");
 
-    // Deterimine if we're building for MSVC
+    // Deterimine build platform
     let target = env::var("TARGET").unwrap();
     let msvc = target.contains("msvc");
+    let apple = target.contains("apple");
+
     // Build libui if needed. Otherwise, assume it's in lib/
     let mut dst;
     if cfg!(feature = "build") {
-        dst = Config::new("libui").build_target("").profile("release").build();
+        let mut cfg = Config::new("libui");
+        cfg.build_target("").profile("release");
+        if apple {
+            cfg.cxxflag("--stdlib=libc++");
+        }
+        dst = cfg.build();
 
         let mut postfix = Path::new("build").join("out");
         if msvc {
@@ -62,7 +69,7 @@ fn main() {
     }
 
     let libname;
-     if msvc {
+    if msvc {
         libname = "libui";
     } else {
         libname = "ui";
