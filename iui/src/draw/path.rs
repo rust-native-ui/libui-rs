@@ -20,10 +20,10 @@ pub enum FillMode {
 
 impl FillMode {
     fn into_ui_fillmode(self) -> uiDrawFillMode {
-        match self {
+        return match self {
             FillMode::Winding => uiDrawFillModeWinding,
             FillMode::Alternate => uiDrawFillModeAlternate,
-        }
+        } as uiDrawFillMode;
     }
 }
 
