@@ -1,6 +1,6 @@
 # Improved User Interface
 ## A cross-platform UI toolkit for Rust based on libui
-[![libui-rs travis build status](https://api.travis-ci.org/LeoTindall/libui-rs.svg?branch=master)](https://travis-ci.org/LeoTindall/libui-rs/)
+[![travis-ci build status](https://travis-ci.com/rust-native-ui/libui-rs.svg?branch=master)](https://travis-ci.com/rust-native-ui/libui-rs)
 [![libui-rs appveyor build status badge](https://ci.appveyor.com/api/projects/status/github/leotindall/libui-rs)](https://ci.appveyor.com/project/LeoTindall/libui-rs)
 ![actively developed badge](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
@@ -32,16 +32,16 @@ Then, in your code, all you have to do is:
 Or, you can track the `master` branch, which may be broken and whose API often changes, with:
 
 ```toml
-iui = { git = "https://github.com/LeoTindall/libui-rs.git" }
+iui = { git = "https://github.com/rust-native-ui/libui-rs.git" }
 ```
 
-We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://leotindall.github.io/libui-rs/iui/index.html) for master.
+We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://rust-native-ui.github.io/libui-rs/iui/index.html) for master.
 
 ## Examples
 
 ![Three example GUI applications running on Linux](themed.png)
 
-Check out the [`examples/`](https://github.com/LeoTindall/libui-rs/tree/0.3.0/iui/examples) directory from the latest release for these examples and more.
+Check out the [`examples/`](https://github.com/rust-native-ui/libui-rs/tree/0.3.0/iui/examples) directory from the latest release for these examples and more.
 
 ## Organization
 
