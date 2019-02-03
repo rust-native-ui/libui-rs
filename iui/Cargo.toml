@@ -1,7 +1,7 @@
 [package]
 name = "iui"
 version = "0.3.0"
-authors = ["Leo Tindall <lfstindall@gmail.com>"]
+authors = ["Leonora Tindall <lfstindall@gmail.com>"]
 
 # A short blurb about the package. This is not rendered in any format when
 # uploaded to crates.io (aka this is not markdown).
@@ -11,7 +11,7 @@ description = "Simple, small, easy to distribute GUI bindings."
 # intended to be webviews of the relevant data, not necessarily compatible
 # with VCS tools and the like.
 documentation = "https://docs.rs/iui/"
-repository = "https://github.com/LeoTindall/libui-rs"
+repository = "https://github.com/rust-native-ui/libui-rs"
 
 # This points to a file under the package root (relative to this `Cargo.toml`).
 # The contents of this file are stored and indexed in the registry.
@@ -32,8 +32,8 @@ license = "MIT"
 [badges]
 # Travis CI: `repository` in format "<user>/<project>" is required.
 # `branch` is optional; default is `master`
-travis-ci = { repository = "LeoTindall/libui-rs", branch = "master" }
-appveyor = { repository = "LeoTindall/libui-rs", branch = "master" }
+travis-ci = { repository = "rust-native-ui/libui-rs", branch = "master" }
+appveyor = { repository = "rust-native-ui/libui-rs", branch = "master" }
 
 maintenance = { status = "actively-developed" }
 
@@ -41,5 +41,5 @@ maintenance = { status = "actively-developed" }
 bitflags = "1.0"
 libc = "0.2"
 failure = "0.1.1"
-ui-sys = { path = "../ui-sys", version = "0.2.0" } 
+ui-sys = { path = "../ui-sys", version = "0.2.1" } 
 
