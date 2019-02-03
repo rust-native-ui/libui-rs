@@ -15,7 +15,7 @@ Their intended use is for `to_heap_ptr` to turn a Rust function into a bag of bi
 by "generic locking" the user and wrapper functions, like so:
 
 ```rust
-fn on_whatever<'ctx, F: FnMut(&Whatever)>(&mut self, _ctx: &'ctx UI, callback: F) {
+fn on_whatever<'ctx, F: FnMut(&Whatever) + 'static>(&mut self, _ctx: &'ctx UI, callback: F) {
 
     fn c_callback<G: FnMut(&Whatever)> { /* ... do stuff ... */ }
 
@@ -26,5 +26,5 @@ fn on_whatever<'ctx, F: FnMut(&Whatever)>(&mut self, _ctx: &'ctx UI, callback: F
 This is somewhat verbose but ensures that the types do not deviate, which would be unsafe.
 
 Callbacks should be named `on_event` where `event` is, for instance, `clicked` or
-`closing`.
+`closing`. The functions taken by callbacks must always have the `'static` bound.
 

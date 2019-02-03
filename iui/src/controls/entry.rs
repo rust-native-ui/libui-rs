@@ -19,13 +19,13 @@ use str_tools::{from_toolkit_string, to_toolkit_string};
 pub trait NumericEntry {
     fn value(&self, ctx: &UI) -> i32;
     fn set_value(&mut self, ctx: &UI, value: i32);
-    fn on_changed<'ctx, F: FnMut(i32) + 'ctx>(&mut self, ctx: &'ctx UI, callback: F);
+    fn on_changed<'ctx, F: FnMut(i32) + 'static>(&mut self, ctx: &'ctx UI, callback: F);
 }
 
 pub trait TextEntry {
     fn value(&self, ctx: &UI) -> String;
     fn set_value(&mut self, ctx: &UI, value: &str);
-    fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, ctx: &'ctx UI, callback: F);
+    fn on_changed<'ctx, F: FnMut(String) + 'static>(&mut self, ctx: &'ctx UI, callback: F);
 }
 
 define_control! {
@@ -70,7 +70,7 @@ impl NumericEntry for Spinbox {
 
     fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(i32) + 'ctx,
+        F: FnMut(i32) + 'static
     {
         extern "C" fn c_callback<G>(spinbox: *mut uiSpinbox, data: *mut c_void)
         where
@@ -103,7 +103,7 @@ impl NumericEntry for Slider {
 
     fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(i32) + 'ctx,
+        F: FnMut(i32) + 'static
     {
         extern "C" fn c_callback<G>(slider: *mut uiSlider, data: *mut c_void)
         where
@@ -169,7 +169,7 @@ impl TextEntry for Entry {
 
         fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(String) + 'ctx,
+        F: FnMut(String) + 'static,
     {
         extern "C" fn c_callback<G>(entry: *mut uiEntry, data: *mut c_void)
         where
@@ -235,7 +235,7 @@ impl TextEntry for MultilineEntry {
 
     fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(String) + 'ctx,
+        F: FnMut(String) + 'static,
     {
         extern "C" fn c_callback<G>(entry: *mut uiMultilineEntry, data: *mut c_void)
         where
@@ -288,7 +288,7 @@ impl Combobox {
 
     pub fn on_selected<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(i32) + 'ctx,
+        F: FnMut(i32) + 'static,
     {
         extern "C" fn c_callback<G>(combobox: *mut uiCombobox, data: *mut c_void)
         where
@@ -331,7 +331,7 @@ impl Checkbox {
 
     pub fn on_toggled<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(bool) + 'ctx,
+        F: FnMut(bool) + 'static,
     {
         extern "C" fn c_callback<G>(checkbox: *mut uiCheckbox, data: *mut c_void)
         where
@@ -376,7 +376,7 @@ impl RadioButtons {
         unsafe { ui_sys::uiRadioButtonsSetSelected(self.uiRadioButtons, idx); }
     }
 
-    pub fn on_selected<'ctx, F: FnMut(i32) + 'ctx>(&self, _ctx: &'ctx UI, callback: F) {
+    pub fn on_selected<'ctx, F: FnMut(i32) + 'static>(&self, _ctx: &'ctx UI, callback: F) {
         unsafe {
             let mut data: Box<Box<dyn FnMut(i32)>> = Box::new(Box::new(callback));
             ui_sys::uiRadioButtonsOnSelected(

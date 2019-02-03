@@ -46,7 +46,7 @@ impl Button {
     /// Run the given callback when the button is clicked.
     pub fn on_clicked<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(&mut Button) + 'ctx,
+        F: FnMut(&mut Button) + 'static,
     {
         extern "C" fn c_callback<G>(button: *mut uiButton, data: *mut c_void)
         where

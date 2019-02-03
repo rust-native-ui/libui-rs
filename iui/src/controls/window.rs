@@ -90,7 +90,7 @@ impl Window {
     /// the application when the window is closed.
     pub fn on_closing<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(&mut Window) + 'ctx,
+        F: FnMut(&mut Window) + 'static,
     {
         extern "C" fn c_callback<G>(window: *mut uiWindow, data: *mut c_void) -> i32
         where

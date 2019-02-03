@@ -48,7 +48,7 @@ impl MenuItem {
     /// Sets the function to be executed when the item is clicked/selected.
     pub fn on_clicked<'ctx, F>(&self, _ctx: &'ctx UI, callback: F)
     where
-        F: FnMut(&MenuItem, &Window) + 'ctx,
+        F: FnMut(&MenuItem, &Window) + 'static,
     {
         extern "C" fn c_callback<G: FnMut(&MenuItem, &Window)>(
             menu_item: *mut uiMenuItem,
