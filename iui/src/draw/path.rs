@@ -12,9 +12,12 @@ impl Drop for Path {
     }
 }
 
+/// Represents the fill mode used when drawing a path.
 #[derive(Clone, Copy, PartialEq)]
 pub enum FillMode {
+    /// Draw using the [non-zero winding number fill rule](https://en.wikipedia.org/wiki/Nonzero-rule).
     Winding,
+    /// Draw using the [even-odd fill rule](https://en.wikipedia.org/wiki/Even-odd_rule).
     Alternate,
 }
 
