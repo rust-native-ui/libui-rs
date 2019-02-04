@@ -31,6 +31,7 @@ No deprecations.
 ### Fixed
 
 * `VerticalBox` and `HorizontalBox` no longer link to the removed `BoxExt` trait.
+* `ui-sys` now builds on modern macOS.
 
 ### Security
 
