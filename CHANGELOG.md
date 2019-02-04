@@ -19,6 +19,7 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 * README.md now links to libui, and is more explanatory
 * `LayoutGrid::insert_at` no longer takes `left` and `height` arguments
 * Many APIs which took `u64` or `i64` arguments now take `i32` for wider compatibility
+* The semi-unstable `iui::draw` subsystem is again exported to downstream consumers of the `iui` crate.
 
 ### Deprecated
 
