@@ -4,7 +4,7 @@
 extern crate iui;
 use iui::prelude::*;
 use iui::controls::{Label, Spinbox, Slider, Entry, MultilineEntry, LayoutGrid, 
-    GridAlignment, GridExpand, HorizontalSeparator};
+    GridAlignment, GridExpand, HorizontalSeparator, ProgressBar};
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -59,11 +59,12 @@ fn main() {
 
     // Set up the outputs for the application. Organization is very similar to the
     // previous setup.
-    let (add_label, sub_label, text_label, bigtext_label) = {
+    let (add_label, sub_label, text_label, bigtext_label, progress_bar) = {
         let add_label = Label::new(&ui, "");
         let sub_label = Label::new(&ui, "");
         let text_label = Label::new(&ui, "");
         let bigtext_label = Label::new(&ui, "");
+        let progress_bar = ProgressBar::indeterminate(&ui);
         grid.append(&ui, add_label.clone(), 
             1, 0, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, sub_label.clone(),
@@ -74,7 +75,9 @@ fn main() {
             1, 4, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, bigtext_label.clone(),
             1, 5, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        (add_label, sub_label, text_label, bigtext_label)
+        grid.append(&ui, progress_bar.clone(),
+            0, 6, 2, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
+        (add_label, sub_label, text_label, bigtext_label, progress_bar)
     };
 
     // The window allows all constituent components to be displayed.
@@ -116,14 +119,16 @@ fn main() {
         let mut sub_label = sub_label.clone();
         let mut text_label = text_label.clone();
         let mut bigtext_label = bigtext_label.clone();
+        let mut progress_bar = progress_bar.clone();
         move || {
             let state = state.borrow();
 
-            // Update all the labels
+            // Update all the outputs
             add_label.set_text(&ui, &format!("Added: {}", state.slider_val + state.spinner_val));
             sub_label.set_text(&ui, &format!("Subtracted: {}", state.slider_val - state.spinner_val));
             text_label.set_text(&ui, &format!("Text: {}", state.entry_val));
             bigtext_label.set_text(&ui, &format!("Multiline Text: {}", state.multi_val));
+            progress_bar.set_value(&ui, (state.slider_val + state.spinner_val) as u32);
         }
     });
     event_loop.run(&ui);
