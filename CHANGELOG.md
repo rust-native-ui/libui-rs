@@ -12,6 +12,7 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - `enable()` and `disable()` methods on all controls
 - `RadioButtons` control for groups of radio buttons
 - `Combobox::selected()` method to retrieve the currently selected index of the combobox
+- Officially move communications to the Matrix room #rust-native-ui:matrix.nora.codes
 
 ### Changed
 
