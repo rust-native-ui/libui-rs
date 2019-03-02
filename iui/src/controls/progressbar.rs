@@ -3,7 +3,37 @@ use std::mem;
 use ui::UI;
 use ui_sys::{self, uiControl, uiProgressBar};
 
-/// An enum representing the value of a `ProgressBar`
+/// An enum representing the value of a `ProgressBar`.
+/// 
+/// # Values
+/// 
+/// A `ProgressBarValue` can be either `Determinate`, a number from 0 up to 100, or
+/// `Indeterminate`, representing a process that is still in progress but has no
+/// completeness metric availble.
+/// 
+/// # Conversions
+/// 
+/// A `ProgressBarValue` can be made from a `u32` or an `Option<u32>`, and the relevant functions
+/// take a type that is generic over this behavior, so it's easy to set the progress of a bar.
+/// 
+/// ```
+/// # use iui::prelude::*;
+/// # use iui::controls::{ProgressBar, ProgressBarValue};
+/// # let ui = UI::init().unwrap();
+/// # let mut window = Window::new(&ui, "Test Window", 0, 0, WindowType::NoMenubar);
+/// let mut progressbar = ProgressBar::indeterminate(&ui);
+/// progressbar.set_value(&ui, 54);
+/// 
+/// // Perhaps this is the result of some fallible progress-checking function.
+/// let maybe_progress: Option<u32> = None;
+/// progressbar.set_value(&ui, maybe_progress);
+/// 
+/// // And of course, you can always set it by hand.
+/// progressbar.set_value(&ui, ProgressBarValue::Indeterminate);
+/// # window.set_child(&ui, progressbar); 
+/// # ui.quit();
+/// # ui.main();
+/// ```
 pub enum ProgressBarValue {
     /// Represents a set, consistent percentage of the bar to be filled
     ///
@@ -13,6 +43,25 @@ pub enum ProgressBarValue {
     /// Represents an indeterminate value of the progress bar, useful
     /// if you don't know how much of the task being represented is completed.
     Indeterminate,
+}
+
+impl From<u32> for ProgressBarValue {
+    fn from(value: u32) -> ProgressBarValue {
+        if value <= 100 {
+            ProgressBarValue::Determinate(value)
+        } else {
+            ProgressBarValue::Determinate(100)
+        }
+    }
+}
+
+impl From<Option<u32>> for ProgressBarValue {
+    fn from(value: Option<u32>) -> ProgressBarValue {
+        match value {
+            Some(v) => v.into(),
+            None => ProgressBarValue::Indeterminate
+        }
+    }
 }
 
 define_control! {
@@ -34,27 +83,16 @@ impl ProgressBar {
     }
 
     /// Create a new indeterminate progress bar
-    pub fn indeterminate() -> ProgressBar {
+    pub fn indeterminate(ctx: &UI) -> ProgressBar {
         let mut pb = ProgressBar::new();
-        pb.set_indeterminate();
+        pb.set_value(ctx, ProgressBarValue::Indeterminate);
         pb
     }
 
-    /// Set the value of the progress bar to a determinate value
-    ///
-    /// If `value` is larger than 100, than the value will be set to 100.
-    pub fn set_determinate(&mut self, value: u32) {
-        self.set_value(ProgressBarValue::Determinate(value));
-    }
-
-    /// Set the value of the progress bar to be indeterminate
-    pub fn set_indeterminate(&mut self) {
-        self.set_value(ProgressBarValue::Indeterminate);
-    }
-
-    /// Set the value of the progress bar
-    pub fn set_value(&mut self, value: ProgressBarValue) {
-        let sys_value = match value {
+    /// Set the value of the progress bar. See [`ProgressBarValue`] for the values that can be passed in.
+    /// [`ProgressBarValue`]: enum.ProgressBarValue.html
+    pub fn set_value<V: Into<ProgressBarValue>>(&mut self, _ctx: &UI, value: V) {
+        let sys_value = match value.into() {
             ProgressBarValue::Determinate(value) => {
                 let value = if value > 100 { 100 } else { value };
                 value as i32
@@ -65,7 +103,7 @@ impl ProgressBar {
     }
 
     /// Get the value of the progress bar
-    pub fn value(&self) -> ProgressBarValue {
+    pub fn value(&self, _ctx: &UI) -> ProgressBarValue {
         let sys_value = unsafe { ui_sys::uiProgressBarValue(self.uiProgressBar) };
         if sys_value.is_negative() {
             assert!(

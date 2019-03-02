@@ -2,7 +2,7 @@
 
 extern crate iui;
 use iui::prelude::*;
-use iui::controls::{Label, Spinbox, Slider, Entry, MultilineEntry, VerticalBox, HorizontalBox, HorizontalSeparator, Group, Spacer};
+use iui::controls::{Label, Spinbox, Slider, Entry, MultilineEntry, VerticalBox, HorizontalBox, HorizontalSeparator, Group, Spacer, ProgressBar};
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -52,19 +52,21 @@ fn main() {
 
     // Set up the outputs for the application. Organization is very similar to the
     // previous setup.
-    let (output_group, add_label, sub_label, text_label, bigtext_label) = {
+    let (output_group, add_label, sub_label, text_label, bigtext_label, progress_bar) = {
         let mut output_group = Group::new(&ui, "Outputs");
         let mut output_vbox = VerticalBox::new(&ui);
         let add_label = Label::new(&ui, "");
         let sub_label = Label::new(&ui, "");
         let text_label = Label::new(&ui, "");
         let bigtext_label = Label::new(&ui, "");
+        let progress_bar = ProgressBar::indeterminate(&ui);
         output_vbox.append(&ui, add_label.clone(), LayoutStrategy::Compact);
         output_vbox.append(&ui, sub_label.clone(), LayoutStrategy::Compact);
+        output_vbox.append(&ui, progress_bar.clone(), LayoutStrategy::Compact);
         output_vbox.append(&ui, text_label.clone(), LayoutStrategy::Compact);
         output_vbox.append(&ui, bigtext_label.clone(), LayoutStrategy::Stretchy);
         output_group.set_child(&ui, output_vbox);
-        (output_group, add_label, sub_label, text_label, bigtext_label)
+        (output_group, add_label, sub_label, text_label, bigtext_label, progress_bar)
     };
 
     // This horizontal box will arrange the two groups of controls.
@@ -111,14 +113,16 @@ fn main() {
         let mut sub_label = sub_label.clone();
         let mut text_label = text_label.clone();
         let mut bigtext_label = bigtext_label.clone();
+        let mut progress_bar = progress_bar.clone();
         move || {
             let state = state.borrow();
 
-            // Update all the labels
+            // Update all the outputs 
             add_label.set_text(&ui, &format!("Added: {}", state.slider_val + state.spinner_val));
             sub_label.set_text(&ui, &format!("Subtracted: {}", state.slider_val - state.spinner_val));
             text_label.set_text(&ui, &format!("Text: {}", state.entry_val));
             bigtext_label.set_text(&ui, &format!("Multiline Text: {}", state.multi_val));
+            progress_bar.set_value(&ui, (state.slider_val + state.spinner_val) as u32)
         }
     });
     event_loop.run(&ui);

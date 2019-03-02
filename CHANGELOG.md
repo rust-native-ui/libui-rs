@@ -8,7 +8,7 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- `ProgressBar` control for tracking the completion of a task
+- `ProgressBar` control for tracking the completion of a task with automatic value conversions
 - `enable()` and `disable()` methods on all controls
 - `RadioButtons` control for groups of radio buttons
 - `Combobox::selected()` method to retrieve the currently selected index of the combobox
