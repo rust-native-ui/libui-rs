@@ -5,7 +5,7 @@ use std::mem;
 use ui::UI;
 use ui_sys::{self, uiButton, uiColorButton, uiControl, uiLabel};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Rgba {
     pub r: f64,
     pub g: f64,
