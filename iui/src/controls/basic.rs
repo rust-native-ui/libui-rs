@@ -3,7 +3,15 @@ use std::os::raw::c_void;
 use std::ffi::{CStr, CString};
 use std::mem;
 use ui::UI;
-use ui_sys::{self, uiButton, uiControl, uiLabel};
+use ui_sys::{self, uiButton, uiColorButton, uiControl, uiLabel};
+
+#[derive(Debug)]
+pub struct Rgba {
+    pub r: f64,
+    pub g: f64,
+    pub b: f64,
+    pub a: f64,
+}
 
 define_control!{
     /// A non-interactable piece of text.
@@ -15,6 +23,12 @@ define_control!{
     /// A textual button which users can click on, causing a callback to run.
     rust_type: Button,
     sys_type: uiButton
+}
+
+define_control!{
+    /// A color chooser button which users can click on, causing a callback to run.
+    rust_type: ColorButton,
+    sys_type: uiColorButton
 }
 
 impl Button {
@@ -64,6 +78,58 @@ impl Button {
             unsafe {
                 let mut button = Button { uiButton: button };
                 mem::transmute::<*mut c_void, &mut Box<FnMut(&mut Button)>>(data)(&mut button)
+            }
+        }
+    }
+}
+
+impl ColorButton {
+    /// Create a new color button
+    pub fn new(_ctx: &UI) -> ColorButton {
+        unsafe { ColorButton::from_raw(ui_sys::uiNewColorButton()) }
+    }
+
+    pub fn color(&self, _ctx: &UI) -> Rgba {
+        let mut r: f64 = 0.0;
+        let mut g: f64 = 0.0;
+        let mut b: f64 = 0.0;
+        let mut a: f64 = 0.0;
+
+        unsafe {
+            ui_sys::uiColorButtonColor(self.uiColorButton, &mut r, &mut g, &mut b, &mut a);
+            Rgba { r, g, b, a }
+        }
+    }
+
+    /// Set the text on the button.
+    pub fn set_color(&mut self, _ctx: &UI, color: Rgba) {
+        unsafe {
+            ui_sys::uiColorButtonSetColor(self.uiColorButton, color.r, color.g, color.b, color.a)
+        }
+    }
+
+    /// Run the given callback when the color button is clicked.
+    pub fn on_changed<'ctx, F: FnMut(&mut ColorButton) + 'ctx>(
+        &mut self,
+        _ctx: &'ctx UI,
+        callback: F,
+    ) {
+        unsafe {
+            let mut data: Box<Box<FnMut(&mut ColorButton)>> = Box::new(Box::new(callback));
+            ui_sys::uiColorButtonOnChanged(
+                self.uiColorButton,
+                Some(c_callback),
+                &mut *data as *mut Box<FnMut(&mut ColorButton)> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(button: *mut uiColorButton, data: *mut c_void) {
+            unsafe {
+                let mut button = ColorButton {
+                    uiColorButton: button,
+                };
+                mem::transmute::<*mut c_void, &mut Box<FnMut(&mut ColorButton)>>(data)(&mut button)
             }
         }
     }
