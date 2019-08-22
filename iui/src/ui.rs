@@ -119,7 +119,7 @@ impl UI {
         unsafe { ui_sys::uiQuit() }
     }
 
-    /// Queues a function to be executed on the GUI threa when next possible. Returns
+    /// Queues a function to be executed on the GUI thread when next possible. Returns
     /// immediately, not waiting for the function to be executed.
     ///
     /// # Example
