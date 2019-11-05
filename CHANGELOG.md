@@ -42,6 +42,8 @@ compliance.
 * `ui-sys` now builds on modern macOS.
 * `inputs` and `inputs-grid` examples no longer erroneously start at 0 for inputs starting at 1.
 * Text no longer uses incorrect newlines per platform.
+* `UI::run_delay` no longer spins on the callback, but actually calls it at the
+appropriate interval
 
 ### Security
 
