@@ -3,7 +3,7 @@
 
 extern crate iui;
 use iui::prelude::*;
-use iui::controls::{Label, Spinbox, Slider, Entry, MultilineEntry, LayoutGrid, 
+use iui::controls::{Label, Spinbox, Slider, PasswordEntry, Entry, MultilineEntry, LayoutGrid,
     GridAlignment, GridExpand, HorizontalSeparator, ProgressBar};
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -13,6 +13,7 @@ struct State {
     slider_val: i32,
     spinner_val: i32,
     entry_val: String,
+    password_val: String,
     multi_val: String,
 }
 
@@ -21,7 +22,7 @@ fn main() {
     let ui = UI::init().unwrap();
 
     // Initialize the state of the application.
-    let state = Rc::new(RefCell::new(State { slider_val: 0, spinner_val: 0, entry_val: "".into(), multi_val: "".into() }));
+    let state = Rc::new(RefCell::new(State { slider_val: 0, spinner_val: 0, entry_val: "".into(), password_val: "".into(), multi_val: "".into() }));
 
     // Create the grid which we'll use to lay out controls
     let mut grid = LayoutGrid::new(&ui);
@@ -31,12 +32,13 @@ fn main() {
     // While it's not necessary to create a block for this, it makes the code a lot easier
     // to read; the indentation presents a visual cue informing the reader that these
     // statements are related.
-    let (mut slider, mut spinner, mut entry, mut multi) = {
+    let (mut slider, mut spinner, mut entry, mut password, mut multi) = {
         // Numerical inputs
         let slider = Slider::new(&ui, 1, 100);
         let spinner = Spinbox::new(&ui, 1, 100);
         // Text inputs
         let entry = Entry::new(&ui);
+        let password = PasswordEntry::new(&ui);
         let multi = MultilineEntry::new(&ui);
         // Add everything into the grid
         grid.append(&ui, slider.clone(),
@@ -51,21 +53,24 @@ fn main() {
             0, 3, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, entry.clone(),
             0, 4, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
+        grid.append(&ui, password.clone(),
+            0, 5, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, multi.clone(),
             // The multiline entry is at column 0, row 1, and expands vertically.
-            0, 5, 1, 1, GridExpand::Vertical, GridAlignment::Fill, GridAlignment::Fill);
-        (slider, spinner, entry, multi)
+            0, 6, 1, 1, GridExpand::Vertical, GridAlignment::Fill, GridAlignment::Fill);
+        (slider, spinner, entry, password, multi)
     };
 
     // Set up the outputs for the application. Organization is very similar to the
     // previous setup.
-    let (add_label, sub_label, text_label, bigtext_label, progress_bar) = {
+    let (add_label, sub_label, text_label, password_label, bigtext_label, progress_bar) = {
         let add_label = Label::new(&ui, "");
         let sub_label = Label::new(&ui, "");
         let text_label = Label::new(&ui, "");
+        let password_label = Label::new(&ui, "");
         let bigtext_label = Label::new(&ui, "");
         let progress_bar = ProgressBar::indeterminate(&ui);
-        grid.append(&ui, add_label.clone(), 
+        grid.append(&ui, add_label.clone(),
             1, 0, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, sub_label.clone(),
             1, 1, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
@@ -73,11 +78,13 @@ fn main() {
         // This is important because the big text label can expand vertically.
         grid.append(&ui, text_label.clone(),
             1, 4, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        grid.append(&ui, bigtext_label.clone(),
+        grid.append(&ui, password_label.clone(),
             1, 5, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
+        grid.append(&ui, bigtext_label.clone(),
+            1, 6, 1, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
         grid.append(&ui, progress_bar.clone(),
-            0, 6, 2, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
-        (add_label, sub_label, text_label, bigtext_label, progress_bar)
+            0, 7, 2, 1, GridExpand::Neither, GridAlignment::Fill, GridAlignment::Fill);
+        (add_label, sub_label, text_label, password_label, bigtext_label, progress_bar)
     };
 
     // The window allows all constituent components to be displayed.
@@ -103,6 +110,11 @@ fn main() {
         move |val| { state.borrow_mut().entry_val = val; }
     });
 
+    password.on_changed(&ui, {
+        let state = state.clone();
+        move |val| { state.borrow_mut().password_val = val; }
+    });
+
     multi.on_changed(&ui, {
         let state = state.clone();
         move |val| { state.borrow_mut().multi_val = val; }
@@ -118,6 +130,7 @@ fn main() {
         let mut add_label = add_label.clone();
         let mut sub_label = sub_label.clone();
         let mut text_label = text_label.clone();
+        let mut password_label = password_label.clone();
         let mut bigtext_label = bigtext_label.clone();
         let mut progress_bar = progress_bar.clone();
         move || {
@@ -127,6 +140,7 @@ fn main() {
             add_label.set_text(&ui, &format!("Added: {}", state.slider_val + state.spinner_val));
             sub_label.set_text(&ui, &format!("Subtracted: {}", state.slider_val - state.spinner_val));
             text_label.set_text(&ui, &format!("Text: {}", state.entry_val));
+            password_label.set_text(&ui, &format!("Secret Text: {}", state.password_val));
             bigtext_label.set_text(&ui, &format!("Multiline Text: {}", state.multi_val));
             progress_bar.set_value(&ui, (state.slider_val + state.spinner_val) as u32);
         }
