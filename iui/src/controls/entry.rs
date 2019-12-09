@@ -119,6 +119,12 @@ define_control! {
 }
 
 define_control! {
+    /// Single-line editable text buffer.
+    rust_type: PasswordEntry,
+    sys_type: uiEntry
+}
+
+define_control! {
     /// Multi-line editable text buffer.
     rust_type: MultilineEntry,
     sys_type: uiMultilineEntry
@@ -130,6 +136,12 @@ impl Entry {
     }
 }
 
+impl PasswordEntry {
+    pub fn new(_ctx: &UI) -> PasswordEntry {
+        unsafe { PasswordEntry::from_raw(ui_sys::uiNewPasswordEntry()) }
+    }
+}
+
 impl MultilineEntry {
     pub fn new(_ctx: &UI) -> MultilineEntry {
         unsafe { MultilineEntry::from_raw(ui_sys::uiNewMultilineEntry()) }
@@ -137,6 +149,42 @@ impl MultilineEntry {
 }
 
 impl TextEntry for Entry {
+    fn value(&self, _ctx: &UI) -> String {
+        unsafe {
+            CStr::from_ptr(ui_sys::uiEntryText(self.uiEntry))
+                .to_string_lossy()
+                .into_owned()
+        }
+    }
+    fn set_value(&mut self, _ctx: &UI, value: &str) {
+        let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
+        unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
+    }
+
+    fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
+        unsafe {
+            let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
+            ui_sys::uiEntryOnChanged(
+                self.uiEntry,
+                Some(c_callback),
+                &mut *data as *mut Box<FnMut(String)> as *mut c_void,
+            );
+            mem::forget(data);
+        }
+
+        extern "C" fn c_callback(entry: *mut uiEntry, data: *mut c_void) {
+            unsafe {
+                let string = CStr::from_ptr(ui_sys::uiEntryText(entry))
+                    .to_string_lossy()
+                    .into_owned();
+                mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
+                mem::forget(entry);
+            }
+        }
+    }
+}
+
+impl TextEntry for PasswordEntry {
     fn value(&self, _ctx: &UI) -> String {
         unsafe {
             CStr::from_ptr(ui_sys::uiEntryText(self.uiEntry))

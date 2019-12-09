@@ -2,7 +2,7 @@
 
 extern crate iui;
 use iui::prelude::*;
-use iui::controls::{Label, Spinbox, Slider, Entry, MultilineEntry, VerticalBox, HorizontalBox, HorizontalSeparator, Group, Spacer, ProgressBar};
+use iui::controls::{Label, Spinbox, Slider, Entry, PasswordEntry, MultilineEntry, VerticalBox, HorizontalBox, HorizontalSeparator, Group, Spacer, ProgressBar};
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -11,6 +11,7 @@ struct State {
     slider_val: i32,
     spinner_val: i32,
     entry_val: String,
+    password_val: String,
     multi_val: String,
 }
 
@@ -19,13 +20,13 @@ fn main() {
     let ui = UI::init().unwrap();
 
     // Initialize the state of the application.
-    let state = Rc::new(RefCell::new(State { slider_val: 0, spinner_val: 0, entry_val: "".into(), multi_val: "".into() }));
+    let state = Rc::new(RefCell::new(State { slider_val: 0, spinner_val: 0, entry_val: "".into(), password_val: "".into(), multi_val: "".into() }));
 
     // Set up the inputs for the application.
     // While it's not necessary to create a block for this, it makes the code a lot easier
     // to read; the indentation presents a visual cue informing the reader that these
     // statements are related.
-    let (input_group, mut slider, mut spinner, mut entry, mut multi) = {
+    let (input_group, mut slider, mut spinner, mut entry, mut password, mut multi) = {
         // The group will hold all the inputs
         let mut input_group = Group::new(&ui, "Inputs");
         // The vertical box arranges the inputs within the groups
@@ -35,6 +36,7 @@ fn main() {
         let slider = Slider::new(&ui, 1, 100);
         let spinner = Spinbox::new(&ui, 1, 100);
         let entry = Entry::new(&ui);
+        let password = PasswordEntry::new(&ui);
         let multi = MultilineEntry::new(&ui);
         // Add everything in hierarchy
         // Note the reverse order here. Again, it's not necessary, but it improves
@@ -45,28 +47,31 @@ fn main() {
         input_vbox.append(&ui, HorizontalSeparator::new(&ui), LayoutStrategy::Compact);
         input_vbox.append(&ui, Spacer::new(&ui), LayoutStrategy::Compact);
         input_vbox.append(&ui, entry.clone(), LayoutStrategy::Compact);
+        input_vbox.append(&ui, password.clone(), LayoutStrategy::Compact);
         input_vbox.append(&ui, multi.clone(), LayoutStrategy::Stretchy);
         input_group.set_child(&ui, input_vbox);
-        (input_group, slider, spinner, entry, multi)
+        (input_group, slider, spinner, entry, password, multi)
     };
 
     // Set up the outputs for the application. Organization is very similar to the
     // previous setup.
-    let (output_group, add_label, sub_label, text_label, bigtext_label, progress_bar) = {
+    let (output_group, add_label, sub_label, text_label, password_label, bigtext_label, progress_bar) = {
         let mut output_group = Group::new(&ui, "Outputs");
         let mut output_vbox = VerticalBox::new(&ui);
         let add_label = Label::new(&ui, "");
         let sub_label = Label::new(&ui, "");
         let text_label = Label::new(&ui, "");
+        let password_label = Label::new(&ui, "");
         let bigtext_label = Label::new(&ui, "");
         let progress_bar = ProgressBar::indeterminate(&ui);
         output_vbox.append(&ui, add_label.clone(), LayoutStrategy::Compact);
         output_vbox.append(&ui, sub_label.clone(), LayoutStrategy::Compact);
         output_vbox.append(&ui, progress_bar.clone(), LayoutStrategy::Compact);
         output_vbox.append(&ui, text_label.clone(), LayoutStrategy::Compact);
+        output_vbox.append(&ui, password_label.clone(), LayoutStrategy::Compact);
         output_vbox.append(&ui, bigtext_label.clone(), LayoutStrategy::Stretchy);
         output_group.set_child(&ui, output_vbox);
-        (output_group, add_label, sub_label, text_label, bigtext_label, progress_bar)
+        (output_group, add_label, sub_label, text_label, password_label, bigtext_label, progress_bar)
     };
 
     // This horizontal box will arrange the two groups of controls.
@@ -97,6 +102,11 @@ fn main() {
         move |val| { state.borrow_mut().entry_val = val; }
     });
 
+    password.on_changed(&ui, {
+        let state = state.clone();
+        move |val| { state.borrow_mut().password_val = val; }
+    });
+
     multi.on_changed(&ui, {
         let state = state.clone();
         move |val| { state.borrow_mut().multi_val = val; }
@@ -112,15 +122,17 @@ fn main() {
         let mut add_label = add_label.clone();
         let mut sub_label = sub_label.clone();
         let mut text_label = text_label.clone();
+        let mut password_label = password_label.clone();
         let mut bigtext_label = bigtext_label.clone();
         let mut progress_bar = progress_bar.clone();
         move || {
             let state = state.borrow();
 
-            // Update all the outputs 
+            // Update all the outputs
             add_label.set_text(&ui, &format!("Added: {}", state.slider_val + state.spinner_val));
             sub_label.set_text(&ui, &format!("Subtracted: {}", state.slider_val - state.spinner_val));
             text_label.set_text(&ui, &format!("Text: {}", state.entry_val));
+            password_label.set_text(&ui, &format!("Secret Text: {}", state.password_val));
             bigtext_label.set_text(&ui, &format!("Multiline Text: {}", state.multi_val));
             progress_bar.set_value(&ui, (state.slider_val + state.spinner_val) as u32)
         }
