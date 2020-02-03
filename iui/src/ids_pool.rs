@@ -51,7 +51,7 @@
 //! 
 //!     master_info_group_vbox.append(&ui,master_layout_grid1.clone(),LayoutStrategy::Compact);
 //!     master_info_group.set_child(&ui,master_info_group_vbox.clone());
-//!     must_get_ui_id!(master_vbox,VerticalBox).append(&ui, master_info_group.clone(),LayoutStrategy::Compact);
+//!     ui_must_get!(master_vbox,VerticalBox).append(&ui, master_info_group.clone(),LayoutStrategy::Compact);
 //! }
 //!
 //! fn build_master_tab_level_config_group(){
@@ -70,7 +70,7 @@
 //! 
 //!     master_level_config_group_vbox.append(&ui,master_layout_grid3,LayoutStrategy::Compact);
 //!     master_level_config_group.set_child(&ui,master_level_config_group_vbox.clone());
-//!     must_get_ui_id!(master_vbox,VerticalBox)
+//!     ui_must_get!(master_vbox,VerticalBox)
 //!         .append(&ui, master_level_config_group.clone(),LayoutStrategy::Compact);
 //! }
 //!
@@ -90,7 +90,7 @@
 //! 
 //!     master_apple_config_group_vbox.append(&ui,master_layout_grid5,LayoutStrategy::Compact);
 //!     master_apple_config_group.set_child(&ui,master_apple_config_group_vbox.clone());
-//!     must_get_ui_id!(master_vbox,VerticalBox)
+//!     ui_must_get!(master_vbox,VerticalBox)
 //!     .append(&ui, master_apple_config_group.clone(),LayoutStrategy::Compact);
 //! }
 //!
@@ -105,7 +105,7 @@
 //!     build_master_tab_info_group();
 //!     build_master_tab_level_config_group();
 //!     build_master_tab_apple_config_group();
-//!     let mut tab_group = must_get_ui_id!(tab_group,TabGroup);
+//!     let mut tab_group = ui_must_get!(tab_group,TabGroup);
 //!     tab_group.append(&ui,"master",master_vbox);
 //! }
 //!
@@ -114,7 +114,7 @@
 //!     ui_new!(slave_vbox,VerticalBox,&ui);
 //!     ui_new!(slave_tip_label,Label,&ui, "slave system starting...");
 //!     slave_vbox.append(&ui, slave_tip_label.clone(), LayoutStrategy::Compact);
-//!     let mut tab_group = must_get_ui_id!(tab_group,TabGroup);
+//!     let mut tab_group = ui_must_get!(tab_group,TabGroup);
 //!     tab_group.append(&ui,"slave",slave_vbox);
 //! }
 //! 
@@ -170,7 +170,7 @@ macro_rules! ui_new{
 /// The second argument is the control's type.
 /// The return type is Option<control's type>
 #[allow(unused_macros)]
-macro_rules! get_ui_id{
+macro_rules! ui_get{
     ( $id:ident, $control_type:expr) => {
         UI_IDS_POOL.with(|p| {
             let h =  &p.borrow().$control_type;
@@ -185,7 +185,7 @@ macro_rules! get_ui_id{
 /// The second argument is the control type.
 /// The return type is the control's type
 #[allow(unused_macros)]
-macro_rules! must_get_ui_id{
+macro_rules! ui_must_get{
     ( $id:ident, $control_type:tt) => {
         UI_IDS_POOL.with(|p| {
             let h =  &p.borrow().$control_type;
