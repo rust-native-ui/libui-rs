@@ -31,6 +31,7 @@ fn main() {
 
     // Generate libui bindings on the fly
     let bindings = BindgenBuilder::default()
+        .trust_clang_mangling(false)
         .header("wrapper.h")
         .opaque_type("max_align_t") // For some reason this ends up too large
         //.rustified_enum(".*")

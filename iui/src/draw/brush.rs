@@ -27,6 +27,7 @@ impl Brush {
             Brush::Solid(ref solid_brush) => BrushRef {
                 ui_draw_brush: uiDrawBrush {
                     Type: ui_sys::uiDrawBrushTypeSolid as u32,
+                    __bindgen_padding_0:0,
 
                     R: solid_brush.r,
                     G: solid_brush.g,
@@ -46,6 +47,7 @@ impl Brush {
             Brush::LinearGradient(ref linear_gradient_brush) => BrushRef {
                 ui_draw_brush: uiDrawBrush {
                     Type: ui_sys::uiDrawBrushTypeLinearGradient as u32,
+                    __bindgen_padding_0:0,
 
                     R: 0.0,
                     G: 0.0,
@@ -65,6 +67,7 @@ impl Brush {
             Brush::RadialGradient(ref radial_gradient_brush) => BrushRef {
                 ui_draw_brush: uiDrawBrush {
                     Type: ui_sys::uiDrawBrushTypeRadialGradient as u32,
+                    __bindgen_padding_0:0,
 
                     R: 0.0,
                     G: 0.0,
@@ -86,6 +89,7 @@ impl Brush {
                 BrushRef {
                     ui_draw_brush: uiDrawBrush {
                         Type: ui_sys::uiDrawBrushTypeImage as u32,
+                        __bindgen_padding_0:0,
 
                         R: 0.0,
                         G: 0.0,

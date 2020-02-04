@@ -30,7 +30,6 @@ mod error;
 mod ffi_tools;
 pub mod menus;
 mod ui;
-#[macro_use]
 pub mod ids_pool;
 
 pub use error::UIError;

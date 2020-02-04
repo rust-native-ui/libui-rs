@@ -1,149 +1,14 @@
 //! Macros in this module provide an easy way to manipulate
 //! ui controls with their ids.
-//!
-//!  # Example
-//!
-//!  ```
-//! #[macro_use]
-//! use iui::preclude::*;
-//! use iui::ids_pool;
-//! use std::cell::RefCell;
-//!
-//! //Create the handle of libui 
-//! thread_local! {
-//!     pub static UI:RefCell<iui::UI> 
-//!         = RefCell::new(iui::UI::init().expect("Couldn't initialize UI library"));
-//! }
-//! 
-//! //Provide a thread local ui controls ids pool
-//! thread_ui_ids_pool!(
-//!     Button,
-//!     Checkbox,	
-//!     Combobox,
-//!     Entry,
-//!     Group,
-//!     HorizontalBox,
-//!     HorizontalSeparator,
-//!     Label,
-//!     LayoutGrid,
-//!     MultilineEntry,
-//!     Slider,
-//!     Spacer,
-//!     Spinbox,
-//!     TabGroup,
-//!     VerticalBox,
-//!     Window);
-//!
-//! fn build_master_tab_info_group(){
-//!     let ui =  UI.with(|u| {(*u.borrow()).clone()});
-//!     ui_new!(master_info_group,Group,&ui, "master info");
-//!     ui_new!(master_info_group_vbox,VerticalBox,&ui);
-//!     master_info_group_vbox.set_padded(&ui, true);
-//!
-//!     ui_new!(master_layout_grid1,LayoutGrid,&ui);
-//!     ui_new!(label_master_hw_type_,Label,&ui, "system type:");
-//!     master_layout_grid1.append(&ui, label_master_hw_type_.clone(),
-//!     0,0,1,1,GridExpand::Neither,GridAlignment::Fill,GridAlignment::Fill);
-//! 
-//!     ui_new!(label_master_hw_type,Label,&ui, "xxx");
-//!     master_layout_grid1.append(&ui, label_master_hw_type.clone(),
-//!     1,0,1,1,GridExpand::Horizontal,GridAlignment::Fill,GridAlignment::Fill)
-//! 
-//!     master_info_group_vbox.append(&ui,master_layout_grid1.clone(),LayoutStrategy::Compact);
-//!     master_info_group.set_child(&ui,master_info_group_vbox.clone());
-//!     ui_must_get!(master_vbox,VerticalBox).append(&ui, master_info_group.clone(),LayoutStrategy::Compact);
-//! }
-//!
-//! fn build_master_tab_level_config_group(){
-//!     let ui =  UI.with(|u| {(*u.borrow()).clone()});
-//!     ui_new!(master_level_config_group,Group,&ui, "master setting1");
-//!     ui_new!(master_level_config_group_vbox,VerticalBox,&ui);
-//!     master_level_config_group_vbox.set_padded(&ui, true);
-//!     ui_new!(master_layout_grid2,LayoutGrid,&ui);
-//!     ui_new!(label_master_lv_channel_,Label,&ui, " disk: ");
-//!     master_layout_grid2.append(&ui, label_master_lv_channel_.clone(),
-//!     0,1,1,1,GridExpand::Neither,GridAlignment::Fill,GridAlignment::Fill);
-//! 
-//!     ui_new!(entry_master_lv_channel,Entry,&ui);
-//!     master_layout_grid2.append(&ui, entry_master_lv_channel.clone(),
-//!     1,1,1,1,GridExpand::Horizontal,GridAlignment::Fill,GridAlignment::Fill);
-//! 
-//!     master_level_config_group_vbox.append(&ui,master_layout_grid3,LayoutStrategy::Compact);
-//!     master_level_config_group.set_child(&ui,master_level_config_group_vbox.clone());
-//!     ui_must_get!(master_vbox,VerticalBox)
-//!         .append(&ui, master_level_config_group.clone(),LayoutStrategy::Compact);
-//! }
-//!
-//! fn build_master_tab_apple_config_group(){
-//!     let ui =  UI.with(|u| {(*u.borrow()).clone()});
-//!     ui_new!(master_apple_config_group,Group,&ui, "master setting2");
-//!     ui_new!(master_apple_config_group_vbox,VerticalBox,&ui);
-//!     master_apple_config_group_vbox.set_padded(&ui, true);
-//! 
-//!     ui_new!(label_master_apple_baudrate_,Label,&ui, " memory: ");
-//!     master_layout_grid4.append(&ui, label_master_apple_baudrate_.clone(),
-//!     0,1,1,1,GridExpand::Neither,GridAlignment::Fill,GridAlignment::Fill);
-//! 
-//!     ui_new!(entry_master_apple_baudrate,Entry,&ui);
-//!     master_layout_grid4.append(&ui, entry_master_apple_baudrate.clone(),
-//!     1,1,1,1,GridExpand::Horizontal,GridAlignment::Fill,GridAlignment::Fill);
-//! 
-//!     master_apple_config_group_vbox.append(&ui,master_layout_grid5,LayoutStrategy::Compact);
-//!     master_apple_config_group.set_child(&ui,master_apple_config_group_vbox.clone());
-//!     ui_must_get!(master_vbox,VerticalBox)
-//!     .append(&ui, master_apple_config_group.clone(),LayoutStrategy::Compact);
-//! }
-//!
-//! fn build_master_tab(){
-//!     let ui =  UI.with(|u| {(*u.borrow()).clone()});
-//!     // Create a vertical layout to hold the controls
-//!     ui_new!(master_vbox,VerticalBox,&ui);
-//!     master_vbox.set_padded(&ui, true);
-//! 
-//!     ui_new!(master_tip_label,Label,&ui, "master starting...");
-//!     master_vbox.append(&ui, master_tip_label.clone(), LayoutStrategy::Compact);
-//!     build_master_tab_info_group();
-//!     build_master_tab_level_config_group();
-//!     build_master_tab_apple_config_group();
-//!     let mut tab_group = ui_must_get!(tab_group,TabGroup);
-//!     tab_group.append(&ui,"master",master_vbox);
-//! }
-//!
-//! fn build_slave_tab(){
-//!     let ui =  UI.with(|u| {(*u.borrow()).clone()});
-//!     ui_new!(slave_vbox,VerticalBox,&ui);
-//!     ui_new!(slave_tip_label,Label,&ui, "slave system starting...");
-//!     slave_vbox.append(&ui, slave_tip_label.clone(), LayoutStrategy::Compact);
-//!     let mut tab_group = ui_must_get!(tab_group,TabGroup);
-//!     tab_group.append(&ui,"slave",slave_vbox);
-//! }
-//! 
-//! pub fn show_ui() {
-//!     debug!("starting ui");
-//!     let ui =  UI.with(|u| {(*u.borrow()).clone()});
-//!     ui_new!(win,Window,&ui,"Hello World V0.0", 200, 200, WindowType::NoMenubar);
-//!     win.set_margined(&ui, true);
-//! 
-//!     ui_new!(tab_group,TabGroup,&ui);
-//! 
-//!     build_master_tab();
-//!     build_slave_tab();
-//! 
-//!     // Actually put the button in the window
-//!     win.set_child(&ui, tab_group);
-//!     // Show the window
-//!     win.show(&ui);
-//!     // Run the application
-//!     ui.main();
-//! }
-//! ```
 
 /// This macro create a ui control, and put the "id" into a thread local
 /// pool called UI_IDS_POOL if the "id" does not exists in the pool
 /// The first argument is the "id", you should make it unique.
 /// The second argument is the control type.
 /// The left arguments are used to call with the control's new() function.
+
 #[allow(unused_macros)]
+#[macro_export]
 macro_rules! ui_new{
     ( $id:ident,$control_type:ident) => (
         ui_new!($id,$control_type,)
@@ -158,7 +23,7 @@ macro_rules! ui_new{
                     if !h.contains_key(stringify!($id)){
                         h.insert(stringify!($id).to_owned(),cloned_id);
                     }else{
-                        error!("ui id:{} already exists.",stringify!($id));
+                        //error!("ui id:{} already exists.",stringify!($id));
                     }
                 })
             }
@@ -170,8 +35,9 @@ macro_rules! ui_new{
 /// The second argument is the control's type.
 /// The return type is Option<control's type>
 #[allow(unused_macros)]
+#[macro_export]
 macro_rules! ui_get{
-    ( $id:ident, $control_type:expr) => {
+    ( $id:ident, $control_type:tt) => {
         UI_IDS_POOL.with(|p| {
             let h =  &p.borrow().$control_type;
             h.get(stringify!($id)).cloned()
@@ -185,6 +51,7 @@ macro_rules! ui_get{
 /// The second argument is the control type.
 /// The return type is the control's type
 #[allow(unused_macros)]
+#[macro_export]
 macro_rules! ui_must_get{
     ( $id:ident, $control_type:tt) => {
         UI_IDS_POOL.with(|p| {
@@ -196,12 +63,14 @@ macro_rules! ui_must_get{
 
 /// This macro build an ids pool named UI_IDS_POOL.
 /// The arguments control types.
+#[allow(unused_macros)]
+#[macro_export]
 macro_rules! thread_ui_ids_pool{
     ($($control:ident),*) => {
         #[allow(non_snake_case)]
         #[derive(Clone)]
         pub struct UiIdsPool{
-            $(pub $control:std::collections::HashMap<String,$control>,)*
+            $(pub $control: std::collections::HashMap<String,$control>,)*
         }
 
         impl UiIdsPool{
@@ -213,9 +82,183 @@ macro_rules! thread_ui_ids_pool{
         }
 
         thread_local! {
-            pub static UI_IDS_POOL:std::cell::RefCell<UiIdsPool> = RefCell::new(UiIdsPool::new());
+            pub static UI_IDS_POOL:std::cell::RefCell<UiIdsPool> = std::cell::RefCell::new(UiIdsPool::new());
         }
     };
 }
 
 
+///  # Example
+///
+///  ```
+/// use iui::controls::*;
+/// #[macro_use]
+/// use iui::ids_pool;
+/// use std::cell::RefCell;
+///
+/// //Create the handle of libui 
+/// thread_local/ {
+///     pub static UI:RefCell<iui::UI> 
+///         = RefCell::new(iui::UI::init().expect("Couldn't initialize UI library"));
+/// }
+/// 
+/// //Provide a thread local ui controls ids pool
+/// thread_ui_ids_pool/(
+///     Button,
+///     Checkbox,	
+///     Combobox,
+///     Entry,
+///     Group,
+///     HorizontalBox,
+///     HorizontalSeparator,
+///     Label,
+///     LayoutGrid,
+///     MultilineEntry,
+///     Slider,
+///     Spacer,
+///     Spinbox,
+///     TabGroup,
+///     VerticalBox,
+///     Window);
+///
+/// fn build_master_tab_info_group(){
+///     let ui =  UI.with(|u| {(*u.borrow()).clone()});
+///     ui_new/(master_info_group,Group,&ui, "master info");
+///     ui_new/(master_info_group_vbox,VerticalBox,&ui);
+///     master_info_group_vbox.set_padded(&ui, true);
+///
+///     ui_new/(master_layout_grid1,LayoutGrid,&ui);
+///     ui_new/(label_master_hw_type_,Label,&ui, "system type:");
+///     master_layout_grid1.append(&ui, label_master_hw_type_.clone(),
+///     0,0,1,1,GridExpand::Neither,GridAlignment::Fill,GridAlignment::Fill);
+/// 
+///     ui_new/(label_master_hw_type,Label,&ui, "xxx");
+///     master_layout_grid1.append(&ui, label_master_hw_type.clone(),
+///     1,0,1,1,GridExpand::Horizontal,GridAlignment::Fill,GridAlignment::Fill);
+/// 
+///     master_info_group_vbox.append(&ui,master_layout_grid1.clone(),LayoutStrategy::Compact);
+///     master_info_group.set_child(&ui,master_info_group_vbox.clone());
+///     ui_must_get/(master_vbox,VerticalBox).append(&ui, master_info_group.clone(),LayoutStrategy::Compact);
+/// }
+///
+/// fn build_master_tab_level_config_group(){
+///     let ui =  UI.with(|u| {(*u.borrow()).clone()});
+///     ui_new/(master_level_config_group,Group,&ui, "master setting1");
+///     ui_new/(master_level_config_group_vbox,VerticalBox,&ui);
+///     master_level_config_group_vbox.set_padded(&ui, true);
+///     ui_new/(master_layout_grid2,LayoutGrid,&ui);
+///     ui_new/(label_master_lv_channel_,Label,&ui, " disk: ");
+///     master_layout_grid2.append(&ui, label_master_lv_channel_.clone(),
+///     0,1,1,1,GridExpand::Neither,GridAlignment::Fill,GridAlignment::Fill);
+/// 
+///     ui_new/(entry_master_lv_channel,Entry,&ui);
+///     master_layout_grid2.append(&ui, entry_master_lv_channel.clone(),
+///     1,1,1,1,GridExpand::Horizontal,GridAlignment::Fill,GridAlignment::Fill);
+/// 
+///     master_level_config_group_vbox.append(&ui,master_layout_grid3,LayoutStrategy::Compact);
+///     master_level_config_group.set_child(&ui,master_level_config_group_vbox.clone());
+///     ui_must_get/(master_vbox,VerticalBox)
+///         .append(&ui, master_level_config_group.clone(),LayoutStrategy::Compact);
+/// }
+///
+/// fn build_master_tab_apple_config_group(){
+///     let ui =  UI.with(|u| {(*u.borrow()).clone()});
+///     ui_new/(master_apple_config_group,Group,&ui, "master setting2");
+///     ui_new/(master_apple_config_group_vbox,VerticalBox,&ui);
+///     master_apple_config_group_vbox.set_padded(&ui, true);
+/// 
+///     ui_new/(label_master_apple_baudrate_,Label,&ui, " memory: ");
+///     master_layout_grid4.append(&ui, label_master_apple_baudrate_.clone(),
+///     0,1,1,1,GridExpand::Neither,GridAlignment::Fill,GridAlignment::Fill);
+/// 
+///     ui_new/(entry_master_apple_baudrate,Entry,&ui);
+///     master_layout_grid4.append(&ui, entry_master_apple_baudrate.clone(),
+///     1,1,1,1,GridExpand::Horizontal,GridAlignment::Fill,GridAlignment::Fill);
+/// 
+///     master_apple_config_group_vbox.append(&ui,master_layout_grid5,LayoutStrategy::Compact);
+///     master_apple_config_group.set_child(&ui,master_apple_config_group_vbox.clone());
+///     ui_must_get/(master_vbox,VerticalBox)
+///     .append(&ui, master_apple_config_group.clone(),LayoutStrategy::Compact);
+/// }
+///
+/// fn build_master_tab(){
+///     let ui =  UI.with(|u| {(*u.borrow()).clone()});
+///     // Create a vertical layout to hold the controls
+///     ui_new/(master_vbox,VerticalBox,&ui);
+///     master_vbox.set_padded(&ui, true);
+/// 
+///     ui_new/(master_tip_label,Label,&ui, "master starting...");
+///     master_vbox.append(&ui, master_tip_label.clone(), LayoutStrategy::Compact);
+///     build_master_tab_info_group();
+///     build_master_tab_level_config_group();
+///     build_master_tab_apple_config_group();
+///     let mut tab_group = ui_must_get/(tab_group,TabGroup);
+///     tab_group.append(&ui,"master",master_vbox);
+/// }
+///
+/// fn build_slave_tab(){
+///     let ui =  UI.with(|u| {(*u.borrow()).clone()});
+///     ui_new/(slave_vbox,VerticalBox,&ui);
+///     ui_new/(slave_tip_label,Label,&ui, "slave system starting...");
+///     slave_vbox.append(&ui, slave_tip_label.clone(), LayoutStrategy::Compact);
+///     let mut tab_group = ui_must_get/(tab_group,TabGroup);
+///     tab_group.append(&ui,"slave",slave_vbox);
+/// }
+/// 
+/// pub fn show_ui() {
+///     debug/("starting ui");
+///     let ui =  UI.with(|u| {(*u.borrow()).clone()});
+///     ui_new/(win,Window,&ui,"Hello World V0.0", 200, 200, WindowType::NoMenubar);
+///     win.set_margined(&ui, true);
+/// 
+///     ui_new/(tab_group,TabGroup,&ui);
+/// 
+///     build_master_tab();
+///     build_slave_tab();
+/// 
+///     // Actually put the button in the window
+///     win.set_child(&ui, tab_group);
+///     // Show the window
+///     win.show(&ui);
+///     // Run the application
+///     ui.main();
+/// }
+/// ```
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_ids_pool() {
+        use crate::controls::*;
+        thread_ui_ids_pool!(
+            Button,
+            Checkbox,	
+            Combobox,
+            Entry,
+            Group,
+            HorizontalBox,
+            HorizontalSeparator,
+            Label,
+            LayoutGrid,
+            MultilineEntry,
+            Slider,
+            Spacer,
+            Spinbox,
+            TabGroup,
+            VerticalBox,
+            Window);
+
+        thread_local! {
+            pub static UI:std::cell::RefCell<crate::UI> 
+                = std::cell::RefCell::new(crate::UI::init().expect("Couldn't initialize UI library"));
+        }
+    
+        let ui =  UI.with(|u| {(*u.borrow()).clone()});
+        ui_new!(group,Group,&ui, "test");
+        ui_new!(vbox,VerticalBox,&ui);
+        //assert_eq!(ui_must_get!(group,Group),group);
+        //assert_eq!(ui_get!(vbox,VerticalBox),Some(vbox));
+        ui_must_get!(group,Group);
+        ui_get!(vbox,VerticalBox).unwrap();
+    }
+}
