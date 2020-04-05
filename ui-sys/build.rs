@@ -1,6 +1,7 @@
 extern crate bindgen;
 extern crate cc;
 extern crate embed_resource;
+extern crate pkg_config;
 
 use bindgen::Builder as BindgenBuilder;
 
@@ -9,6 +10,13 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 fn main() {
+    // Deterimine build platform
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let target_triple = env::var("TARGET").unwrap();
+    let msvc = target_triple.contains("msvc");
+    let apple = target_triple.contains("apple");
+    let unix = cfg!(target_family = "unix") && !apple;
+
     // Fetch the submodule if needed
     if cfg!(feature = "fetch") {
         // Init or update the submodule with libui if needed
@@ -34,6 +42,7 @@ fn main() {
         .header("wrapper.h")
         .opaque_type("max_align_t") // For some reason this ends up too large
         //.rustified_enum(".*")
+        .trust_clang_mangling(false) // clang sometimes wants to treat these functions as C++
         .generate()
         .expect("Unable to generate bindings");
 
@@ -42,17 +51,12 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings");
 
-    // Deterimine build platform
-    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
-    let target_triple = env::var("TARGET").unwrap();
-    let msvc = target_triple.contains("msvc");
-    let apple = target_triple.contains("apple");
-
     // Build libui if needed. Otherwise, assume it's in lib/
     if cfg!(feature = "build") {
         let mut base_config = cc::Build::new();
         let src_base = env::var("SRC_BASE").unwrap_or("libui".to_string());
 
+        // Add source files that are common to all platforms
         base_config.include(format!("{}{}", src_base, "/common"));
 
         base_config.file(format!("{}{}", src_base, "/common/attribute.c"));
@@ -158,10 +162,68 @@ fn main() {
             link("oleacc", false);
             link("uuid", false);
             link("windowscodecs", false);
+        } else if unix {
+            base_config.include(format!("{}{}", src_base, "/unix"));
+
+            let pkg_cfg = pkg_config::Config::new().probe("gtk+-3.0").unwrap();
+            for inc in pkg_cfg.include_paths {
+                base_config.include(inc);
+            }
+
+            base_config.file(format!("{}{}", src_base, "/unix/alloc.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/area.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/attrstr.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/box.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/button.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/cellrendererbutton.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/checkbox.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/child.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/colorbutton.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/combobox.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/control.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/datetimepicker.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/debug.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/draw.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/drawmatrix.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/drawpath.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/drawtext.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/editablecombo.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/entry.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/fontbutton.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/fontmatch.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/form.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/future.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/graphemes.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/grid.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/group.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/image.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/label.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/main.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/menu.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/multilineentry.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/opentype.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/progressbar.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/radiobuttons.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/separator.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/slider.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/spinbox.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/stddialogs.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/tab.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/table.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/tablemodel.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/text.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/util.c"));
+            base_config.file(format!("{}{}", src_base, "/unix/window.c"));
         }
+
+        // Link everything together into `libui.a`.  This will get linked
+        // together because of the `links="ui"` flag in the `Cargo.toml` file,
+        // and because the `.compile()` function emits
+        // `cargo:rustc-link-lib=static=ui`.
         base_config.compile("libui.a");
     } else {
-        // If we're not building the library, then assume it's pre-built and exists in `lib/`
+        // If we're not building the library, then assume it's pre-built and
+        // exists in `lib/`
         let mut dst = env::current_dir().expect("Unable to retrieve current directory location.");
         dst.push("lib");
 
