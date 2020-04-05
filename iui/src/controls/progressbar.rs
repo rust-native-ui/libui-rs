@@ -20,6 +20,7 @@ use ui_sys::{self, uiControl, uiProgressBar};
 /// # use iui::prelude::*;
 /// # use iui::controls::{ProgressBar, ProgressBarValue};
 /// # let ui = UI::init().unwrap();
+/// # if cfg!(target_os = "macos") { return; }
 /// # let mut window = Window::new(&ui, "Test Window", 0, 0, WindowType::NoMenubar);
 /// let mut progressbar = ProgressBar::indeterminate(&ui);
 /// progressbar.set_value(&ui, 54);
