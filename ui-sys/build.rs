@@ -214,6 +214,60 @@ fn main() {
             base_config.file(format!("{}{}", src_base, "/unix/text.c"));
             base_config.file(format!("{}{}", src_base, "/unix/util.c"));
             base_config.file(format!("{}{}", src_base, "/unix/window.c"));
+        } else if apple {
+            base_config.include(format!("{}{}", src_base, "/darwin"));
+            base_config.file(format!("{}{}", src_base, "/darwin/aat.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/alloc.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/area.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/areaevents.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/attrstr.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/autolayout.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/box.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/button.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/checkbox.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/colorbutton.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/combobox.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/control.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/datetimepicker.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/debug.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/draw.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/drawtext.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/editablecombo.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/entry.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/fontbutton.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/fontmatch.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/fonttraits.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/fontvariation.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/form.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/future.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/graphemes.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/grid.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/group.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/image.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/label.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/main.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/map.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/menu.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/multilineentry.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/opentype.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/progressbar.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/radiobuttons.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/scrollview.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/separator.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/slider.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/spinbox.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/stddialogs.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/tab.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/table.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/tablecolumn.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/text.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/undocumented.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/util.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/window.m"));
+            base_config.file(format!("{}{}", src_base, "/darwin/winmoveresize.m"));
+            println!("cargo:rustc-link-lib=framework=AppKit");
+        } else {
+            panic!("unrecognized platform! cannot build libui from source");
         }
 
         // Link everything together into `libui.a`.  This will get linked
