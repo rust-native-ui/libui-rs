@@ -51,11 +51,11 @@ impl Button {
     /// Run the given callback when the button is clicked.
     pub fn on_clicked<'ctx, F: FnMut(&mut Button) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(&mut Button)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(&mut Button)>> = Box::new(Box::new(callback));
             ui_sys::uiButtonOnClicked(
                 self.uiButton,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(&mut Button)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(&mut Button)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -63,7 +63,7 @@ impl Button {
         extern "C" fn c_callback(button: *mut uiButton, data: *mut c_void) {
             unsafe {
                 let mut button = Button { uiButton: button };
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&mut Button)>>(data)(&mut button)
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(&mut Button)>>(data)(&mut button)
             }
         }
     }

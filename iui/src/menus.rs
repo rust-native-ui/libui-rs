@@ -48,11 +48,11 @@ impl MenuItem {
     /// Sets the function to be executed when the item is clicked/selected.
     pub fn on_clicked<'ctx, F: FnMut(&MenuItem, &Window) + 'ctx>(&self, _ctx: &'ctx UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(&MenuItem, &Window)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(&MenuItem, &Window)>> = Box::new(Box::new(callback));
             ui_sys::uiMenuItemOnClicked(
                 self.ui_menu_item,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(&MenuItem, &Window)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(&MenuItem, &Window)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -67,7 +67,7 @@ impl MenuItem {
                     ui_menu_item: menu_item,
                 };
                 let window = Window::from_raw(window);
-                mem::transmute::<*mut c_void, &mut Box<FnMut(&MenuItem, &Window)>>(data)(
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(&MenuItem, &Window)>>(data)(
                     &menu_item, &window,
                 );
                 mem::forget(window);
