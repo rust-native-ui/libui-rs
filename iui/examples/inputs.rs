@@ -20,7 +20,7 @@ fn main() {
     let ui = UI::init().unwrap();
 
     // Initialize the state of the application.
-    let state = Rc::new(RefCell::new(State { slider_val: 0, spinner_val: 0, entry_val: "".into(), password_val: "".into(), multi_val: "".into() }));
+    let state = Rc::new(RefCell::new(State { slider_val: 1, spinner_val: 1, entry_val: "".into(), password_val: "".into(), multi_val: "".into() }));
 
     // Set up the inputs for the application.
     // While it's not necessary to create a block for this, it makes the code a lot easier

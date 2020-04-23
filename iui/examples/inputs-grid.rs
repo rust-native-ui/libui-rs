@@ -22,7 +22,7 @@ fn main() {
     let ui = UI::init().unwrap();
 
     // Initialize the state of the application.
-    let state = Rc::new(RefCell::new(State { slider_val: 0, spinner_val: 0, entry_val: "".into(), password_val: "".into(), multi_val: "".into() }));
+    let state = Rc::new(RefCell::new(State { slider_val: 1, spinner_val: 1, entry_val: "".into(), password_val: "".into(), multi_val: "".into() }));
 
     // Create the grid which we'll use to lay out controls
     let mut grid = LayoutGrid::new(&ui);
