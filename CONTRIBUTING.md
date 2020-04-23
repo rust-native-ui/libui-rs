@@ -7,7 +7,7 @@ When contributing to this repository, please first discuss the change you wish t
 make via Matrix, issue, email, or any other method with the owners of this repository
 before making a change. 
 
-Our Matrix room is at #rust-native-ui:matrix.nora.codes.
+Our Matrix room is at #rust-native-ui:nora.codes.
 
 Please note we have a code of conduct, please follow it in all your interactions 
 with the project.
