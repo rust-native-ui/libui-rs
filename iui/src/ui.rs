@@ -135,10 +135,10 @@ impl UI {
     /// ```
     pub fn queue_main<'ctx, F: FnMut() + 'ctx>(&'ctx self, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut()>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut()>> = Box::new(Box::new(callback));
             ui_sys::uiQueueMain(
                 None,
-                &mut *data as *mut Box<FnMut()> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut()> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -147,10 +147,10 @@ impl UI {
     /// Set a callback to be run when the application quits.
     pub fn on_should_quit<'ctx, F: FnMut() + 'ctx>(&'ctx self, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut()>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut()>> = Box::new(Box::new(callback));
             ui_sys::uiOnShouldQuit(
                 None,
-                &mut *data as *mut Box<FnMut()> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut()> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -167,7 +167,7 @@ pub struct EventLoop<'s> {
     // This PhantomData prevents UIToken from being Send and Sync
     _pd: PhantomData<*mut ()>,
     // This callback gets run during "run_delay" loops.
-    callback: Option<Box<FnMut() + 's>>,
+    callback: Option<Box<dyn FnMut() + 's>>,
 }
 
 impl<'s> EventLoop<'s> {

@@ -65,11 +65,11 @@ impl NumericEntry for Spinbox {
 
     fn on_changed<'ctx, F: FnMut(i32) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(i32)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(i32)>> = Box::new(Box::new(callback));
             ui_sys::uiSpinboxOnChanged(
                 self.uiSpinbox,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(i32)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(i32)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -77,7 +77,7 @@ impl NumericEntry for Spinbox {
         extern "C" fn c_callback(spinbox: *mut uiSpinbox, data: *mut c_void) {
             unsafe {
                 let val = ui_sys::uiSpinboxValue(spinbox);
-                mem::transmute::<*mut c_void, &mut Box<FnMut(i32)>>(data)(val);
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(i32)>>(data)(val);
             }
         }
     }
@@ -94,11 +94,11 @@ impl NumericEntry for Slider {
 
     fn on_changed<'ctx, F: FnMut(i32) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(i32)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(i32)>> = Box::new(Box::new(callback));
             ui_sys::uiSliderOnChanged(
                 self.uiSlider,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(i32)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(i32)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -106,7 +106,7 @@ impl NumericEntry for Slider {
         extern "C" fn c_callback(slider: *mut uiSlider, data: *mut c_void) {
             unsafe {
                 let val = ui_sys::uiSliderValue(slider);
-                mem::transmute::<*mut c_void, &mut Box<FnMut(i32)>>(data)(val);
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(i32)>>(data)(val);
             }
         }
     }
@@ -163,11 +163,11 @@ impl TextEntry for Entry {
 
     fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(String)>> = Box::new(Box::new(callback));
             ui_sys::uiEntryOnChanged(
                 self.uiEntry,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(String)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(String)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -177,7 +177,7 @@ impl TextEntry for Entry {
                 let string = CStr::from_ptr(ui_sys::uiEntryText(entry))
                     .to_string_lossy()
                     .into_owned();
-                mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(String)>>(data)(string);
                 mem::forget(entry);
             }
         }
@@ -199,11 +199,11 @@ impl TextEntry for PasswordEntry {
 
     fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(String)>> = Box::new(Box::new(callback));
             ui_sys::uiEntryOnChanged(
                 self.uiEntry,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(String)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(String)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -213,7 +213,7 @@ impl TextEntry for PasswordEntry {
                 let string = CStr::from_ptr(ui_sys::uiEntryText(entry))
                     .to_string_lossy()
                     .into_owned();
-                mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(String)>>(data)(string);
                 mem::forget(entry);
             }
         }
@@ -235,11 +235,11 @@ impl TextEntry for MultilineEntry {
 
     fn on_changed<'ctx, F: FnMut(String) + 'ctx>(&mut self, _ctx: &'ctx UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(String)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(String)>> = Box::new(Box::new(callback));
             ui_sys::uiMultilineEntryOnChanged(
                 self.uiMultilineEntry,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(String)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(String)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -249,7 +249,7 @@ impl TextEntry for MultilineEntry {
                 let string = CStr::from_ptr(ui_sys::uiMultilineEntryText(entry))
                     .to_string_lossy()
                     .into_owned();
-                mem::transmute::<*mut c_void, &mut Box<FnMut(String)>>(data)(string);
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(String)>>(data)(string);
                 mem::forget(entry);
             }
         }
@@ -287,11 +287,11 @@ impl Combobox {
 
     pub fn on_selected<F: FnMut(i32)>(&mut self, _ctx: &UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(i32)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(i32)>> = Box::new(Box::new(callback));
             ui_sys::uiComboboxOnSelected(
                 self.uiCombobox,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(i32)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(i32)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -299,7 +299,7 @@ impl Combobox {
         extern "C" fn c_callback(combobox: *mut uiCombobox, data: *mut c_void) {
             unsafe {
                 let val = ui_sys::uiComboboxSelected(combobox);
-                mem::transmute::<*mut c_void, &mut Box<FnMut(i32)>>(data)(val);
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(i32)>>(data)(val);
             }
         }
     }
@@ -328,11 +328,11 @@ impl Checkbox {
 
     pub fn on_toggled<F: FnMut(bool)>(&mut self, _ctx: &UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(bool)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(bool)>> = Box::new(Box::new(callback));
             ui_sys::uiCheckboxOnToggled(
                 self.uiCheckbox,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(bool)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(bool)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -340,7 +340,7 @@ impl Checkbox {
         extern "C" fn c_callback(checkbox: *mut uiCheckbox, data: *mut c_void) {
             unsafe {
                 let val = ui_sys::uiCheckboxChecked(checkbox) != 0;
-                mem::transmute::<*mut c_void, &mut Box<FnMut(bool)>>(data)(val);
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(bool)>>(data)(val);
             }
         }
     }
@@ -372,11 +372,11 @@ impl RadioButtons {
 
     pub fn on_selected<'ctx, F: FnMut(i32) + 'ctx>(&self, _ctx: &'ctx UI, callback: F) {
         unsafe {
-            let mut data: Box<Box<FnMut(i32)>> = Box::new(Box::new(callback));
+            let mut data: Box<Box<dyn FnMut(i32)>> = Box::new(Box::new(callback));
             ui_sys::uiRadioButtonsOnSelected(
                 self.uiRadioButtons,
                 Some(c_callback),
-                &mut *data as *mut Box<FnMut(i32)> as *mut c_void,
+                &mut *data as *mut Box<dyn FnMut(i32)> as *mut c_void,
             );
             mem::forget(data);
         }
@@ -384,7 +384,7 @@ impl RadioButtons {
         extern "C" fn c_callback(radio_buttons: *mut uiRadioButtons, data: *mut c_void) {
             unsafe {
                 let val = ui_sys::uiRadioButtonsSelected(radio_buttons);
-                mem::transmute::<*mut c_void, &mut Box<FnMut(i32)>>(data)(val);
+                mem::transmute::<*mut c_void, &mut Box<dyn FnMut(i32)>>(data)(val);
             }
         }
     }

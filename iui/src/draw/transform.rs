@@ -19,9 +19,9 @@ impl Transform {
     /// Create a new Transform that does nothing.
     pub fn identity() -> Transform {
         unsafe {
-            let mut matrix = mem::uninitialized();
-            ui_sys::uiDrawMatrixSetIdentity(&mut matrix);
-            Transform::from_ui_matrix(&matrix)
+            let mut matrix = mem::MaybeUninit::uninit();
+            ui_sys::uiDrawMatrixSetIdentity(matrix.as_mut_ptr());
+            Transform::from_ui_matrix(&matrix.assume_init())
         }
     }
 
