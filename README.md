@@ -39,7 +39,8 @@ We have documentation on [docs.rs](https://docs.rs/iui) for released versions an
 
 ## Examples
 
-![Three example GUI applications running on Linux](themed.png)
+![Three example GUI applications running on Linux](images/themed.png)
+![Three example GUI applications running on Ubuntu](images/ubuntu.png)
 
 Check out the [`examples/`](https://github.com/rust-native-ui/libui-rs/tree/0.3.0/iui/examples) directory from the latest release for these examples and more.
 
