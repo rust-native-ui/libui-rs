@@ -48,7 +48,7 @@ Check out the [`examples/`](https://github.com/rust-native-ui/libui-rs/tree/0.3.
 This repository contains multiple Rust crates: 
 
 * `iui` is the safe Rust wrapper, to be used by most users.
-* `ui-sys` is the raw unsafe bindings to the `libui` C code. Requires `cmake` so it can build `libui`. `libui` is included as a submodule. 
+* `ui-sys` is the raw unsafe bindings to the `libui` C code. `libui` is included as a submodule.
 
 Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING.md).
 
@@ -60,8 +60,7 @@ default features `fetch` and `build`. With `fetch` disabled, it will simply buil
 existing sources without updating them, and with `build` disabled it will build nothing,
 assuming either a system or local (in `./lib/`) version of `libui` is available.
 
-Note that _most of the time_, building `libui` on the fly is what you want. It does however
-require a copy of cmake, essential build tools, et cetera.
+Note that _most of the time_, building `libui` on the fly is what you want.
 
 ## Acknowledgments
 
