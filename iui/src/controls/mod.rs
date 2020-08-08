@@ -50,9 +50,7 @@ impl Clone for Control {
 impl Control {
     /// Creates a new `Control` object from an existing `*mut uiControl`.
     pub unsafe fn from_ui_control(ui_control: *mut uiControl) -> Control {
-        Control {
-            ui_control: ui_control,
-        }
+        Control { ui_control }
     }
 
     /// Returns the underlying `*mut uiControl`.

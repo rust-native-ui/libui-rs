@@ -6,8 +6,10 @@
 
 iui: [![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](https://crates.io/crates/iui/)
 [![docs.rs for iui](https://docs.rs/iui/badge.svg)](https://docs.rs/iui)
+![rustc 1.40](https://img.shields.io/badge/rustc-1.40-blue)
 ui-sys: [![ui-sys crates.io version badge](https://img.shields.io/crates/v/ui-sys.svg)](https://crates.io/crates/ui-sys/)
 [![docs.rs for ui-sys](https://docs.rs/ui-sys/badge.svg)](https://docs.rs/ui)
+![rustc 1.40](https://img.shields.io/badge/rustc-1.40-blue)
 
 `iui` is a **simple** (about 4 kLOC of Rust), **small** (about 800kb, including `libui`), **easy to distribute** (one shared library) GUI library, providing a **Rusty** user interface library that binds to **native APIs** via the [libui](https://github.com/andlabs/libui) and the `ui-sys` bindings crate.
 
@@ -51,7 +53,7 @@ This repository contains multiple Rust crates:
 * `iui` is the safe Rust wrapper, to be used by most users.
 * `ui-sys` is the raw unsafe bindings to the `libui` C code. `libui` is included as a submodule.
 
-Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING.md).
+Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING/CONTRIBUTING.md).
 
 
 ### Building ui-sys

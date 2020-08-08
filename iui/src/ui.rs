@@ -74,7 +74,7 @@ impl UI {
         unsafe {
             // Create the magic value needed to init libUI
             let mut init_options = ui_sys::uiInitOptions {
-                Size: mem::size_of::<ui_sys::uiInitOptions>(),
+                Size: mem::size_of::<ui_sys::uiInitOptions>() as u64,
             };
 
             // Actually start up the library's functionality

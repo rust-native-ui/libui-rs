@@ -24,8 +24,8 @@ extern crate failure;
 #[macro_use]
 extern crate lazy_static;
 extern crate libc;
-extern crate ui_sys;
 extern crate regex;
+extern crate ui_sys;
 
 mod callback_helpers;
 mod compile_tests;
@@ -34,8 +34,8 @@ pub mod draw;
 mod error;
 mod ffi_tools;
 pub mod menus;
-mod ui;
 pub mod str_tools;
+mod ui;
 
 pub use error::UIError;
 pub use ui::{EventLoop, UI};

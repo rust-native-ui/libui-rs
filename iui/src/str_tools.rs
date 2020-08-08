@@ -27,7 +27,7 @@ pub fn insert_dual_endings(s: &str) -> String {
 /// # Panics
 /// Panics if it isn't possible to create a CString from the given string.
 pub fn to_toolkit_string(s: &str) -> CString {
-    let data = if cfg!(windows) { 
+    let data = if cfg!(windows) {
         insert_dual_endings(s).as_bytes().to_vec()
     } else {
         s.as_bytes().to_vec()
@@ -36,7 +36,7 @@ pub fn to_toolkit_string(s: &str) -> CString {
 }
 
 /// Converts a `*mut c_char` to a String guaranteed to use LF line endings.
-/// 
+///
 /// # Unsafety
 /// Has the same unsafety as [CStr::from_ptr](https://doc.rust-lang.org/std/ffi/struct.CStr.html#method.from_ptr).
 pub unsafe fn from_toolkit_string(c: *mut c_char) -> String {
@@ -49,30 +49,33 @@ mod test {
 
     #[test]
     fn strip_dual_endings_to_single() {
-        assert_eq!(strip_dual_endings("Line 1\r\nLine 2\r\n"),
-                   "Line 1\nLine 2\n");
+        assert_eq!(
+            strip_dual_endings("Line 1\r\nLine 2\r\n"),
+            "Line 1\nLine 2\n"
+        );
     }
 
     #[test]
     fn insert_dual_endings_basic() {
-        assert_eq!(insert_dual_endings("Line 1\nLine 2\n"),
-                   "Line 1\r\nLine 2\r\n");
+        assert_eq!(
+            insert_dual_endings("Line 1\nLine 2\n"),
+            "Line 1\r\nLine 2\r\n"
+        );
     }
 
     #[test]
     fn insert_dual_endings_nodupe() {
-        assert_eq!(insert_dual_endings("Line 1\r\nLine 2\r\n"),
-                   "Line 1\r\nLine 2\r\n");
+        assert_eq!(
+            insert_dual_endings("Line 1\r\nLine 2\r\n"),
+            "Line 1\r\nLine 2\r\n"
+        );
     }
-    
+
     #[test]
     fn test_toolkit_roundtripping() {
         let initial_string = "Here is some test data.\n\nMultiline!\n";
         let toolkit_string = to_toolkit_string(initial_string);
-        let roundtripped_string = unsafe {
-            from_toolkit_string(toolkit_string.into_raw())
-        };
+        let roundtripped_string = unsafe { from_toolkit_string(toolkit_string.into_raw()) };
         assert_eq!(initial_string, &roundtripped_string);
     }
 }
-

@@ -9,12 +9,12 @@ use std::ffi::{CStr, CString};
 use std::i32;
 use std::mem;
 use std::os::raw::c_void;
+use str_tools::{from_toolkit_string, to_toolkit_string};
+use ui::UI;
 use ui_sys::{
     self, uiCheckbox, uiCombobox, uiControl, uiEntry, uiMultilineEntry, uiRadioButtons, uiSlider,
     uiSpinbox,
 };
-use ui::UI;
-use str_tools::{from_toolkit_string, to_toolkit_string};
 
 pub trait NumericEntry {
     fn value(&self, ctx: &UI) -> i32;
@@ -223,9 +223,7 @@ impl TextEntry for PasswordEntry {
 
 impl TextEntry for MultilineEntry {
     fn value(&self, _ctx: &UI) -> String {
-        unsafe {
-            from_toolkit_string(ui_sys::uiMultilineEntryText(self.uiMultilineEntry))
-        }
+        unsafe { from_toolkit_string(ui_sys::uiMultilineEntryText(self.uiMultilineEntry)) }
     }
 
     fn set_value(&mut self, _ctx: &UI, value: &str) {

@@ -212,7 +212,7 @@ impl TabGroup {
             unsafe { ui_sys::uiTabDelete(self.uiTab, index) };
             Ok(n)
         } else {
-            Err(UIError::TabGroupIndexOutOfBounds { index: index, n: n })
+            Err(UIError::TabGroupIndexOutOfBounds { index, n })
         }
     }
 
