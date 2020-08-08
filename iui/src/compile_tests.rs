@@ -16,7 +16,7 @@
 //! ```
 //!
 //! This one is OK, because it moves the `Vec` into the closure's scope.
-//! ```
+//! ```no_run
 //! let ev = iui::UI::init().unwrap();
 //!
 //! let v = vec![1, 2, 3, 4];
@@ -65,5 +65,4 @@
 //! ev.next_tick(&ui);
 //! ui.quit();
 //! ev.next_tick(&ui);
-//!
 //! ```
