@@ -1,7 +1,7 @@
 # Improved User Interface
 ## A cross-platform UI toolkit for Rust based on libui
-[![travis-ci build status](https://travis-ci.com/rust-native-ui/libui-rs.svg?branch=master)](https://travis-ci.com/rust-native-ui/libui-rs)
-[![libui-rs appveyor build status badge](https://ci.appveyor.com/api/projects/status/github/leotindall/libui-rs)](https://ci.appveyor.com/project/rust-native-ui/libui-rs)
+[![travis-ci build status](https://travis-ci.com/rust-native-ui/libui-rs.svg?branch=trunk)](https://travis-ci.com/rust-native-ui/libui-rs)
+[![libui-rs appveyor build status badge](https://ci.appveyor.com/api/projects/status/github/noracodes/libui-rs)](https://ci.appveyor.com/project/rust-native-ui/libui-rs)
 ![actively developed badge](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
 iui: [![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](https://crates.io/crates/iui/)
@@ -31,13 +31,13 @@ Then, in your code, all you have to do is:
 1. implement some [callbacks](https://docs.rs/iui/*/iui/controls/struct.Button.html#method.on_clicked) for user input, taking full advantage of Rust's concurrency protections
 1. call [`UI::main`](https://docs.rs/iui/*/iui/struct.UI.html#method.main), or take control over the event processing with an [`EventLoop`](https://docs.rs/iui/*/iui/struct.EventLoop.html), and voíla! A GUI!
 
-Or, you can track the `master` branch, which may be broken and whose API often changes, with:
+Or, you can track the `trunk` branch, which may be broken and whose API often changes, with:
 
 ```toml
-iui = { git = "https://github.com/rust-native-ui/libui-rs.git" }
+iui = { git = "https://github.com/rust-native-ui/libui-rs.git" branch="trunk" }
 ```
 
-We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://rust-native-ui.github.io/libui-rs/iui/index.html) for master.
+We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://rust-native-ui.github.io/libui-rs/iui/index.html) for `trunk`.
 
 ## Examples
 
