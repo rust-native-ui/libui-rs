@@ -29,7 +29,7 @@
 //! ev.quit();
 //! ev.main();
 //! ```
-//! 
+//!
 //! This one tries to use a reference to a string that is dropped out of scope.
 //! ```compile_fail
 //! # use iui::prelude::*;
@@ -46,9 +46,9 @@
 //!
 //! win.set_child(&ui, button);
 //! ```
-//! 
+//!
 //! Here we try to use-after-free data in the on-tick callback.
-//! 
+//!
 //! ```compile_fail
 //! # use iui::prelude::*;
 //! # use iui::controls::{Button};
@@ -61,7 +61,7 @@
 //!     let callback =  || { println!("{}", s) };
 //!     ev.on_tick(&ui, callback);
 //! }
-//! 
+//!
 //! ev.next_tick(&ui);
 //! ui.quit();
 //! ev.next_tick(&ui);

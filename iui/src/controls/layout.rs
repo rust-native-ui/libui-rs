@@ -227,7 +227,7 @@ impl TabGroup {
     }
 }
 
-define_control!{
+define_control! {
     /// Horizontal line, to seperate things visually.
     rust_type: HorizontalSeparator,
     sys_type: uiSeparator
@@ -314,7 +314,7 @@ impl GridInsertionStrategy {
     }
 }
 
-define_control!{
+define_control! {
     /// Lays out its children in a grid according to insertion instructions.
     rust_type: LayoutGrid,
     sys_type: uiGrid

@@ -4,7 +4,7 @@ use std::mem;
 use ui::UI;
 use ui_sys::{self, uiControl, uiLabel};
 
-define_control!{
+define_control! {
     /// A non-interactable piece of text.
     rust_type: Label,
     sys_type: uiLabel

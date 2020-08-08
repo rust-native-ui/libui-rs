@@ -6,7 +6,7 @@ use std::os::raw::c_void;
 use ui::UI;
 use ui_sys::{self, uiButton, uiControl};
 
-define_control!{
+define_control! {
     /// A textual button which users can click on, causing a callback to run.
     rust_type: Button,
     sys_type: uiButton

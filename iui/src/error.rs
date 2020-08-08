@@ -16,8 +16,7 @@ pub enum UIError {
     /// Signifies that an attempt was made to remove a tab from a tab group that was out of bounds.
     #[fail(
         display = "cannot remove index {} from tab group: there are only {} tabs in the group",
-        index,
-        n
+        index, n
     )]
     TabGroupIndexOutOfBounds { index: i32, n: i32 },
 }
