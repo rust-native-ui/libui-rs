@@ -1,10 +1,11 @@
 //! Functionality related to creating, managing, and destroying GUI windows.
 
+use callback_helpers::{from_void_ptr, to_heap_ptr};
 use controls::Control;
-use std::os::raw::{c_int, c_void};
 use std::cell::RefCell;
 use std::ffi::{CStr, CString};
 use std::mem;
+use std::os::raw::{c_int, c_void};
 use std::path::PathBuf;
 use ui::UI;
 use ui_sys::{self, uiControl, uiWindow};
@@ -20,7 +21,7 @@ pub enum WindowType {
     NoMenubar,
 }
 
-define_control!{
+define_control! {
     /// Contains a single child control and displays it and its children in a window on the screen.
     rust_type: Window,
     sys_type: uiWindow
@@ -87,27 +88,23 @@ impl Window {
     ///
     /// This is often used on the main window of an application to quit
     /// the application when the window is closed.
-    pub fn on_closing<'ctx, F: FnMut(&mut Window) + 'ctx>(&mut self, _ctx: &'ctx UI, mut callback: F) {
-        unsafe {
-            let mut data: Box<Box<dyn FnMut(&mut Window) -> bool>> = Box::new(Box::new(|window| {
-                callback(window);
-                false
-            }));
-            ui_sys::uiWindowOnClosing(
-                self.uiWindow,
-                Some(c_callback),
-                &mut *data as *mut Box<dyn FnMut(&mut Window) -> bool> as *mut c_void,
-            );
-            mem::forget(data);
+    pub fn on_closing<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(&mut Window) + 'static,
+    {
+        extern "C" fn c_callback<G>(window: *mut uiWindow, data: *mut c_void) -> i32
+        where
+            G: FnMut(&mut Window),
+        {
+            let mut window = Window { uiWindow: window };
+            unsafe {
+                from_void_ptr::<G>(data)(&mut window);
+            }
+            0
         }
 
-        extern "C" fn c_callback(window: *mut uiWindow, data: *mut c_void) -> i32 {
-            unsafe {
-                let mut window = Window { uiWindow: window };
-                mem::transmute::<*mut c_void, Box<Box<dyn FnMut(&mut Window) -> bool>>>(data)(
-                    &mut window,
-                ) as i32
-            }
+        unsafe {
+            ui_sys::uiWindowOnClosing(self.uiWindow, Some(c_callback::<F>), to_heap_ptr(callback));
         }
     }
 

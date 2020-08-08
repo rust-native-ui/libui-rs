@@ -1,10 +1,8 @@
 extern crate iui;
 extern crate ui_sys;
 
-use iui::controls::{
-    Area, AreaDrawParams, AreaHandler, HorizontalBox, LayoutStrategy,
-};
-use iui::draw::{Brush, Path, SolidBrush, FillMode};
+use iui::controls::{Area, AreaDrawParams, AreaHandler, HorizontalBox, LayoutStrategy};
+use iui::draw::{Brush, FillMode, Path, SolidBrush};
 use iui::prelude::*;
 use std::f64::consts::PI;
 

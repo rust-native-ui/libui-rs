@@ -1,13 +1,13 @@
 extern crate iui;
+use iui::controls::{Button, Group, Label, VerticalBox};
 use iui::prelude::*;
-use iui::controls::{Label, Button, VerticalBox, Group};
 
 fn main() {
     // Initialize the UI library
     let ui = UI::init().expect("Couldn't initialize UI library");
     // Create a window into which controls can be placed
     let mut win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
-    
+
     // Create a vertical layout to hold the controls
     let mut vbox = VerticalBox::new(&ui);
     vbox.set_padded(&ui, true);

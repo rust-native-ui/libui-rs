@@ -4,18 +4,18 @@ use ui::UI;
 use ui_sys::{self, uiControl, uiProgressBar};
 
 /// An enum representing the value of a `ProgressBar`.
-/// 
+///
 /// # Values
-/// 
+///
 /// A `ProgressBarValue` can be either `Determinate`, a number from 0 up to 100, or
 /// `Indeterminate`, representing a process that is still in progress but has no
 /// completeness metric availble.
-/// 
+///
 /// # Conversions
-/// 
+///
 /// A `ProgressBarValue` can be made from a `u32` or an `Option<u32>`, and the relevant functions
 /// take a type that is generic over this behavior, so it's easy to set the progress of a bar.
-/// 
+///
 /// ```
 /// # use iui::prelude::*;
 /// # use iui::controls::{ProgressBar, ProgressBarValue};
@@ -24,14 +24,14 @@ use ui_sys::{self, uiControl, uiProgressBar};
 /// # let mut window = Window::new(&ui, "Test Window", 0, 0, WindowType::NoMenubar);
 /// let mut progressbar = ProgressBar::indeterminate(&ui);
 /// progressbar.set_value(&ui, 54);
-/// 
+///
 /// // Perhaps this is the result of some fallible progress-checking function.
 /// let maybe_progress: Option<u32> = None;
 /// progressbar.set_value(&ui, maybe_progress);
-/// 
+///
 /// // And of course, you can always set it by hand.
 /// progressbar.set_value(&ui, ProgressBarValue::Indeterminate);
-/// # window.set_child(&ui, progressbar); 
+/// # window.set_child(&ui, progressbar);
 /// # ui.quit();
 /// # ui.main();
 /// ```
@@ -60,7 +60,7 @@ impl From<Option<u32>> for ProgressBarValue {
     fn from(value: Option<u32>) -> ProgressBarValue {
         match value {
             Some(v) => v.into(),
-            None => ProgressBarValue::Indeterminate
+            None => ProgressBarValue::Indeterminate,
         }
     }
 }

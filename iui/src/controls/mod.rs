@@ -9,8 +9,10 @@ use std::ptr;
 
 #[macro_use]
 mod create_macro;
-mod basic;
-pub use self::basic::*;
+mod label;
+pub use self::label::*;
+mod button;
+pub use self::button::*;
 mod window;
 pub use self::window::*;
 mod layout;

@@ -1,12 +1,13 @@
-// Defines a new control, creating a Rust wrapper, a `Deref` implementation, and a destructor.
-// An example of use:
-//
-//      define_control!{
-//          /// Some documentation
-//          #[attribute(whatever="something")]
-//          rust_type: Slider,
-//          sys_type: uiSlider,
-//      }
+/// Defines a new control, creating a Rust wrapper, a `Deref` implementation, and a destructor.
+/// An example of use:
+/// ```ignore
+///     define_control!{
+///         /// Some documentation
+///         #[attribute(whatever="something")]
+///         rust_type: Slider,
+///         sys_type: uiSlider,
+///      }
+/// ```
 macro_rules! define_control {
     // Match first any attributes (incl. doc comments) and then the actual invocation
     {$(#[$attr:meta])* rust_type: $rust_type:ident, sys_type: $sys_type:ident$(,)* } => {

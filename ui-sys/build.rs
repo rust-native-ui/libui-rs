@@ -74,7 +74,9 @@ fn main() {
             "common/tablevalue.c",
             "common/userbugs.c",
             "common/utf.c",
-        ].iter() {
+        ]
+        .iter()
+        {
             base_config.file(src_path(filename));
         }
 
@@ -144,7 +146,9 @@ fn main() {
                 "windows/window.cpp",
                 "windows/winpublic.cpp",
                 "windows/winutil.cpp",
-            ].iter() {
+            ]
+            .iter()
+            {
                 base_config.file(src_path(filename));
             }
 
@@ -224,7 +228,9 @@ fn main() {
                 "unix/text.c",
                 "unix/util.c",
                 "unix/window.c",
-            ].iter() {
+            ]
+            .iter()
+            {
                 base_config.file(src_path(filename));
             }
         } else if apple {
@@ -280,7 +286,9 @@ fn main() {
                 "darwin/util.m",
                 "darwin/window.m",
                 "darwin/winmoveresize.m",
-            ].iter() {
+            ]
+            .iter()
+            {
                 base_config.file(src_path(filename));
             }
             println!("cargo:rustc-link-lib=framework=AppKit");

@@ -1,6 +1,6 @@
+use draw::DrawContext;
 use std::marker::PhantomData;
 use std::ptr;
-use draw::DrawContext;
 use ui_sys::{self, uiDrawBrush};
 
 pub use ui_sys::uiDrawBrushGradientStop as BrushGradientStop;
