@@ -14,7 +14,7 @@
 //! 1. implement some [callbacks](https://docs.rs/iui/*/iui/controls/struct.Button.html#method.on_clicked) for user input, taking full advantage of Rust's concurrency protections
 //! 1. call [`UI::main`](https://docs.rs/iui/*/iui/struct.UI.html#method.main), or take control over the event processing with an [`EventLoop`](https://docs.rs/iui/*/iui/struct.EventLoop.html), and voíla! A GUI!
 //!
-//! For code examples, see the [examples](https://github.com/rust-native-ui/libui-rs/blob/master/iui/examples/)
+//! For code examples, see the [examples](https://github.com/rust-native-ui/libui-rs/blob/trunk/iui/examples/)
 //! directory.
 
 #[macro_use]
@@ -24,8 +24,8 @@ extern crate failure;
 #[macro_use]
 extern crate lazy_static;
 extern crate libc;
-extern crate ui_sys;
 extern crate regex;
+extern crate ui_sys;
 
 mod callback_helpers;
 mod compile_tests;
@@ -34,8 +34,8 @@ pub mod draw;
 mod error;
 mod ffi_tools;
 pub mod menus;
-mod ui;
 pub mod str_tools;
+mod ui;
 
 pub use error::UIError;
 pub use ui::{EventLoop, UI};

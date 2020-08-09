@@ -30,17 +30,15 @@ categories = ["gui", "os::macos-apis", "os::unix-apis", "os::windows-apis"]
 license = "MIT"
 
 [badges]
-# Travis CI: `repository` in format "<user>/<project>" is required.
-# `branch` is optional; default is `master`
-travis-ci = { repository = "rust-native-ui/libui-rs", branch = "master" }
-appveyor = { repository = "rust-native-ui/libui-rs", branch = "master" }
+travis-ci = { repository = "rust-native-ui/libui-rs", branch = "trunk" }
+appveyor = { repository = "rust-native-ui/libui-rs", branch = "trunk" }
 
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-bitflags = "1.0"
+bitflags = "1"
 libc = "0.2"
-failure = "0.1.1"
+failure = "0.1"
 ui-sys = { path = "../ui-sys", version = "0.2.1" }
 regex = "1"
 lazy_static = "1"

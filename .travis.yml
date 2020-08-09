@@ -6,11 +6,9 @@ jobs:
     - env: TEST_CMD=xvfb-run
       rust: nightly
     - env: TEST_CMD=xvfb-run
-      rust: beta
-    - env: TEST_CMD=xvfb-run
-      rust: stable
+      rust: 1.40.0
     - env: MACOSX_DEPLOYMENT_TARGET=10.7 SKIP_INSTALL=1
-      rust: stable
+      rust: 1.40.0 
       os: osx
 before_install: |
   [ "x$SKIP_INSTALL" != "x" ] || sudo apt-get -qq update
@@ -24,7 +22,7 @@ script:
     - cargo build --verbose --tests --examples
     - $TEST_CMD cargo test
 after_success: |
-  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_BRANCH = trunk] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
   cd $TRAVIS_BUILD_DIR/iui/ &&
   cargo doc &&

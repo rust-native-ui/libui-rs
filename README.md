@@ -1,13 +1,15 @@
 # Improved User Interface
 ## A cross-platform UI toolkit for Rust based on libui
-[![travis-ci build status](https://travis-ci.com/rust-native-ui/libui-rs.svg?branch=master)](https://travis-ci.com/rust-native-ui/libui-rs)
-[![libui-rs appveyor build status badge](https://ci.appveyor.com/api/projects/status/github/leotindall/libui-rs)](https://ci.appveyor.com/project/rust-native-ui/libui-rs)
+[![travis-ci build status](https://travis-ci.com/rust-native-ui/libui-rs.svg?branch=trunk)](https://travis-ci.com/rust-native-ui/libui-rs)
+[![libui-rs appveyor build status badge](https://ci.appveyor.com/api/projects/status/github/noracodes/libui-rs)](https://ci.appveyor.com/project/rust-native-ui/libui-rs)
 ![actively developed badge](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
 iui: [![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](https://crates.io/crates/iui/)
 [![docs.rs for iui](https://docs.rs/iui/badge.svg)](https://docs.rs/iui)
+![rustc 1.40](https://img.shields.io/badge/rustc-1.40-blue)
 ui-sys: [![ui-sys crates.io version badge](https://img.shields.io/crates/v/ui-sys.svg)](https://crates.io/crates/ui-sys/)
 [![docs.rs for ui-sys](https://docs.rs/ui-sys/badge.svg)](https://docs.rs/ui)
+![rustc 1.40](https://img.shields.io/badge/rustc-1.40-blue)
 
 `iui` is a **simple** (about 4 kLOC of Rust), **small** (about 800kb, including `libui`), **easy to distribute** (one shared library) GUI library, providing a **Rusty** user interface library that binds to **native APIs** via the [libui](https://github.com/andlabs/libui) and the `ui-sys` bindings crate.
 
@@ -29,13 +31,13 @@ Then, in your code, all you have to do is:
 1. implement some [callbacks](https://docs.rs/iui/*/iui/controls/struct.Button.html#method.on_clicked) for user input, taking full advantage of Rust's concurrency protections
 1. call [`UI::main`](https://docs.rs/iui/*/iui/struct.UI.html#method.main), or take control over the event processing with an [`EventLoop`](https://docs.rs/iui/*/iui/struct.EventLoop.html), and voíla! A GUI!
 
-Or, you can track the `master` branch, which may be broken and whose API often changes, with:
+Or, you can track the `trunk` branch, which may be broken and whose API often changes, with:
 
 ```toml
-iui = { git = "https://github.com/rust-native-ui/libui-rs.git" }
+iui = { git = "https://github.com/rust-native-ui/libui-rs.git" branch="trunk" }
 ```
 
-We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://rust-native-ui.github.io/libui-rs/iui/index.html) for master.
+We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://rust-native-ui.github.io/libui-rs/iui/index.html) for `trunk`.
 
 ## Examples
 
@@ -51,7 +53,7 @@ This repository contains multiple Rust crates:
 * `iui` is the safe Rust wrapper, to be used by most users.
 * `ui-sys` is the raw unsafe bindings to the `libui` C code. `libui` is included as a submodule.
 
-Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING.md).
+Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING/CONTRIBUTING.md).
 
 
 ### Building ui-sys

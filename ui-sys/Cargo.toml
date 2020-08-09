@@ -31,10 +31,8 @@ links = "ui"
 build = "build.rs"
 
 [badges]
-# Travis CI: `repository` in format "<user>/<project>" is required.
-# `branch` is optional; default is `master`
-travis-ci = { repository = "rust-native-ui/libui-rs", branch = "master" }
-appveyor = { repository = "rust-native-ui/libui-rs", branch = "master" }
+travis-ci = { repository = "rust-native-ui/libui-rs", branch = "trunk" }
+appveyor = { repository = "rust-native-ui/libui-rs", branch = "trunk" }
 
 maintenance = { status = "actively-developed" }
 
@@ -48,7 +46,7 @@ build = []
 libc = "0.2"
 
 [build-dependencies]
-bindgen = "0.31"
+bindgen = "0.54"
 cc = "1.0"
 embed-resource = "1.3"
 pkg-config = "0.3"

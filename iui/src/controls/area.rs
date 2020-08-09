@@ -36,7 +36,7 @@ impl RustAreaHandler {
                 DragBroken: Some(drag_broken),
                 KeyEvent: Some(key_event),
             },
-            trait_object: trait_object,
+            trait_object,
         });
 
         extern "C" fn draw(
