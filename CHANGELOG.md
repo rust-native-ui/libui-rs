@@ -25,6 +25,8 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 * The semi-unstable `iui::draw` subsystem is again exported to downstream consumers of the `iui` crate.
 * `UI::queue_main` and `UI::on_should_quit` now require passed closures to be `'static`, for soundness
 * All callback registration functions require that their callbacks live at least as long as the `UI` token, for soundness
+* `Menu` methods now returns `Option<>` because menus can't always be created or
+modified
 
 ### Deprecated
 
@@ -44,6 +46,7 @@ compliance.
 * Text no longer uses incorrect newlines per platform.
 * `UI::run_delay` no longer spins on the callback, but actually calls it at the
 appropriate interval
+* Menus can no longer be created or modified after windows, as this causes crashes.
 
 ### Security
 

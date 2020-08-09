@@ -4,18 +4,25 @@ use callback_helpers::{from_void_ptr, to_heap_ptr};
 use controls::Window;
 use std::ffi::CString;
 use std::os::raw::{c_int, c_void};
+use std::sync::atomic::{AtomicBool, Ordering};
 use ui_sys::{self, uiMenu, uiMenuItem, uiWindow};
 use UI;
 
-/// A `MenuItem` represents an item that is shown in a `Menu`. Note that, unlike many controls,
+pub static HAS_FINALIZED_MENUS: AtomicBool = AtomicBool::new(false);
+
+/// A `MenuItem` represents an item that is shown in a `Menu`.
+/// Note that, unlike many controls,
 /// the text on `MenuItem`s cannot be changed after creation.
 #[derive(Clone)]
 pub struct MenuItem {
     ui_menu_item: *mut uiMenuItem,
 }
 
-/// A `Menu` represents one of the top-level menus at the top of a window. As that bar is unique
-/// per application, creating a new `Menu` shows it on all windows that support displaying menus.
+/// A `Menu` represents one of the top-level menus at the top of a window.
+/// That bar is unique per application, and creating a new `Menu` shows it
+/// on all windows that support displaying menus.
+///
+/// Once windows have been created, no more menus can be created.
 #[derive(Clone)]
 pub struct Menu {
     ui_menu: *mut uiMenu,
@@ -77,33 +84,49 @@ impl MenuItem {
 }
 
 impl Menu {
-    /// Creates a new menu with the given name to be displayed in the menubar at the top of the window.
-    pub fn new(_ctx: &UI, name: &str) -> Menu {
-        unsafe {
-            let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
-            Menu {
-                ui_menu: ui_sys::uiNewMenu(c_string.as_ptr()),
+    /// Creates a new menu with the given name to be displayed in the menubar
+    /// at the top of all windows with a menubar.
+    ///
+    /// This is possible only if menus have not been finalized.
+    pub fn new(_ctx: &UI, name: &str) -> Option<Menu> {
+        if HAS_FINALIZED_MENUS.load(Ordering::SeqCst) { None }
+        else {
+            unsafe {
+                let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
+                Some(Menu {
+                    ui_menu: ui_sys::uiNewMenu(c_string.as_ptr()),
+                })
             }
         }
     }
 
     /// Adds a new item with the given name to the menu.
-    pub fn append_item(&self, name: &str) -> MenuItem {
+    ///
+    /// This is possible only if menus have not been finalized.
+    pub fn append_item(&self, name: &str) -> Option<MenuItem> {
+        if HAS_FINALIZED_MENUS.load(Ordering::SeqCst) { None }
+        else {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
-            MenuItem {
+            Some(MenuItem {
                 ui_menu_item: ui_sys::uiMenuAppendItem(self.ui_menu, c_string.as_ptr()),
-            }
+            })
+        }
         }
     }
 
     /// Adds a new togglable (checkbox) item with the given name to the menu.
-    pub fn append_check_item(&self, name: &str) -> MenuItem {
+    ///
+    /// This is possible only if menus have not been finalized.
+    pub fn append_check_item(&self, name: &str) -> Option<MenuItem> {
+        if HAS_FINALIZED_MENUS.load(Ordering::SeqCst) { None }
+        else {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
-            MenuItem {
+            Some(MenuItem {
                 ui_menu_item: ui_sys::uiMenuAppendCheckItem(self.ui_menu, c_string.as_ptr()),
-            }
+            })
+        }
         }
     }
 
@@ -112,3 +135,15 @@ impl Menu {
         unsafe { ui_sys::uiMenuAppendSeparator(self.ui_menu) }
     }
 }
+
+#[test]
+fn cannot_change_menus_late() {
+    use crate::prelude::*;
+    let ui = UI::init().expect("failed to init");
+    let mut menu = Menu::new(&ui, "menu").unwrap();
+    assert!(menu.append_item("test item").is_some());
+    let win = Window::new(&ui, "Test App", 200, 200, WindowType::HasMenubar);
+    assert!(Menu::new(&ui, "menu2").is_none());
+    assert!(menu.append_item("test item 2").is_none());
+}
+
