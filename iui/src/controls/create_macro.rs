@@ -43,6 +43,14 @@ macro_rules! define_control {
             }
         }
 
+        impl AsRef<Control> for $rust_type {
+            fn as_ref(&self) -> &Control {
+                // This works because the first field is always a pointer to a
+                // uiControl... but this is almost definitely undefined behavior
+                unsafe { ::std::mem::transmute(self) }
+            }
+        }
+
         impl $rust_type {
             // Show this control to the user. This will also show its non-hidden children.
             pub fn show(&mut self, _ctx: &UI) {
