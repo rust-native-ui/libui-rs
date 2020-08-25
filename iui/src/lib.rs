@@ -19,6 +19,7 @@
 
 #[macro_use]
 extern crate bitflags;
+extern crate thiserror;
 #[macro_use]
 extern crate lazy_static;
 extern crate libc;
