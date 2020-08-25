@@ -46,7 +46,7 @@ build = []
 libc = "0.2"
 
 [build-dependencies]
-bindgen = "0.54"
+bindgen = "0.55"
 cc = "1.0"
 embed-resource = "1.3"
 pkg-config = "0.3"
