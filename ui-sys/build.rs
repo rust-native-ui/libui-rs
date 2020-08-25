@@ -37,6 +37,8 @@ fn main() {
         }
     }
 
+    println!("cargo:rerun-if-changed=wrapper.h");
+
     // Generate libui bindings on the fly
     let bindings = BindgenBuilder::default()
         .header("wrapper.h")
