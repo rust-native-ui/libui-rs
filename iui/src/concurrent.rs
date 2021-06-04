@@ -2,11 +2,14 @@ use callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::os::raw::c_void;
 use std::sync::Arc;
 use std::future::Future;
+use std::marker::PhantomData;
 
 /// Evidence that it's safe to call `ui_sys:uiQueueMain`; ie that `UI:init()`
 /// has been run.
 #[derive(Copy,Clone)]
-pub struct Context {}
+pub struct Context {
+    pub(crate) _pd: PhantomData<()>,
+}
 
 impl Context {
     /// Queues a function to be executed on the GUI thread when next possible. Returns
@@ -53,11 +56,11 @@ pub(crate) fn queue_main_unsafe<F: FnMut() + 'static>(callback: F) {
     }
 }
 
-pub(crate) unsafe fn spawn_unsafe<F: Future<Output = ()> + 'static>(arc: Arc<F>) {
+pub(crate) unsafe fn spawn_unsafe<F: Future<Output = ()> + 'static>(mut arc: Arc<F>) {
     queue_main_unsafe(move || {
         let waker = waker::make_waker(&arc.clone());
         let mut ctx = std::task::Context::from_waker(&waker);
-        match F::poll(std::pin::Pin::new_unchecked(Arc::get_mut(&mut arc.clone()).unwrap()), &mut ctx) {
+        match F::poll(std::pin::Pin::new_unchecked(Arc::get_mut(&mut arc).unwrap()), &mut ctx) {
             _ => ()
         }
     })
