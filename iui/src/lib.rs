@@ -36,6 +36,7 @@ mod ffi_tools;
 pub mod menus;
 pub mod str_tools;
 mod ui;
+pub mod async;
 
 pub use error::UIError;
 pub use ui::{EventLoop, UI};
