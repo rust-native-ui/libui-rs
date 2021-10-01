@@ -1,7 +1,7 @@
 use draw::DrawContext;
 use std::marker::PhantomData;
 use std::ptr;
-use ui_sys::{self, uiDrawBrush};
+use ui_sys::{self, size_t, uiDrawBrush};
 
 pub use ui_sys::uiDrawBrushGradientStop as BrushGradientStop;
 
@@ -58,7 +58,7 @@ impl Brush {
                     Y1: linear_gradient_brush.end_y,
                     OuterRadius: 0.0,
                     Stops: linear_gradient_brush.stops.as_ptr() as *mut BrushGradientStop,
-                    NumStops: linear_gradient_brush.stops.len() as u64,
+                    NumStops: linear_gradient_brush.stops.len() as size_t,
                 },
                 phantom: PhantomData,
             },
@@ -77,7 +77,7 @@ impl Brush {
                     Y1: radial_gradient_brush.outer_circle_center_y,
                     OuterRadius: radial_gradient_brush.outer_radius,
                     Stops: radial_gradient_brush.stops.as_ptr() as *mut BrushGradientStop,
-                    NumStops: radial_gradient_brush.stops.len() as u64,
+                    NumStops: radial_gradient_brush.stops.len() as size_t,
                 },
                 phantom: PhantomData,
             },

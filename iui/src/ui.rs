@@ -2,7 +2,7 @@ use callback_helpers::{from_void_ptr, to_heap_ptr};
 use error::UIError;
 use ffi_tools;
 use std::os::raw::{c_int, c_void};
-use ui_sys;
+use ui_sys::{self, size_t};
 
 use std::ffi::CStr;
 use std::marker::PhantomData;
@@ -74,7 +74,7 @@ impl UI {
         unsafe {
             // Create the magic value needed to init libUI
             let mut init_options = ui_sys::uiInitOptions {
-                Size: mem::size_of::<ui_sys::uiInitOptions>() as u64,
+                Size: mem::size_of::<ui_sys::uiInitOptions>() as size_t,
             };
 
             // Actually start up the library's functionality

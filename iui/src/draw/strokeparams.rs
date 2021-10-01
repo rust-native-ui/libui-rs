@@ -1,7 +1,7 @@
 use draw::DrawContext;
 use std::marker::PhantomData;
 use std::os::raw::c_double;
-use ui_sys::uiDrawStrokeParams;
+use ui_sys::{size_t, uiDrawStrokeParams};
 
 pub use ui_sys::uiDrawLineCap as LineCap;
 pub use ui_sys::uiDrawLineJoin as LineJoin;
@@ -31,7 +31,7 @@ impl StrokeParams {
                 Thickness: self.thickness,
                 MiterLimit: self.miter_limit,
                 Dashes: self.dashes.as_ptr() as *mut c_double,
-                NumDashes: self.dashes.len() as u64,
+                NumDashes: self.dashes.len() as size_t,
                 DashPhase: self.dash_phase,
             },
             phantom: PhantomData,
