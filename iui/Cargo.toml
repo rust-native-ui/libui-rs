@@ -40,6 +40,4 @@ bitflags = "1"
 libc = "0.2"
 failure = "0.1"
 ui-sys = { path = "../ui-sys", version = "0.2.1" }
-regex = "1"
-lazy_static = "1"
 
