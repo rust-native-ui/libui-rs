@@ -11,17 +11,17 @@ pub fn strip_dual_endings(s: &str) -> String {
 
 /// Replaces every occurrence of `"\n"` not led by `"\r"` with `"\r\n"`.
 pub fn insert_dual_endings(s: &str) -> String {
-    let mut ns = String::with_capacity(s.len() + 2);
-    let mut cr = false;
-    for (_, d) in s.char_indices() {
-        if d == '\n' && !cr {
-            ns.push('\r');
+    let mut new_string = String::with_capacity(s.len() + 2);
+    let mut prev_was_cr = false;
+    for (_, character) in s.char_indices() {
+        if character == '\n' && !prev_was_cr {
+            new_string.push('\r');
         }
 
-        ns.push(d);
-        cr = d == '\r';
+        new_string.push(character);
+        prev_was_cr = character == '\r';
     }
-    return ns;
+    return new_string;
 }
 
 /// Converts a &str to a CString, using either LF or CRLF as appropriate.
