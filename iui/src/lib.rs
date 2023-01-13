@@ -21,10 +21,7 @@
 extern crate bitflags;
 #[macro_use]
 extern crate failure;
-#[macro_use]
-extern crate lazy_static;
 extern crate libc;
-extern crate regex;
 extern crate ui_sys;
 
 mod callback_helpers;

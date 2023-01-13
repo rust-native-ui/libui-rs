@@ -1,6 +1,5 @@
 //! Tools for making platform-independent string handling work properly
 
-use regex::{Regex, RegexBuilder};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
@@ -10,16 +9,19 @@ pub fn strip_dual_endings(s: &str) -> String {
     s.replace("\r\n", "\n")
 }
 
-/// Replaces every occurrance of `"\n"` not followed by `"\r"` with `"\r\n"`.
+/// Replaces every occurrence of `"\n"` not led by `"\r"` with `"\r\n"`.
 pub fn insert_dual_endings(s: &str) -> String {
-    lazy_static! {
-        //static ref RE: Regex = Regex::new("([^\r])\n").expect("Could not compile regex");
-        static ref RE: Regex = RegexBuilder::new("\r\n|\n")
-                                             .multi_line(true)
-                                             .build()
-                                             .expect("Could not compile regex");
+    let mut new_string = String::with_capacity(s.len() + 2);
+    let mut prev_was_cr = false;
+    for (_, character) in s.char_indices() {
+        if character == '\n' && !prev_was_cr {
+            new_string.push('\r');
+        }
+
+        new_string.push(character);
+        prev_was_cr = character == '\r';
     }
-    RE.replace_all(s, "\r\n").to_string()
+    return new_string;
 }
 
 /// Converts a &str to a CString, using either LF or CRLF as appropriate.
