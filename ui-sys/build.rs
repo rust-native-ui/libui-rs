@@ -57,6 +57,9 @@ fn main() {
         let src_base = env::var("SRC_BASE").unwrap_or("libui".to_string());
         let src_path = |x| format!("{}/{}", src_base, x);
 
+        // libui might emit lots of warnings we can do nothing
+        base_config.warnings(false);
+
         // Add source files that are common to all platforms
         base_config.include(src_path("/common"));
 
@@ -70,6 +73,7 @@ fn main() {
             "common/matrix.c",
             "common/opentype.c",
             "common/shouldquit.c",
+            "common/table.c",
             "common/tablemodel.c",
             "common/tablevalue.c",
             "common/userbugs.c",
