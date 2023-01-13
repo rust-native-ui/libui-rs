@@ -4,3 +4,4 @@ ui/target
 ui-sys/target
 iui/target
 target
+.direnv
