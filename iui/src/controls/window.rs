@@ -123,23 +123,42 @@ impl Window {
         unsafe { ui_sys::uiWindowSetChild(self.uiWindow, child.into().as_ui_control()) }
     }
 
-    /// Allow the user to select an existing file.
+    /// Allow the user to select an existing file using the systems file dialog
     pub fn open_file(&self, _ctx: &UI) -> Option<PathBuf> {
         let ptr = unsafe { ui_sys::uiOpenFile(self.uiWindow) };
         if ptr.is_null() {
             return None;
         };
         let path_string: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
+        unsafe {
+            ui_sys::uiFreeText(ptr);
+        }
         Some(path_string.into())
     }
 
-    /// Allow the user to select a new or existing file.
+    /// Allow the user to select a new or existing file using the systems file dialog.
     pub fn save_file(&self, _ctx: &UI) -> Option<PathBuf> {
         let ptr = unsafe { ui_sys::uiSaveFile(self.uiWindow) };
         if ptr.is_null() {
             return None;
         };
         let path_string: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
+        unsafe {
+            ui_sys::uiFreeText(ptr);
+        }
+        Some(path_string.into())
+    }
+
+    /// Allow the user to select a single folder using the systems folder dialog.
+    pub fn open_folder(&self, _ctx: &UI) -> Option<PathBuf> {
+        let ptr = unsafe { ui_sys::uiOpenFolder(self.uiWindow) };
+        if ptr.is_null() {
+            return None;
+        };
+        let path_string: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
+        unsafe {
+            ui_sys::uiFreeText(ptr);
+        }
         Some(path_string.into())
     }
 
