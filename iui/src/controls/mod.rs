@@ -13,6 +13,8 @@ mod label;
 pub use self::label::*;
 mod button;
 pub use self::button::*;
+mod datetimepicker;
+pub use self::datetimepicker::*;
 mod window;
 pub use self::window::*;
 mod layout;
