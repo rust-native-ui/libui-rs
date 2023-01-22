@@ -13,6 +13,8 @@ mod label;
 pub use self::label::*;
 mod button;
 pub use self::button::*;
+mod colorbutton;
+pub use self::colorbutton::*;
 mod window;
 pub use self::window::*;
 mod layout;
