@@ -12,6 +12,7 @@ use std::thread;
 use std::time::{Duration, SystemTime};
 
 use controls::Window;
+use concurrent::Context;
 
 /// RAII guard for the UI; when dropped, it uninits libUI.
 struct UIToken {
@@ -135,15 +136,24 @@ impl UI {
     /// ui.quit();
     /// ```
     pub fn queue_main<F: FnMut() + 'static>(&self, callback: F) {
-        extern "C" fn c_callback<G: FnMut()>(data: *mut c_void) {
-            unsafe {
-                from_void_ptr::<G>(data)();
-            }
-        }
+        crate::concurrent::queue_main_unsafe(callback)
+    }
 
-        unsafe {
-            ui_sys::uiQueueMain(Some(c_callback::<F>), to_heap_ptr(callback));
-        }
+    /// Obtains a context which can be used for queueing tasks on the main
+    /// thread.
+    pub fn async_context(&self) -> Context {
+        Context { _pd: PhantomData }
+    }
+
+    /// Spawns a new asynchronous task on the GUI thread when next possible.
+    /// Returns immediately, not waiting for the task to be executed.
+    /// The GUI thread will resume normal operation when the task completes
+    /// or when it is awaiting. This version can be used from any thread.
+    /// This version doesn't require the future to be `Send`, but can only
+    /// be run in the main thread.
+    pub fn spawn<F: std::future::Future<Output = ()> + 'static>(&self, future: F) {
+        let arc = std::sync::Arc::new(future);
+        unsafe { crate::concurrent::spawn_unsafe(arc) }
     }
 
     /// Set a callback to be run when the application quits.
