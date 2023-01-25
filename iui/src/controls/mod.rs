@@ -15,6 +15,8 @@ mod button;
 pub use self::button::*;
 mod window;
 pub use self::window::*;
+mod form;
+pub use self::form::*;
 mod layout;
 pub use self::layout::*;
 mod entry;
