@@ -40,7 +40,9 @@ fn main() {
     // Generate libui bindings on the fly
     let bindings = BindgenBuilder::default()
         .header("wrapper.h")
-        .opaque_type("max_align_t") // For some reason this ends up too large
+        .whitelist_function("ui[A-Z].+")
+        .whitelist_type("ui[A-Z].+")
+        .whitelist_var("ui[A-Z].+")
         //.rustified_enum(".*")
         .trust_clang_mangling(false) // clang sometimes wants to treat these functions as C++
         .generate()
