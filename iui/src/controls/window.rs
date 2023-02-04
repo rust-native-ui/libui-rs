@@ -4,10 +4,12 @@ use callback_helpers::{from_void_ptr, to_heap_ptr};
 use controls::Control;
 use std::cell::RefCell;
 use std::ffi::{CStr, CString};
+use std::sync::atomic::{Ordering};
 use std::mem;
 use std::os::raw::{c_int, c_void};
 use std::path::PathBuf;
 use ui::UI;
+use menus::{HAS_FINALIZED_MENUS};
 use ui_sys::{self, uiControl, uiWindow};
 
 thread_local! {
@@ -15,6 +17,8 @@ thread_local! {
 }
 
 /// A `Window` can either have a menubar or not; this enum represents that decision.\
+///
+/// Once one window is created, no changes to menus can be made.
 #[derive(Clone, Copy, Debug)]
 pub enum WindowType {
     HasMenubar,
@@ -46,6 +50,7 @@ impl Window {
             ));
 
             WINDOWS.with(|windows| windows.borrow_mut().push(window.clone()));
+            HAS_FINALIZED_MENUS.store(true, Ordering::SeqCst);
 
             window
         };
