@@ -34,7 +34,7 @@ Then, in your code, all you have to do is:
 Or, you can track the `trunk` branch, which may be broken and whose API often changes, with:
 
 ```toml
-iui = { git = "https://github.com/rust-native-ui/libui-rs.git" branch="trunk" }
+iui = { git = "https://github.com/rust-native-ui/libui-rs.git", branch="trunk" }
 ```
 
 We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://rust-native-ui.github.io/libui-rs/iui/index.html) for `trunk`.
